@@ -1,0 +1,323 @@
+/* =============================================================================
+   CARBONOGRAPHY — global.css
+   Shared tokens, resets, and components used across all Carbonography pages.
+   Link this before any page-specific <style> block:
+     <link rel="stylesheet" href="/assets/global.css">
+   ============================================================================= */
+
+
+/* ── 1. DESIGN TOKENS ────────────────────────────────────────────────────── */
+
+:root {
+  --dark-red:    #8b0000;
+  --red-hover:   #b30000;
+  --off-white:   #f5f5f5;
+  --grey:        #2c2c2c;
+  --grey-dark:   #0f0f0f;
+  --grey-mid:    #111111;
+  --black:       #000000;
+  --border-color: #444;
+
+  --font-ui:   'Inter', 'Arial Black', sans-serif;
+  --font-mono: 'Consolas', 'Monaco', monospace;
+  --font-code: 'Courier New', monospace;
+
+  --radius-sm: 2px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+
+  --transition-fast: 0.2s;
+  --transition-med:  0.3s;
+  --camera-ease:     0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+
+/* ── 2. RESET ────────────────────────────────────────────────────────────── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 16px;
+  background: var(--black);
+  color: var(--off-white);
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+/* ── 3. TYPOGRAPHY ───────────────────────────────────────────────────────── */
+
+label {
+  font-size: 13px;
+  color: #999;
+  text-transform: uppercase;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+}
+
+
+/* ── 4. TOOLBAR ──────────────────────────────────────────────────────────── */
+/*
+   Shared header bar used on both desktop and mobile.
+   Mobile overrides font sizes in its own stylesheet.
+*/
+
+#top-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: var(--grey);
+  border-bottom: 3px solid var(--dark-red);
+  flex-shrink: 0;
+}
+
+#top-toolbar .logo-text {
+  color: var(--off-white);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -1.5px;
+}
+
+#version-badge {
+  color: var(--dark-red);
+  font-family: var(--font-code);
+  font-weight: 900;
+  background: var(--black);
+  border-radius: var(--radius-sm);
+  letter-spacing: 1px;
+}
+
+.header-logo {
+  margin-left: auto;
+}
+
+
+/* ── 5. PANEL HEADER ─────────────────────────────────────────────────────── */
+/*
+   Red section divider bar used throughout both layouts.
+*/
+
+.panel-header {
+  background: var(--dark-red);
+  border-bottom: 1px solid var(--black);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--off-white);
+  font-weight: 900;
+}
+
+
+/* ── 6. FORM ELEMENTS ────────────────────────────────────────────────────── */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+input,
+select {
+  background: var(--grey);
+  border: 1px solid var(--border-color);
+  color: var(--off-white);
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  font-weight: 700;
+  font-family: var(--font-ui);
+  outline: none;
+  transition: border-color var(--transition-med), background var(--transition-med);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input:focus,
+select:focus {
+  border-color: var(--dark-red);
+  background: #333;
+}
+
+
+/* ── 7. CHECKBOXES ───────────────────────────────────────────────────────── */
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+  accent-color: var(--dark-red);
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.checkbox-group label {
+  cursor: pointer;
+  color: var(--off-white);
+  text-transform: none;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+
+/* ── 8. BUTTONS ──────────────────────────────────────────────────────────── */
+
+.btn {
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  font-weight: 900;
+  font-family: var(--font-ui);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--dark-red);
+  color: var(--off-white);
+}
+
+.btn-primary:hover,
+.btn-primary:active {
+  background: var(--red-hover);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--dark-red);
+  color: var(--off-white);
+}
+
+.btn-outline:hover,
+.btn-outline:active {
+  background: var(--dark-red);
+}
+
+/* Subtle inline copy button used inside panel headers */
+.btn-copy-inline {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--off-white);
+  font-family: var(--font-ui);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn-copy-inline:hover,
+.btn-copy-inline:active {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+
+/* ── 9. STATUS MESSAGE ───────────────────────────────────────────────────── */
+
+#status-msg {
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #777;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* ── 10. RIG / CAMERA PREVIEW ────────────────────────────────────────────── */
+
+#rig-container {
+  width: 100%;
+  background: radial-gradient(ellipse 60% 75% at 50% 50%, #2a2a2a 0%, var(--black) 100%);
+  position: relative;
+  border-bottom: 2px solid var(--grey);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+#vehicle-aerial {
+  width: auto;
+  opacity: 0.9;
+  z-index: 1;
+}
+
+#camera-indicator {
+  position: absolute;
+  transition: transform var(--camera-ease);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+#camera-icon {
+  width: 100%;
+  height: auto;
+}
+
+
+/* ── 11. OUTPUT / PROMPT AREA ────────────────────────────────────────────── */
+
+#output-area {
+  font-family: var(--font-mono);
+  color: var(--off-white);
+  line-height: 1.8;
+  font-weight: 700;
+  white-space: pre-wrap;
+  overflow-y: auto;
+}
+
+/* Blinking cursor appended after prompt text */
+#cursor {
+  display: inline-block;
+  background: var(--dark-red);
+  animation: blink 1s infinite;
+  vertical-align: middle;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+
+/* ── 12. PROMPT PANEL HEADER ROW ─────────────────────────────────────────── */
+/*
+   Used on mobile: the red header bar that holds both the section
+   label and the inline copy button side by side.
+*/
+
+.prompt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--dark-red);
+  border-bottom: 1px solid var(--black);
+}
+
+.panel-header-text {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--off-white);
+  font-weight: 900;
+}
+
+
+/* ── 13. UTILITY ─────────────────────────────────────────────────────────── */
+
+.full-width  { grid-column: span 2; }
+.sr-only     { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
