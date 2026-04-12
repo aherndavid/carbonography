@@ -53,7 +53,6 @@
     <!-- Right: controls + output -->
     <div id="right">
 
-      <!-- Controls strip -->
       <div id="controls-panel">
         <div class="panel-header">Studio Controls</div>
         <div class="controls-inner">
@@ -106,7 +105,7 @@
           <div class="colour-group">
             <label>Exterior Colour</label>
             <div class="colour-input-row">
-              <input type="color" id="extColourPicker" value="#1a1a1a" title="Pick exterior colour">
+              <input type="color" id="extColourPicker" value="#1a1a1a">
               <input type="text"  id="extColourHex"    value="#1a1a1a" maxlength="7" placeholder="#000000" class="hex-input">
               <input type="text"  id="extColourName"   placeholder="e.g. Obsidian Black" class="colour-name-input">
             </div>
@@ -115,13 +114,41 @@
           <div class="colour-group">
             <label>Interior Colour</label>
             <div class="colour-input-row">
-              <input type="color" id="intColourPicker" value="#2c1a0e" title="Pick interior colour">
+              <input type="color" id="intColourPicker" value="#2c1a0e">
               <input type="text"  id="intColourHex"    value="#2c1a0e" maxlength="7" placeholder="#000000" class="hex-input">
               <input type="text"  id="intColourName"   placeholder="e.g. Cognac Tan" class="colour-name-input">
             </div>
           </div>
 
-        </div><!-- /.colour-row -->
+        </div>
+
+        <!-- Number Plate section -->
+        <div class="panel-header">Number Plate</div>
+        <div class="controls-inner plate-row">
+
+          <div class="form-group">
+            <label for="plateStyle">Plate Style</label>
+            <select id="plateStyle">
+              <option value="none">No Plate / Hidden</option>
+              <option value="uk">UK — White &amp; Yellow</option>
+              <option value="us">US — State Style</option>
+              <option value="eu">EU — White with Blue Band</option>
+              <option value="custom">Custom / Other</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="plate-chars-group" style="display:none;">
+            <label for="plateChars">Plate Characters</label>
+            <div class="plate-input-wrap">
+              <input type="text" id="plateChars" placeholder="AB12 CDE" maxlength="12" class="plate-chars-input" autocomplete="off" spellcheck="false">
+              <div id="plate-preview-uk"    class="plate-preview plate-uk"     style="display:none;"></div>
+              <div id="plate-preview-us"    class="plate-preview plate-us"     style="display:none;"></div>
+              <div id="plate-preview-eu"    class="plate-preview plate-eu"     style="display:none;"></div>
+              <div id="plate-preview-custom" class="plate-preview plate-custom" style="display:none;"></div>
+            </div>
+          </div>
+
+        </div>
 
         <!-- Location section -->
         <div class="panel-header">Location &amp; Background</div>
@@ -140,15 +167,13 @@
             </select>
           </div>
 
-          <!-- Custom background text + font -->
-          <div id="custom-location-group" class="custom-location-group" style="display:none;">
+          <div id="custom-location-group" style="display:none;">
             <div class="form-group">
               <label for="customLocation">Describe Your Background</label>
               <input type="text" id="customLocation" placeholder="e.g. Snowy mountain pass at dusk, pine trees lining the road">
             </div>
           </div>
 
-          <!-- Overlay text -->
           <div class="overlay-text-group">
             <div class="form-group">
               <label for="overlayText">Overlay Text (optional)</label>
@@ -170,12 +195,11 @@
             </div>
           </div>
 
-          <!-- Live font preview -->
           <div id="font-preview-wrap" style="display:none;">
             <div id="font-preview"></div>
           </div>
 
-        </div><!-- /.location-row -->
+        </div>
 
         <!-- Output spec row -->
         <div class="controls-inner output-spec-row">
@@ -221,11 +245,10 @@
             <div class="checkbox-group"><input type="checkbox" id="drone"><label for="drone">Drone Flyover</label></div>
           </div>
 
-        </div><!-- /.output-spec-row -->
+        </div>
 
       </div><!-- /#controls-panel -->
 
-      <!-- Output -->
       <div class="panel-header" id="output-panel-header">Generated Image Prompt</div>
       <div id="output-area">Initialize Carbonography System...<span id="cursor"></span></div>
 
@@ -245,7 +268,6 @@
 
 </div>
 
-<!-- Toast -->
 <div id="generator-toast"></div>
 
 <style>
@@ -282,23 +304,134 @@
   #rig-container { background: radial-gradient(ellipse 60% 75% at 50% 50%, #2a2a2a 0%, #000 100%) !important; }
   #output-area   { background: #0f0f0f !important; }
 
-  /* ── Location section ── */
-  .location-row {
+  /* ── Number plate section ── */
+  .plate-row {
     display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  .custom-location-group,
-  .overlay-text-group {
-    display: flex;
-    gap: 14px;
+    align-items: flex-start;
+    gap: 20px;
     flex-wrap: wrap;
   }
 
-  .overlay-text-group .form-group { flex: 1; min-width: 180px; }
+  .plate-row .form-group { min-width: 180px; }
 
-  /* Font preview */
+  .plate-input-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .plate-chars-input {
+    font-family: 'Courier New', monospace !important;
+    font-size: 20px !important;
+    font-weight: 900 !important;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    width: 100%;
+    padding: 10px 14px !important;
+  }
+
+  /* Plate previews */
+  .plate-preview {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border-radius: 4px;
+    padding: 6px 16px;
+    font-size: 22px;
+    min-width: 180px;
+    min-height: 46px;
+    border: 2px solid #555;
+    user-select: none;
+  }
+
+  /* UK plate — white front / yellow rear (we show front style) */
+  .plate-uk {
+    background: #f5f0c8;
+    color: #111;
+    font-family: 'UKNumberPlate', 'Arial Black', 'Impact', sans-serif;
+    border-color: #bbb;
+    border-radius: 6px;
+    border-width: 3px;
+    position: relative;
+    padding-left: 36px;
+  }
+
+  .plate-uk::before {
+    content: 'GB';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 30px;
+    background: #003399;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px 0 0 3px;
+    writing-mode: horizontal-tb;
+  }
+
+  /* US plate */
+  .plate-us {
+    background: #fff;
+    color: #1a1a6e;
+    font-family: 'Arial Black', 'Impact', sans-serif;
+    border-color: #1a1a6e;
+    border-width: 3px;
+    font-size: 20px;
+  }
+
+  /* EU plate */
+  .plate-eu {
+    background: #fff;
+    color: #111;
+    font-family: 'Arial Black', sans-serif;
+    border-color: #ccc;
+    border-radius: 4px;
+    border-width: 2px;
+    padding-left: 36px;
+    position: relative;
+  }
+
+  .plate-eu::before {
+    content: 'EU';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 30px;
+    background: #003399;
+    color: #FFD700;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px 0 0 3px;
+  }
+
+  /* Custom plate */
+  .plate-custom {
+    background: #1a1a1a;
+    color: #f5f5f5;
+    font-family: 'Arial Black', sans-serif;
+    border-color: #555;
+    border-radius: 4px;
+  }
+
+  /* ── Location section ── */
+  .location-row { display:flex; flex-direction:column; gap:14px; }
+  .overlay-text-group { display:flex; gap:14px; flex-wrap:wrap; }
+  .overlay-text-group .form-group { flex:1; min-width:180px; }
+
   #font-preview-wrap {
     background: #0f0f0f;
     border: 1px solid #333;
@@ -306,7 +439,6 @@
     padding: 14px 20px;
     text-align: center;
   }
-
   #font-preview {
     font-size: 28px;
     color: #f5f5f5;
@@ -333,46 +465,30 @@
     white-space: nowrap;
     flex-shrink: 0;
   }
-
   .btn-generator:hover {
     background: linear-gradient(135deg, #2a2a4e 0%, #26316e 50%, #1f4480 100%);
-    border-color: #7a7aca;
-    color: #fff;
+    border-color: #7a7aca; color: #fff;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(100,100,200,0.3);
   }
-
   .btn-generator:active { transform: translateY(0); }
 
-  /* Toast */
   #generator-toast {
-    position: fixed;
-    bottom: 80px;
-    left: 50%;
+    position: fixed; bottom: 80px; left: 50%;
     transform: translateX(-50%) translateY(20px);
-    background: #1a1a2e;
-    border: 1px solid #4a4a8a;
-    color: #e0e0ff;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 700;
-    font-family: var(--font-ui);
-    letter-spacing: 0.5px;
-    opacity: 0;
-    transition: all 0.3s ease;
-    pointer-events: none;
-    z-index: 9999;
-    text-align: center;
-    white-space: nowrap;
+    background: #1a1a2e; border: 1px solid #4a4a8a; color: #e0e0ff;
+    padding: 12px 20px; border-radius: 8px;
+    font-size: 13px; font-weight: 700; font-family: var(--font-ui);
+    letter-spacing: 0.5px; opacity: 0; transition: all 0.3s ease;
+    pointer-events: none; z-index: 9999; text-align: center; white-space: nowrap;
   }
   #generator-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
   /* ── Checkbox fix ── */
   .checkbox-group input[type="checkbox"] {
-    width: 18px; height: 18px; min-width: 18px;
-    accent-color: #8b0000; cursor: pointer; flex-shrink: 0;
-    opacity: 1; -webkit-appearance: checkbox; appearance: checkbox;
+    width:18px; height:18px; min-width:18px; accent-color:#8b0000;
+    cursor:pointer; flex-shrink:0; opacity:1;
+    -webkit-appearance:checkbox; appearance:checkbox;
   }
 
   /* ── Colour section ── */
@@ -388,10 +504,7 @@
   input[type="color"]::-webkit-color-swatch-wrapper { padding:0; border-radius:4px; }
   input[type="color"]::-webkit-color-swatch { border:none; border-radius:4px; }
 
-  .hex-input {
-    width:90px; font-family:'Consolas','Monaco',monospace;
-    font-size:14px; text-transform:uppercase; letter-spacing:1px; flex-shrink:0;
-  }
+  .hex-input { width:90px; font-family:'Consolas','Monaco',monospace; font-size:14px; text-transform:uppercase; letter-spacing:1px; flex-shrink:0; }
   .colour-name-input { flex:1; font-size:14px; }
 </style>
 
@@ -399,7 +512,6 @@
   const WHEEL_MIN = 13;
   const WHEEL_MAX = 22;
   const STATUS_RESET_MS = 2000;
-
   const $ = id => document.getElementById(id);
   let currentPrompt = '';
 
@@ -434,22 +546,58 @@
     return name ? `${name} (${hex})` : hex;
   }
 
+  // ── Number plate ───────────────────────────────────────────────────────────
+  const PLATE_STYLES = {
+    uk:     { label: 'UK-style white front plate with black Charles Wright font',     previewId: 'plate-preview-uk' },
+    us:     { label: 'US-style state licence plate with bold sans-serif characters',  previewId: 'plate-preview-us' },
+    eu:     { label: 'EU-style white plate with blue country band and black lettering',previewId: 'plate-preview-eu' },
+    custom: { label: 'custom-style number plate',                                     previewId: 'plate-preview-custom' },
+  };
+
+  function updatePlatePreview() {
+    const style    = $('plateStyle').value;
+    const chars    = $('plateChars').value.trim().toUpperCase();
+    const charsGrp = $('plate-chars-group');
+
+    // Hide all previews first
+    ['uk','us','eu','custom'].forEach(s => {
+      $('plate-preview-' + s).style.display = 'none';
+    });
+
+    if (style === 'none') {
+      charsGrp.style.display = 'none';
+    } else {
+      charsGrp.style.display = 'block';
+      if (chars) {
+        const prev = $(PLATE_STYLES[style].previewId);
+        prev.textContent = chars;
+        prev.style.display = 'inline-flex';
+      }
+    }
+    autoGenerate();
+  }
+
+  $('plateStyle').addEventListener('change', updatePlatePreview);
+  $('plateChars').addEventListener('input', () => {
+    // Force uppercase as user types
+    $('plateChars').value = $('plateChars').value.toUpperCase();
+    updatePlatePreview();
+  });
+
   // ── Location toggle ────────────────────────────────────────────────────────
   $('location').addEventListener('change', () => {
-    const isCustom = $('location').value === 'custom';
-    $('custom-location-group').style.display = isCustom ? 'flex' : 'none';
+    $('custom-location-group').style.display = $('location').value === 'custom' ? 'block' : 'none';
     autoGenerate();
   });
   $('customLocation').addEventListener('input', autoGenerate);
 
   // ── Font preview ───────────────────────────────────────────────────────────
-  $('overlayFont').addEventListener('change', () => {
+  function updateFontPreview() {
     const sel    = $('overlayFont');
     const family = sel.options[sel.selectedIndex].getAttribute('data-family');
     const text   = $('overlayText').value.trim();
     const wrap   = $('font-preview-wrap');
     const prev   = $('font-preview');
-
     if (family && text) {
       prev.style.fontFamily = `'${family}', sans-serif`;
       prev.textContent = text;
@@ -458,24 +606,9 @@
       wrap.style.display = 'none';
     }
     autoGenerate();
-  });
-
-  $('overlayText').addEventListener('input', () => {
-    const sel    = $('overlayFont');
-    const family = sel.options[sel.selectedIndex].getAttribute('data-family');
-    const text   = $('overlayText').value.trim();
-    const wrap   = $('font-preview-wrap');
-    const prev   = $('font-preview');
-
-    if (family && text) {
-      prev.style.fontFamily = `'${family}', sans-serif`;
-      prev.textContent = text;
-      wrap.style.display = 'block';
-    } else {
-      wrap.style.display = 'none';
-    }
-    autoGenerate();
-  });
+  }
+  $('overlayFont').addEventListener('change', updateFontPreview);
+  $('overlayText').addEventListener('input', updateFontPreview);
 
   // ── Maps ───────────────────────────────────────────────────────────────────
   const RESOLUTION_MAP = {
@@ -483,18 +616,15 @@
     high:     { label: '3840x2160' },
     ultra:    { label: '7680x4320' },
   };
-
   const QUALITY_MAP = {
     standard: 'sharp focus, clean render, commercial quality',
     high:     'hyper-detailed surfaces, micro-texture realism, studio-grade sharpness, HDR tonal range',
     extreme:  'extreme hyper-realism, every surface pore and scratch visible, ultra-sharp micro detail, museum-quality render, reference-grade photorealism',
   };
-
   const ORIENTATION_MAP = {
     landscape: { label: 'landscape', ratio: '16:9 aspect ratio, horizontal composition' },
     portrait:  { label: 'portrait',  ratio: '9:16 aspect ratio, vertical composition' },
   };
-
   const VIDEO_MAP = {
     slowmo: 'ultra slow-motion capture at 240fps',
     dolly:  'cinematic dolly push-in camera move',
@@ -536,6 +666,11 @@
     const extColour   = colourDesc('extColourHex', 'extColourName');
     const intColour   = colourDesc('intColourHex', 'intColourName');
 
+    // Plate
+    const plateStyle  = $('plateStyle').value;
+    const plateChars  = $('plateChars').value.trim().toUpperCase();
+    const hasPlate    = plateStyle !== 'none' && plateChars.length > 0;
+
     // Location
     const locSel      = $('location');
     const isCustomLoc = locSel.value === 'custom';
@@ -543,7 +678,7 @@
       ? ($('customLocation').value.trim() || 'a custom environment')
       : locSel.value;
 
-    // Overlay text
+    // Overlay
     const overlayText = $('overlayText').value.trim();
     const fontSel     = $('overlayFont');
     const fontVal     = fontSel.value;
@@ -570,6 +705,7 @@
     prompt     += `>> TYPE: ${typeLabel} | ORIENTATION: ${orientation.label.toUpperCase()} | RESOLUTION: ${resolution.label}\n`;
     prompt     += `>> PERSPECTIVE: ${angle.toUpperCase()}\n`;
     prompt     += `>> EXT: ${extColour} | INT: ${intColour}\n`;
+    if (hasPlate) prompt += `>> PLATE: "${plateChars}" — ${PLATE_STYLES[plateStyle].label}\n`;
     prompt     += `>> LOCATION: ${isCustomLoc ? 'CUSTOM' : locSel.options[locSel.selectedIndex].text.toUpperCase()}\n`;
     if (overlayText && fontVal) prompt += `>> OVERLAY: "${overlayText}" — ${fontFamily}\n`;
     prompt     += `\n`;
@@ -584,14 +720,16 @@
     prompt += `The lighting setup is ${lighting}. `;
     prompt += `Background: ${locationStr}. `;
 
+    if (hasPlate) {
+      prompt += `The vehicle displays a clearly legible ${PLATE_STYLES[plateStyle].label} reading "${plateChars}", mounted in the correct position on the vehicle, photorealistic plate lettering. `;
+    }
+
     if (mods.length)      prompt += `Vehicle features include ${mods.join(', ')}. `;
     if (videoMods.length) prompt += `Camera and motion direction: ${videoMods.join(', ')}. `;
 
     if (overlayText && fontVal) {
       prompt += `Overlay text reading "${overlayText}" rendered in a ${fontVal} typeface, large and bold, integrated into the composition. `;
     }
-
-    prompt += `Visible interior showcases ${interior} craftsmanship. `;
 
     if (isVideo) {
       prompt += `Rendered at ${resolution.label}, ${quality}, Unreal Engine 5.4 cinematic render, ray-traced global illumination, motion blur, depth of field, photorealistic materials, cinematic colour grade.`;
@@ -644,7 +782,7 @@
   $('ideogramBtn').addEventListener('click', () => openInGenerator('https://ideogram.ai/t/explore', 'Ideogram'));
   $('leonardoBtn').addEventListener('click', () => openInGenerator('https://app.leonardo.ai/', 'Leonardo.ai'));
 
-  // ── Copy ───────────────────────────────────────────────────────────────────
+  // ── Copy / Export ──────────────────────────────────────────────────────────
   $('copyBtn').addEventListener('click', () => {
     if (!currentPrompt) return;
     navigator.clipboard.writeText(currentPrompt)
@@ -652,14 +790,13 @@
       .catch(() => flashStatus('COPY FAILED'));
   });
 
-  // ── Export ─────────────────────────────────────────────────────────────────
   $('exportBtn').addEventListener('click', () => {
     if (!currentPrompt) { flashStatus('NOTHING TO EXPORT'); return; }
     const blob = new Blob([currentPrompt], { type: 'text/plain' });
     const url  = URL.createObjectURL(blob);
     const a    = document.createElement('a');
-    a.href     = url;
-    a.download = `Carbonography_Prompt_${new Date().toISOString().slice(0, 10)}.txt`;
+    a.href = url;
+    a.download = `Carbonography_Prompt_${new Date().toISOString().slice(0,10)}.txt`;
     a.click();
     URL.revokeObjectURL(url);
   });
