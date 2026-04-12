@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Autofacts-Bespoke | Vehicle Image Generator v1.5</title>
+<title>Carbonography | Vehicle Image Generator v1.6</title>
 <style>
   :root {
     --dark-red: #8b0000;
@@ -35,10 +35,30 @@
     border-bottom: 3px solid var(--dark-red); 
     flex-shrink: 0; 
   }
-  #top-toolbar span.label { font-size: 22px; color: var(--off-white); letter-spacing: 1px; font-weight: 800; text-transform: uppercase; }
-  #version-badge { font-size: 12px; color: var(--dark-red); font-family: 'Courier New', monospace; font-weight: bold; background: var(--black); padding: 2px 8px; border-radius: 4px; }
+
+  /* Chunky Modern Typography */
+  #top-toolbar span.label { 
+    font-family: 'Arial Black', 'Inter', sans-serif;
+    font-size: 28px; 
+    color: var(--off-white); 
+    letter-spacing: -1.5px; 
+    font-weight: 900; 
+    text-transform: uppercase; 
+  }
+
+  #version-badge { 
+    font-size: 11px; 
+    color: var(--dark-red); 
+    font-family: 'Courier New', monospace; 
+    font-weight: bold; 
+    background: var(--black); 
+    padding: 4px 10px; 
+    border-radius: 2px; 
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
   
-  .header-logo { height: 40px; margin-left: auto; filter: drop-shadow(0 0 5px rgba(255,255,255,0.1)); }
+  .header-logo { height: 45px; margin-left: auto; filter: drop-shadow(0 0 5px rgba(255,255,255,0.1)); }
   
   #main { display: flex; flex: 1; min-height: 0; }
 
@@ -54,26 +74,14 @@
   }
   #vehicle-aerial { width: 160px; opacity: 0.9; filter: drop-shadow(0 0 20px rgba(139,0,0,0.3)); z-index: 1; }
   
-  /* The Dynamic Camera Indicator - Container for Positioning */
   #camera-indicator {
-    position: absolute; 
-    width: 70px; /* Container size matching camera asset needs */
-    height: 70px;
+    position: absolute; width: 70px; height: 70px;
     transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
-    display: flex; 
-    align-items: center; 
-    justify-content: center;
-    pointer-events: none;
-    z-index: 10; /* Above car */
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none; z-index: 10; 
   }
 
-  /* The actual camera asset */
-  #camera-icon {
-    width: 100%;
-    height: auto;
-    /* Red glow to match color scheme */
-    filter: drop-shadow(0 0 8px var(--dark-red)); 
-  }
+  #camera-icon { width: 100%; height: auto; filter: drop-shadow(0 0 8px var(--dark-red)); }
 
   .form-container { padding: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
   .form-group { display: flex; flex-direction: column; gap: 8px; }
@@ -137,18 +145,17 @@
 
 <div id="app">
   <div id="top-toolbar">
-    <span class="label">Autofacts-Bespoke</span>
-    <span id="version-badge">v1.5 ENGINE</span>
-    <img class="header-logo" src="https://raw.githubusercontent.com/aherndavid/autofacts/main/assets/autofacts-logo.png" alt="Autofacts Logo">
+    <span class="label">Carbonography</span>
+    <span id="version-badge">v1.6 ENGINE</span>
+    <img class="header-logo" src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/carbonography-logo.png" alt="Carbonography Logo">
   </div>
 
   <div id="main">
     <div id="left">
       <div id="rig-container">
-        <img id="vehicle-aerial" src="https://raw.githubusercontent.com/aherndavid/autofacts/main/assets/car-above.png" alt="Vehicle Aerial">
-        
+        <img id="vehicle-aerial" src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/car-above.png" alt="Vehicle Aerial">
         <div id="camera-indicator">
-          <img id="camera-icon" src="https://raw.githubusercontent.com/aherndavid/autofacts/main/assets/camera.png" alt="Camera Position">
+          <img id="camera-icon" src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/camera.png" alt="Camera Position">
         </div>
       </div>
 
@@ -206,14 +213,14 @@
 
     <div id="right">
       <div class="panel-header">Generated Image Prompt</div>
-      <div id="output-area">Initialize System...<span id="cursor"></span></div>
+      <div id="output-area">Initialize Carbonography System...<span id="cursor"></span></div>
     </div>
   </div>
 
   <div id="bottom-bar">
     <button class="btn btn-primary" onclick="copyPrompt()">Copy Prompt</button>
     <button class="btn btn-outline" onclick="exportFile()">Export .TXT</button>
-    <div id="status-msg">AUTOFACTS-BESPOKE // SYSTEM OPERATIONAL</div>
+    <div id="status-msg">CARBONOGRAPHY // READY</div>
   </div>
 </div>
 
@@ -234,22 +241,8 @@
     let rot = parseFloat(opt.getAttribute('data-rot'));
 
     const indicator = document.getElementById('camera-indicator');
-    
-    // Position the container
-    let transformString = `translate(${x}px, ${y}px)`;
-    
-    // Apply Rotation so lens points inward.
-    // The asset lens is at 12 o'clock relative to the image bounds.
-    // CSS rotate(0deg) faces East (3 o'clock). 
-    // We add 90 degrees to align the 12 o'clock lens with the CSS 3 o'clock standard.
     let adjustedRot = rot + 90;
-    
-    transformString += ` rotate(${adjustedRot}deg)`;
-    
-    // Ensure rotation is around center, and offset the container's top-left positioning
-    transformString += ` translate(-50%, -50%)`;
-
-    indicator.style.transform = transformString;
+    indicator.style.transform = `translate(${x}px, ${y}px) rotate(${adjustedRot}deg) translate(-50%, -50%)`;
 
     // Process Mods
     let mods = [];
@@ -263,7 +256,7 @@
     const interior = document.getElementById('leather').checked ? "luxurious quilted leather" : "performance textile";
     
     // Construct Prompt
-    fullPromptText = `>> AUTOFACTS-BESPOKE-V1.5-GENERATED-STRING\n`;
+    fullPromptText = `>> CARBONOGRAPHY-V1.6-STRING\n`;
     fullPromptText += `>> PERSPECTIVE: ${angle.toUpperCase()}\n\n`;
     
     fullPromptText += `A professional automotive studio photograph of a ${model}. `;
@@ -290,11 +283,7 @@
     navigator.clipboard.writeText(text);
     const msg = document.getElementById('status-msg');
     msg.innerText = "COPIED TO CLIPBOARD!";
-    msg.style.color = "#f5f5f5";
-    setTimeout(() => {
-        msg.innerText = "AUTOFACTS-BESPOKE // SYSTEM OPERATIONAL";
-        msg.style.color = "#777";
-    }, 2000);
+    setTimeout(() => msg.innerText = "CARBONOGRAPHY // READY", 2000);
   }
 
   function exportFile() {
@@ -304,7 +293,7 @@
     const a = document.createElement("a");
     const timestamp = new Date().toISOString().slice(0,10);
     a.href = url;
-    a.download = `Autofacts_Bespoke_Prompt_${timestamp}.txt`;
+    a.download = `Carbonography_Prompt_${timestamp}.txt`;
     a.click();
     URL.revokeObjectURL(url);
   }
