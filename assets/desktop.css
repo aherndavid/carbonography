@@ -1,0 +1,232 @@
+/* =============================================================================
+   CARBONOGRAPHY — desktop.css
+   Desktop-specific layout, sizing overrides, and desktop-only components.
+   Load AFTER global.css:
+     <link rel="stylesheet" href="/assets/global.css">
+     <link rel="stylesheet" href="/assets/desktop.css">
+   ============================================================================= */
+
+
+/* ── 1. BODY + APP SHELL ─────────────────────────────────────────────────── */
+
+body {
+  height: 100vh;
+  overflow: hidden;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+
+/* ── 2. TOOLBAR — desktop sizes ──────────────────────────────────────────── */
+
+#top-toolbar {
+  padding: 22px 40px;
+  gap: 20px;
+}
+
+#top-toolbar .logo-text {
+  font-size: 56px;
+  letter-spacing: -3px;
+}
+
+#version-badge {
+  font-size: 13px;
+  padding: 5px 12px;
+  margin-top: 6px;
+}
+
+.header-logo {
+  height: 90px;
+}
+
+
+/* ── 3. MAIN LAYOUT — two column ─────────────────────────────────────────── */
+
+#main {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+#left {
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  border-right: 2px solid var(--grey);
+  background: var(--grey-dark);
+  overflow: hidden;
+}
+
+#form-scroll {
+  flex: 1;
+  overflow-y: auto;
+}
+
+#right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--black);
+  min-width: 0;
+}
+
+
+/* ── 4. PANEL HEADER — desktop size ─────────────────────────────────────── */
+
+.panel-header {
+  padding: 15px 20px;
+  font-size: 13px;
+}
+
+
+/* ── 5. RIG — desktop sizes ──────────────────────────────────────────────── */
+
+#rig-container {
+  aspect-ratio: 3 / 4;
+}
+
+#vehicle-aerial {
+  height: 52%;
+}
+
+#camera-indicator {
+  width: 70px;
+  height: 70px;
+}
+
+
+/* ── 6. VEHICLE MODEL FORM ───────────────────────────────────────────────── */
+
+.form-container {
+  padding: 20px;
+}
+
+.form-group {
+  gap: 10px;
+}
+
+label {
+  font-size: 13px;
+}
+
+input,
+select {
+  padding: 15px;
+}
+
+input:focus,
+select:focus {
+  background: #333;
+}
+
+.checkbox-group input {
+  width: 18px;
+  height: 18px;
+}
+
+.checkbox-group label {
+  font-size: 14px;
+}
+
+
+/* ── 7. CONTROLS STRIP — right panel top ─────────────────────────────────── */
+/*
+   Desktop-only. Horizontal bar across the top of the right panel
+   holding lighting, wheel, camera, and toggle controls.
+*/
+
+#controls-panel {
+  flex-shrink: 0;
+  border-bottom: 2px solid var(--grey);
+}
+
+.controls-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px 25px;
+  align-items: flex-end;
+}
+
+.controls-inner .form-group {
+  min-width: 140px;
+}
+
+.controls-inner .form-group.wide {
+  min-width: 220px;
+  flex: 1;
+}
+
+.toggle-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  align-items: center;
+  border-left: 2px solid var(--border-color);
+  padding-left: 20px;
+  flex: 1;
+}
+
+.output-spec-row {
+  border-top: 1px solid var(--border-color);
+  background: #0a0a0a;
+}
+
+
+/* ── 8. OUTPUT AREA ──────────────────────────────────────────────────────── */
+
+#output-area {
+  flex: 1;
+  padding: 60px;
+  font-size: 22px;
+  border-left: 1px solid var(--grey);
+}
+
+#cursor {
+  width: 14px;
+  height: 24px;
+}
+
+
+/* ── 9. BOTTOM BAR ───────────────────────────────────────────────────────── */
+/*
+   Desktop-only. Full-width bar at the bottom with status left,
+   Export and Copy buttons right.
+*/
+
+#bottom-bar {
+  padding: 25px 40px;
+  background: var(--grey);
+  border-top: 3px solid var(--dark-red);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#bottom-bar-right {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+#status-msg {
+  font-size: 13px;
+  color: #777;
+}
+
+
+/* ── 10. BUTTONS — desktop sizes ─────────────────────────────────────────── */
+
+.btn {
+  padding: 16px 32px;
+  font-size: 15px;
+  letter-spacing: 1.5px;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+}
