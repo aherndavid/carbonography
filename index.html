@@ -67,7 +67,7 @@
           <div class="form-group">
             <label for="wheelSize">Wheel Diameter</label>
             <select id="wheelSize">
-              <option value="factory-fitted OEM" id="factory-option">Factory Fitted</option>
+              <option value="factory-fitted OEM">Factory Fitted</option>
             </select>
           </div>
 
@@ -95,6 +95,32 @@
           </div>
 
         </div><!-- /.controls-inner -->
+
+        <!-- Colour section -->
+        <div class="panel-header">Colour</div>
+        <div class="controls-inner colour-row">
+
+          <!-- Exterior colour -->
+          <div class="colour-group">
+            <label>Exterior Colour</label>
+            <div class="colour-input-row">
+              <input type="color" id="extColourPicker" value="#1a1a1a" title="Pick exterior colour">
+              <input type="text"  id="extColourHex"    value="#1a1a1a" maxlength="7" placeholder="#000000" class="hex-input">
+              <input type="text"  id="extColourName"   placeholder="e.g. Obsidian Black" class="colour-name-input">
+            </div>
+          </div>
+
+          <!-- Interior colour -->
+          <div class="colour-group">
+            <label>Interior Colour</label>
+            <div class="colour-input-row">
+              <input type="color" id="intColourPicker" value="#2c1a0e" title="Pick interior colour">
+              <input type="text"  id="intColourHex"    value="#2c1a0e" maxlength="7" placeholder="#000000" class="hex-input">
+              <input type="text"  id="intColourName"   placeholder="e.g. Cognac Tan" class="colour-name-input">
+            </div>
+          </div>
+
+        </div><!-- /.colour-row -->
 
         <!-- Output spec row -->
         <div class="controls-inner output-spec-row">
@@ -163,7 +189,39 @@
 </div>
 
 <style>
-  /* Ensure checkboxes are always visible and correctly sized on desktop */
+  /* ── Top toolbar: carbon fibre background ── */
+  #top-toolbar {
+    position: relative;
+    overflow: hidden;
+    background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/carbon.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: repeat;
+    /* Dark overlay so text stays readable over the texture */
+    background-color: transparent;
+  }
+
+  /* Subtle dark veil over the carbon so the white text pops cleanly */
+  #top-toolbar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 0;
+  }
+
+  /* Lift all toolbar children above the overlay */
+  #top-toolbar > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Keep the red bottom border prominent */
+  #top-toolbar {
+    border-bottom: 3px solid #8b0000;
+  }
+
+  /* ── Checkbox fix ── */
   .checkbox-group input[type="checkbox"] {
     width: 18px;
     height: 18px;
@@ -171,10 +229,60 @@
     accent-color: #8b0000;
     cursor: pointer;
     flex-shrink: 0;
-    /* Force browser to render the native checkbox visibly */
     opacity: 1;
     -webkit-appearance: checkbox;
     appearance: checkbox;
+  }
+
+  /* ── Colour section ── */
+  .colour-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .colour-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-width: 220px;
+  }
+
+  .colour-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  input[type="color"] {
+    width: 44px;
+    height: 44px;
+    border: 2px solid #444;
+    border-radius: 6px;
+    padding: 2px;
+    background: #2c2c2c;
+    cursor: pointer;
+    flex-shrink: 0;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; border-radius: 4px; }
+  input[type="color"]::-webkit-color-swatch         { border: none; border-radius: 4px; }
+
+  .hex-input {
+    width: 90px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+  }
+
+  .colour-name-input {
+    flex: 1;
+    font-size: 14px;
   }
 </style>
 
@@ -187,7 +295,7 @@
 
   let currentPrompt = '';
 
-  // ── Populate wheel size dropdown (after Factory Fitted) ────────────────────
+  // ── Populate wheel size dropdown ───────────────────────────────────────────
   (function populateWheels() {
     const sel = $('wheelSize');
     for (let i = WHEEL_MIN; i <= WHEEL_MAX; i++) {
@@ -198,11 +306,43 @@
     }
   })();
 
-  // ── Output type / orientation / resolution maps ───────────────────────────
+  // ── Colour picker <-> hex input sync ──────────────────────────────────────
+  function syncColour(pickerId, hexId) {
+    const picker = $(pickerId);
+    const hex    = $(hexId);
+
+    picker.addEventListener('input', () => {
+      hex.value = picker.value.toUpperCase();
+      autoGenerate();
+    });
+
+    hex.addEventListener('input', () => {
+      const val = hex.value.trim();
+      if (/^#[0-9a-fA-F]{6}$/.test(val)) {
+        picker.value = val;
+      }
+      autoGenerate();
+    });
+  }
+
+  syncColour('extColourPicker', 'extColourHex');
+  syncColour('intColourPicker', 'intColourHex');
+
+  $('extColourName').addEventListener('input', autoGenerate);
+  $('intColourName').addEventListener('input', autoGenerate);
+
+  // ── Colour description helper ──────────────────────────────────────────────
+  function colourDesc(hexId, nameId) {
+    const hex  = $(hexId).value.trim().toUpperCase();
+    const name = $(nameId).value.trim();
+    return name ? `${name} (${hex})` : hex;
+  }
+
+  // ── Maps ───────────────────────────────────────────────────────────────────
   const RESOLUTION_MAP = {
-    standard: { label: '1920x1080',  text: '1080p Full HD resolution' },
-    high:     { label: '3840x2160',  text: '4K Ultra HD resolution' },
-    ultra:    { label: '7680x4320',  text: '8K Ultra HD resolution' },
+    standard: { label: '1920x1080' },
+    high:     { label: '3840x2160' },
+    ultra:    { label: '7680x4320' },
   };
 
   const QUALITY_MAP = {
@@ -223,7 +363,7 @@
     drone:  'sweeping drone flyover aerial cinematography',
   };
 
-  // ── Show/hide video options on type change ─────────────────────────────────
+  // ── Show/hide video options ────────────────────────────────────────────────
   $('outputType').addEventListener('change', () => {
     const isVideo = $('outputType').value === 'video';
     $('video-options').style.display = isVideo ? 'flex' : 'none';
@@ -245,10 +385,9 @@
   function buildPrompt() {
     const model       = $('model').value.trim() || '[VEHICLE]';
     const lighting    = $('lighting').value;
-    const wheelEl     = $('wheelSize');
-    const wheel       = wheelEl.value;
-    const isFactory   = wheel === 'factory-fitted OEM';
-    const wheelText   = isFactory ? 'factory-fitted OEM wheels' : `${wheel} custom alloy rims`;
+    const wheelVal    = $('wheelSize').value;
+    const isFactory   = wheelVal === 'factory-fitted OEM';
+    const wheelText   = isFactory ? 'factory-fitted OEM wheels' : `${wheelVal} custom alloy rims`;
     const angleEl     = $('angle');
     const angle       = angleEl.value;
     const interior    = $('leather').checked ? 'luxurious quilted leather' : 'performance textile';
@@ -257,6 +396,9 @@
     const resolution  = RESOLUTION_MAP[$('resolution').value];
     const quality     = QUALITY_MAP[$('quality').value];
     const isVideo     = outputType === 'video';
+
+    const extColour   = colourDesc('extColourHex', 'extColourName');
+    const intColour   = colourDesc('intColourHex', 'intColourName');
 
     const mods = [
       $('lightsOn').checked    && 'headlights and taillights turned on with realistic bloom',
@@ -279,22 +421,20 @@
 
     let prompt  = `>> CARBONOGRAPHY-V1.6-STRING\n`;
     prompt     += `>> TYPE: ${typeLabel} | ORIENTATION: ${orientation.label.toUpperCase()} | RESOLUTION: ${resolution.label}\n`;
-    prompt     += `>> PERSPECTIVE: ${angle.toUpperCase()}\n\n`;
+    prompt     += `>> PERSPECTIVE: ${angle.toUpperCase()}\n`;
+    prompt     += `>> EXT: ${extColour} | INT: ${intColour}\n\n`;
 
-    if (isVideo) {
-      prompt += `A cinematic automotive video of a ${model}. `;
-    } else {
-      prompt += `A professional automotive studio photograph of a ${model}. `;
-    }
+    prompt += isVideo
+      ? `A cinematic automotive video of a ${model}. `
+      : `A professional automotive studio photograph of a ${model}. `;
 
+    prompt += `Exterior painted in ${extColour}, interior finished in ${intColour} ${interior} craftsmanship. `;
     prompt += `The vehicle is captured from a ${angle}, emphasizing the ${wheelText}. `;
     prompt += `${orientation.ratio}. `;
     prompt += `The lighting setup is ${lighting}. `;
 
     if (mods.length) prompt += `Vehicle features include ${mods.join(', ')}. `;
     if (videoMods.length) prompt += `Camera and motion direction: ${videoMods.join(', ')}. `;
-
-    prompt += `Visible interior showcases ${interior} craftsmanship. `;
 
     if (isVideo) {
       prompt += `Rendered at ${resolution.label}, ${quality}, Unreal Engine 5.4 cinematic render, ray-traced global illumination, motion blur, depth of field, photorealistic materials, cinematic colour grade.`;
@@ -308,10 +448,8 @@
   // ── Render output ──────────────────────────────────────────────────────────
   function autoGenerate() {
     currentPrompt = buildPrompt();
-
     const output = $('output-area');
     output.textContent = currentPrompt;
-
     const cursor = document.createElement('span');
     cursor.id = 'cursor';
     output.appendChild(cursor);
@@ -335,14 +473,11 @@
   // ── Export ─────────────────────────────────────────────────────────────────
   $('exportBtn').addEventListener('click', () => {
     if (!currentPrompt) { flashStatus('NOTHING TO EXPORT'); return; }
-
     const blob = new Blob([currentPrompt], { type: 'text/plain' });
     const url  = URL.createObjectURL(blob);
     const a    = document.createElement('a');
-    const date = new Date().toISOString().slice(0, 10);
-
     a.href     = url;
-    a.download = `Carbonography_Prompt_${date}.txt`;
+    a.download = `Carbonography_Prompt_${new Date().toISOString().slice(0, 10)}.txt`;
     a.click();
     URL.revokeObjectURL(url);
   });
@@ -353,8 +488,7 @@
    'slowmo', 'dolly', 'orbit', 'drone'
   ].forEach(id => {
     const el = $(id);
-    const event = el.type === 'checkbox' ? 'change' : 'input';
-    el.addEventListener(event, autoGenerate);
+    el.addEventListener(el.type === 'checkbox' ? 'change' : 'input', autoGenerate);
   });
 
   // ── Init ───────────────────────────────────────────────────────────────────
