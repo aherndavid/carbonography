@@ -118,6 +118,10 @@
   const WHEEL_MAX = 22;
   const STATUS_RESET_MS = 2000;
 
+  // Design baseline: the rig dimensions these data-x/y offsets were authored against
+  const RIG_BASELINE_W = 380;
+  const RIG_BASELINE_H = 380;
+
   const $ = id => document.getElementById(id);
 
   let currentPrompt = '';
@@ -142,12 +146,26 @@
   }
 
   // ── Camera indicator ───────────────────────────────────────────────────────
+  // Scales the fixed design-time pixel offsets to the live rendered rig size
+  // so the camera icon stays correctly positioned on any screen width.
   function updateCameraIndicator(opt) {
-    const x   = parseFloat(opt.getAttribute('data-x'));
-    const y   = parseFloat(opt.getAttribute('data-y'));
-    const rot = parseFloat(opt.getAttribute('data-rot')) + 90;
-    $('camera-indicator').style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg)`;
+    const xRaw = parseFloat(opt.getAttribute('data-x'));
+    const yRaw = parseFloat(opt.getAttribute('data-y'));
+    const rot  = parseFloat(opt.getAttribute('data-rot')) + 90;
+
+    const rig    = $('rig-container');
+    const scaleX = rig.offsetWidth  / RIG_BASELINE_W;
+    const scaleY = rig.offsetHeight / RIG_BASELINE_H;
+
+    $('camera-indicator').style.transform =
+      `translate(${xRaw * scaleX}px, ${yRaw * scaleY}px) rotate(${rot}deg)`;
   }
+
+  // Re-position camera icon whenever the viewport resizes or orientation changes
+  window.addEventListener('resize', () => {
+    const angleEl = $('angle');
+    updateCameraIndicator(angleEl.options[angleEl.selectedIndex]);
+  });
 
   // ── Prompt builder ─────────────────────────────────────────────────────────
   function buildPrompt() {
