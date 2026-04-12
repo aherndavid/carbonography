@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Carbonography | Vehicle Image Generator v1.6</title>
+<title>Carbonography | Vehicle Image Generator v1.7</title>
 <link rel="stylesheet" href="/assets/global.css">
 <link rel="stylesheet" href="/assets/desktop.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -102,7 +102,6 @@
         <!-- Colour -->
         <div class="panel-header">Colour</div>
         <div class="controls-inner colour-row">
-
           <div class="colour-group">
             <label>Exterior Colour</label>
             <div class="colour-input-row">
@@ -111,7 +110,6 @@
               <input type="text"  id="extColourName"   placeholder="e.g. Obsidian Black" class="colour-name-input">
             </div>
           </div>
-
           <div class="colour-group">
             <label>Interior Colour</label>
             <div class="colour-input-row">
@@ -120,13 +118,11 @@
               <input type="text"  id="intColourName"   placeholder="e.g. Cognac Tan" class="colour-name-input">
             </div>
           </div>
-
         </div>
 
         <!-- Number Plate -->
         <div class="panel-header">Number Plate</div>
         <div class="controls-inner plate-row">
-
           <div class="form-group">
             <label for="plateStyle">Plate Style</label>
             <select id="plateStyle">
@@ -137,7 +133,6 @@
               <option value="custom">Custom / Other</option>
             </select>
           </div>
-
           <div class="form-group" id="plate-chars-group" style="display:none;">
             <label for="plateChars">Plate Characters</label>
             <div class="plate-input-wrap">
@@ -148,31 +143,46 @@
               <div id="plate-preview-custom" class="plate-preview plate-custom" style="display:none;"></div>
             </div>
           </div>
-
         </div>
 
-        <!-- Location -->
-        <div class="panel-header">Location &amp; Background</div>
+        <!-- Location & Weather -->
+        <div class="panel-header">Location, Weather &amp; Background</div>
         <div class="controls-inner location-row">
 
-          <div class="form-group">
-            <label for="location">Background Location</label>
-            <select id="location">
-              <option value="studio-white">Studio (White)</option>
-              <option value="studio-black">Studio (Black)</option>
-              <option value="racetrack">Racetrack</option>
-              <option value="london-street">London Street</option>
-              <option value="desert">Desert</option>
-              <option value="transparent">Transparent / Cutout</option>
-              <option value="custom">Custom</option>
-            </select>
+          <div class="location-selectors">
+            <div class="form-group">
+              <label for="location">Background Location</label>
+              <select id="location">
+                <option value="studio-white">Studio (White)</option>
+                <option value="studio-black">Studio (Black)</option>
+                <option value="racetrack">Racetrack</option>
+                <option value="london-street">London Street</option>
+                <option value="desert">Desert</option>
+                <option value="transparent">Transparent / Cutout</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="weather">Weather Condition</label>
+              <select id="weather">
+                <option value="none">— Clear / None —</option>
+                <option value="rain">Rain</option>
+                <option value="heavy-rain">Heavy Rain / Downpour</option>
+                <option value="wet">Wet Roads (Post-Rain)</option>
+                <option value="snow">Snow / Snowfall</option>
+                <option value="snow-ground">Snow on Ground</option>
+                <option value="fog">Fog / Mist</option>
+                <option value="dust">Dust Storm</option>
+                <option value="heatwave">Heatwave / Heat Haze</option>
+              </select>
+            </div>
           </div>
 
-          <!-- Lighting conflict warning -->
           <div id="lighting-warning" style="display:none;">
-            <div class="conflict-warning">
-              ⚠ <strong>Lighting conflict detected.</strong> <span id="warning-text"></span>
-            </div>
+            <div class="conflict-warning">⚠ <strong>Lighting conflict detected.</strong> <span id="warning-text"></span></div>
+          </div>
+          <div id="weather-warning" style="display:none;">
+            <div class="conflict-warning">⚠ <strong>Weather conflict detected.</strong> <span id="weather-warning-text"></span></div>
           </div>
 
           <div id="custom-location-group" style="display:none;">
@@ -211,23 +221,14 @@
 
         <!-- Output spec -->
         <div class="controls-inner output-spec-row">
-
           <div class="form-group">
             <label for="outputType">Output Type</label>
-            <select id="outputType">
-              <option value="image">Image</option>
-              <option value="video">Video</option>
-            </select>
+            <select id="outputType"><option value="image">Image</option><option value="video">Video</option></select>
           </div>
-
           <div class="form-group">
             <label for="orientation">Orientation</label>
-            <select id="orientation">
-              <option value="landscape">Landscape</option>
-              <option value="portrait">Portrait</option>
-            </select>
+            <select id="orientation"><option value="landscape">Landscape</option><option value="portrait">Portrait</option></select>
           </div>
-
           <div class="form-group">
             <label for="resolution">Resolution</label>
             <select id="resolution">
@@ -236,7 +237,6 @@
               <option value="ultra">Ultra — 8K</option>
             </select>
           </div>
-
           <div class="form-group">
             <label for="quality">Detail Level</label>
             <select id="quality">
@@ -245,14 +245,12 @@
               <option value="extreme">Extreme Detail</option>
             </select>
           </div>
-
           <div class="toggle-inline" id="video-options" style="display:none;">
             <div class="checkbox-group"><input type="checkbox" id="slowmo"><label for="slowmo">Slow Motion</label></div>
             <div class="checkbox-group"><input type="checkbox" id="dolly"><label for="dolly">Dolly Move</label></div>
             <div class="checkbox-group"><input type="checkbox" id="orbit"><label for="orbit">Orbit Shot</label></div>
             <div class="checkbox-group"><input type="checkbox" id="drone"><label for="drone">Drone Flyover</label></div>
           </div>
-
         </div>
 
       </div><!-- /#controls-panel -->
@@ -267,23 +265,68 @@
   <div id="bottom-bar">
     <div id="status-msg">CARBONOGRAPHY // READY</div>
     <div id="bottom-bar-right">
+      <button class="btn btn-clear" id="clearBtn" title="Reset all fields to defaults">✕ Clear</button>
       <button class="btn btn-outline" id="exportBtn">Export .TXT</button>
       <button class="btn btn-outline" id="copyBtn">Copy Prompt</button>
-      <button class="btn btn-generator" id="ideogramBtn" title="Copies prompt then opens Ideogram — paste on arrival">⚡ Ideogram</button>
-      <button class="btn btn-generator" id="leonardoBtn" title="Copies prompt then opens Leonardo.ai — paste on arrival">⚡ Leonardo</button>
+      <button class="btn btn-generator" id="ideogramBtn">⚡ Ideogram</button>
+      <button class="btn btn-generator" id="leonardoBtn">⚡ Leonardo</button>
     </div>
   </div>
 
-</div>
+</div><!-- /#app -->
 
 <div id="generator-toast"></div>
 
+<div id="clear-modal" style="display:none;">
+  <div id="clear-modal-box">
+    <p>Reset all fields to defaults?</p>
+    <div id="clear-modal-buttons">
+      <button class="btn btn-outline" id="clear-cancel">Cancel</button>
+      <button class="btn btn-primary" id="clear-confirm">Reset</button>
+    </div>
+  </div>
+</div>
+
 <style>
-  /* ── Carbon fibre texture ── */
+  /* ════════════════════════════════════════════════════
+     COLOUR TOKENS — darker red throughout
+  ════════════════════════════════════════════════════ */
+  :root {
+    --red:       #6b0000;   /* darker than original #8b0000 */
+    --red-hover: #8b0000;   /* hover lifts to previous base */
+    --red-light: #550000;   /* for borders / subtle accents  */
+  }
+
+  /* Override global.css tokens */
+  body { --dark-red: var(--red); --red-hover: var(--red-hover); }
+
+  /* ════════════════════════════════════════════════════
+     PAGE BORDER — carbon fibre wrapping the whole app
+  ════════════════════════════════════════════════════ */
+  html {
+    background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/carbon.jpg');
+    background-size: 300px auto;
+    background-repeat: repeat;
+    background-color: #0a0a0a;
+    min-height: 100%;
+  }
+
+  /* The app sits inside an 8px carbon border gap on all sides */
+  #app {
+    margin: 8px;
+    border: 3px solid var(--red);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  /* ════════════════════════════════════════════════════
+     CARBON TEXTURE — internal sections
+  ════════════════════════════════════════════════════ */
   #top-toolbar {
     background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/carbon.jpg');
     background-size: cover; background-position: center; background-repeat: repeat;
-    position: relative; overflow: hidden; border-bottom: 3px solid #8b0000;
+    position: relative; overflow: hidden;
+    border-bottom: 3px solid var(--red);
   }
   #top-toolbar::before { content:''; position:absolute; inset:0; background:rgba(0,0,0,0.45); z-index:0; pointer-events:none; }
   #top-toolbar > * { position:relative; z-index:1; }
@@ -310,106 +353,140 @@
   #bottom-bar > * { position:relative; z-index:1; }
 
   #rig-container { background: radial-gradient(ellipse 60% 75% at 50% 50%, #2a2a2a 0%, #000 100%) !important; }
-  #output-area   { background: #0f0f0f !important; }
 
-  /* ── Conflict warning ── */
-  .conflict-warning {
-    background: rgba(139,0,0,0.25);
-    border: 1px solid #8b0000;
-    border-radius: 6px;
-    padding: 10px 14px;
-    font-size: 12px;
-    color: #ffaaaa;
-    line-height: 1.5;
+  /* ════════════════════════════════════════════════════
+     OUTPUT AREA — smaller monospace text
+  ════════════════════════════════════════════════════ */
+  #output-area {
+    background: #0a0a0a !important;
+    font-size: 11px !important;
+    line-height: 1.7 !important;
+    color: #c8c8c8 !important;
   }
-  .conflict-warning strong { color: #ff6666; }
 
-  /* ── Plate section ── */
+  /* Blink cursor inherits the darker red */
+  #cursor { background: var(--red) !important; }
+
+  /* ════════════════════════════════════════════════════
+     RED OVERRIDES — panel headers, borders, accents
+  ════════════════════════════════════════════════════ */
+  .panel-header           { background: var(--red) !important; }
+  .prompt-header          { background: var(--red) !important; }
+  .tab-btn.active         { border-bottom-color: var(--red) !important; }
+  #tab-bar                { border-bottom-color: var(--red) !important; }
+  #action-bar             { border-top-color: var(--red) !important; }
+
+  input:focus,
+  select:focus            { border-color: var(--red) !important; }
+
+  .btn-primary            { background: var(--red) !important; }
+  .btn-primary:hover,
+  .btn-primary:active     { background: var(--red-hover) !important; }
+
+  .btn-outline            { border-color: var(--red) !important; }
+  .btn-outline:hover,
+  .btn-outline:active     { background: var(--red) !important; }
+
+  #bottom-bar             { border-top: 3px solid var(--red) !important; }
+
+  .checkbox-group input[type="checkbox"] { accent-color: var(--red) !important; }
+
+  /* ════════════════════════════════════════════════════
+     CLEAR BUTTON
+  ════════════════════════════════════════════════════ */
+  .btn-clear {
+    background: transparent; border: 2px solid #555; color: #888;
+    border-radius: 8px; padding: 10px 16px; font-size: 12px; font-weight: 900;
+    font-family: var(--font-ui); text-transform: uppercase; letter-spacing: 1px;
+    cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
+  }
+  .btn-clear:hover { border-color: var(--red); color: #ff6666; background: rgba(107,0,0,0.2); }
+
+  /* ════════════════════════════════════════════════════
+     CONFIRM MODAL
+  ════════════════════════════════════════════════════ */
+  #clear-modal {
+    position:fixed; inset:0; background:rgba(0,0,0,0.75);
+    display:flex; align-items:center; justify-content:center; z-index:10000;
+  }
+  #clear-modal-box {
+    background:#141414; border:2px solid var(--red); border-radius:10px;
+    padding:28px 32px; text-align:center; max-width:320px; width:90%;
+  }
+  #clear-modal-box p { color:#f5f5f5; font-size:15px; font-weight:700; margin-bottom:20px; letter-spacing:0.5px; }
+  #clear-modal-buttons { display:flex; gap:12px; justify-content:center; }
+  #clear-modal-buttons .btn { padding:10px 24px; font-size:13px; }
+
+  /* ════════════════════════════════════════════════════
+     CONFLICT WARNINGS
+  ════════════════════════════════════════════════════ */
+  .conflict-warning {
+    background:rgba(107,0,0,0.25); border:1px solid var(--red); border-radius:6px;
+    padding:10px 14px; font-size:12px; color:#ffaaaa; line-height:1.5;
+  }
+  .conflict-warning strong { color:#ff8888; }
+
+  /* ════════════════════════════════════════════════════
+     LOCATION + WEATHER ROW
+  ════════════════════════════════════════════════════ */
+  .location-selectors { display:flex; gap:16px; flex-wrap:wrap; }
+  .location-selectors .form-group { flex:1; min-width:180px; }
+  .location-row { display:flex; flex-direction:column; gap:14px; }
+
+  /* ════════════════════════════════════════════════════
+     PLATE
+  ════════════════════════════════════════════════════ */
   .plate-row { display:flex; align-items:flex-start; gap:20px; flex-wrap:wrap; }
   .plate-row .form-group { min-width:180px; }
   .plate-input-wrap { display:flex; flex-direction:column; gap:10px; }
-
-  .plate-chars-input {
-    font-family: 'Courier New', monospace !important;
-    font-size: 20px !important; font-weight: 900 !important;
-    letter-spacing: 4px; text-transform: uppercase; width: 100%; padding: 10px 14px !important;
-  }
-
-  .plate-preview {
-    display: inline-flex; align-items: center; justify-content: center;
-    font-weight: 900; letter-spacing: 3px; text-transform: uppercase;
-    border-radius: 4px; padding: 6px 16px; font-size: 22px;
-    min-width: 180px; min-height: 46px; border: 2px solid #555; user-select: none;
-  }
-  .plate-uk {
-    background: #f5f0c8; color: #111; border-color: #bbb;
-    border-radius: 6px; border-width: 3px; position: relative; padding-left: 36px;
-  }
-  .plate-uk::before {
-    content:'GB'; position:absolute; left:0; top:0; bottom:0; width:30px;
-    background:#003399; color:#fff; font-size:9px; font-weight:900;
-    display:flex; align-items:center; justify-content:center; border-radius:3px 0 0 3px;
-  }
+  .plate-chars-input { font-family:'Courier New',monospace !important; font-size:20px !important; font-weight:900 !important; letter-spacing:4px; text-transform:uppercase; width:100%; padding:10px 14px !important; }
+  .plate-preview { display:inline-flex; align-items:center; justify-content:center; font-weight:900; letter-spacing:3px; text-transform:uppercase; border-radius:4px; padding:6px 16px; font-size:22px; min-width:180px; min-height:46px; border:2px solid #555; user-select:none; }
+  .plate-uk { background:#f5f0c8; color:#111; border-color:#bbb; border-radius:6px; border-width:3px; position:relative; padding-left:36px; }
+  .plate-uk::before { content:'GB'; position:absolute; left:0; top:0; bottom:0; width:30px; background:#003399; color:#fff; font-size:9px; font-weight:900; display:flex; align-items:center; justify-content:center; border-radius:3px 0 0 3px; }
   .plate-us { background:#fff; color:#1a1a6e; font-family:'Arial Black','Impact',sans-serif; border-color:#1a1a6e; border-width:3px; font-size:20px; }
-  .plate-eu {
-    background:#fff; color:#111; border-color:#ccc; border-radius:4px;
-    border-width:2px; padding-left:36px; position:relative;
-  }
-  .plate-eu::before {
-    content:'EU'; position:absolute; left:0; top:0; bottom:0; width:30px;
-    background:#003399; color:#FFD700; font-size:8px; font-weight:900;
-    display:flex; align-items:center; justify-content:center; border-radius:3px 0 0 3px;
-  }
+  .plate-eu { background:#fff; color:#111; border-color:#ccc; border-radius:4px; border-width:2px; padding-left:36px; position:relative; }
+  .plate-eu::before { content:'EU'; position:absolute; left:0; top:0; bottom:0; width:30px; background:#003399; color:#FFD700; font-size:8px; font-weight:900; display:flex; align-items:center; justify-content:center; border-radius:3px 0 0 3px; }
   .plate-custom { background:#1a1a1a; color:#f5f5f5; font-family:'Arial Black',sans-serif; border-color:#555; border-radius:4px; }
 
-  /* ── Location section ── */
-  .location-row { display:flex; flex-direction:column; gap:14px; }
+  /* ════════════════════════════════════════════════════
+     OVERLAY TEXT / FONT PREVIEW
+  ════════════════════════════════════════════════════ */
   .overlay-text-group { display:flex; gap:14px; flex-wrap:wrap; }
   .overlay-text-group .form-group { flex:1; min-width:180px; }
-
-  #font-preview-wrap { background:#0f0f0f; border:1px solid #333; border-radius:6px; padding:14px 20px; text-align:center; }
+  #font-preview-wrap { background:#0a0a0a; border:1px solid #333; border-radius:6px; padding:14px 20px; text-align:center; }
   #font-preview { font-size:28px; color:#f5f5f5; letter-spacing:2px; text-transform:uppercase; transition:font-family 0.2s; word-break:break-word; }
 
-  /* ── Generator buttons ── */
+  /* ════════════════════════════════════════════════════
+     GENERATOR BUTTONS
+  ════════════════════════════════════════════════════ */
   .btn-generator {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-    color: #e0e0ff; border: 1px solid #4a4a8a; border-radius: 8px;
-    padding: 10px 16px; font-size: 12px; font-weight: 900; font-family: var(--font-ui);
-    text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s;
-    white-space: nowrap; flex-shrink: 0;
+    background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);
+    color:#e0e0ff; border:1px solid #4a4a8a; border-radius:8px;
+    padding:10px 16px; font-size:12px; font-weight:900; font-family:var(--font-ui);
+    text-transform:uppercase; letter-spacing:1px; cursor:pointer; transition:all 0.2s;
+    white-space:nowrap; flex-shrink:0;
   }
-  .btn-generator:hover {
-    background: linear-gradient(135deg, #2a2a4e 0%, #26316e 50%, #1f4480 100%);
-    border-color: #7a7aca; color: #fff;
-    transform: translateY(-1px); box-shadow: 0 4px 12px rgba(100,100,200,0.3);
-  }
-  .btn-generator:active { transform: translateY(0); }
+  .btn-generator:hover { background:linear-gradient(135deg,#2a2a4e 0%,#26316e 50%,#1f4480 100%); border-color:#7a7aca; color:#fff; transform:translateY(-1px); box-shadow:0 4px 12px rgba(100,100,200,0.3); }
+  .btn-generator:active { transform:translateY(0); }
 
-  #generator-toast {
-    position:fixed; bottom:80px; left:50%; transform:translateX(-50%) translateY(20px);
-    background:#1a1a2e; border:1px solid #4a4a8a; color:#e0e0ff;
-    padding:12px 20px; border-radius:8px; font-size:13px; font-weight:700;
-    font-family:var(--font-ui); letter-spacing:0.5px; opacity:0; transition:all 0.3s ease;
-    pointer-events:none; z-index:9999; text-align:center; white-space:nowrap;
-  }
+  /* ════════════════════════════════════════════════════
+     TOAST
+  ════════════════════════════════════════════════════ */
+  #generator-toast { position:fixed; bottom:80px; left:50%; transform:translateX(-50%) translateY(20px); background:#1a1a2e; border:1px solid #4a4a8a; color:#e0e0ff; padding:12px 20px; border-radius:8px; font-size:13px; font-weight:700; font-family:var(--font-ui); letter-spacing:0.5px; opacity:0; transition:all 0.3s ease; pointer-events:none; z-index:9999; text-align:center; white-space:nowrap; }
   #generator-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-  /* ── Checkbox fix ── */
-  .checkbox-group input[type="checkbox"] {
-    width:18px; height:18px; min-width:18px; accent-color:#8b0000;
-    cursor:pointer; flex-shrink:0; opacity:1; -webkit-appearance:checkbox; appearance:checkbox;
-  }
+  /* ════════════════════════════════════════════════════
+     CHECKBOX FIX
+  ════════════════════════════════════════════════════ */
+  .checkbox-group input[type="checkbox"] { width:18px; height:18px; min-width:18px; cursor:pointer; flex-shrink:0; opacity:1; -webkit-appearance:checkbox; appearance:checkbox; }
 
-  /* ── Colour ── */
+  /* ════════════════════════════════════════════════════
+     COLOUR PICKERS
+  ════════════════════════════════════════════════════ */
   .colour-row { display:flex; gap:24px; flex-wrap:wrap; }
   .colour-group { display:flex; flex-direction:column; gap:8px; flex:1; min-width:220px; }
   .colour-input-row { display:flex; align-items:center; gap:10px; }
-
-  input[type="color"] {
-    width:44px; height:44px; border:2px solid #444; border-radius:6px;
-    padding:2px; background:#2c2c2c; cursor:pointer; flex-shrink:0;
-    -webkit-appearance:none; appearance:none;
-  }
+  input[type="color"] { width:44px; height:44px; border:2px solid #444; border-radius:6px; padding:2px; background:#2c2c2c; cursor:pointer; flex-shrink:0; -webkit-appearance:none; appearance:none; }
   input[type="color"]::-webkit-color-swatch-wrapper { padding:0; border-radius:4px; }
   input[type="color"]::-webkit-color-swatch { border:none; border-radius:4px; }
   .hex-input { width:90px; font-family:'Consolas','Monaco',monospace; font-size:14px; text-transform:uppercase; letter-spacing:1px; flex-shrink:0; }
@@ -423,110 +500,66 @@
   const $ = id => document.getElementById(id);
   let currentPrompt = '';
 
-  // ── Lighting definitions ───────────────────────────────────────────────────
-  // Each entry defines: the full prompt string, which locations are compatible,
-  // and which locations cause a conflict (with a message explaining why).
   const LIGHTING_MAP = {
-    'studio-high-key': {
-      prompt:     'softbox lighting, high-key studio strobes, white fill cards, bright even illumination with minimal shadows, clean specular highlights on bodywork',
-      goodWith:   ['studio-white', 'studio-black', 'transparent'],
-      warnWith:   { 'neon-night': '', 'london-street': '', 'racetrack': '', 'desert': '', 'golden-hour': '' },
-      label:      'Studio — High Key',
-    },
-    'studio-low-key': {
-      prompt:     'dramatic low-key lighting, single hard key light, deep shadow gradients, sharp rim lighting separating car from background, moody chiaroscuro',
-      goodWith:   ['studio-black', 'studio-white', 'transparent'],
-      warnWith:   {},
-      label:      'Studio — Low Key',
-    },
-    'neon-night': {
-      prompt:     'cinematic nighttime lighting, vibrant neon sign glow, coloured light spill across bodywork, wet surface reflections, realistic bloom and lens flare on light sources, dark atmospheric shadows',
-      goodWith:   ['london-street', 'studio-black', 'racetrack'],
-      warnWith:   {
-        'studio-white': 'A white studio backdrop kills neon bloom. Switch to Studio (Black) or London Street for this lighting mood.',
-        'desert':       'Desert locations are daylight environments. Neon night lighting will conflict — try Golden Hour or Daytime instead.',
-        'transparent':  'Transparent cutouts require neutral lighting. Neon glow will tint the cutout edges.',
-      },
-      label:      'Neon Night',
-    },
-    'daytime-natural': {
-      prompt:     'bright natural daylight, harsh directional sunlight, crisp hard shadows, clear blue sky ambient fill, realistic outdoor illumination',
-      goodWith:   ['racetrack', 'desert', 'london-street', 'custom'],
-      warnWith:   {
-        'studio-white': 'Natural sunlight and a studio backdrop are contradictory environments. Consider Racetrack or Desert instead.',
-        'studio-black': 'Natural sunlight and a dark studio backdrop are contradictory. Consider an outdoor location.',
-      },
-      label:      'Daytime Natural',
-    },
-    'golden-hour': {
-      prompt:     'golden hour warm directional sunlight, long soft shadows, orange and amber light spilling across body panels, warm atmospheric haze, gentle lens flare',
-      goodWith:   ['racetrack', 'desert', 'london-street', 'custom'],
-      warnWith:   {
-        'studio-white': 'Golden hour warm tones will clash with a neutral white studio. Consider an outdoor location.',
-        'studio-black': 'Golden hour is an outdoor natural light — a dark studio will create a contradiction.',
-      },
-      label:      'Golden Hour',
-    },
-    'overcast': {
-      prompt:     'overcast diffused lighting, flat even sky illumination, soft shadowless light, subtle cool-grey ambient tone, clean reflections across all panels',
-      goodWith:   ['racetrack', 'desert', 'london-street', 'studio-white', 'custom', 'transparent'],
-      warnWith:   {},
-      label:      'Overcast / Diffused',
-    },
+    'studio-high-key': { prompt:'softbox lighting, high-key studio strobes, white fill cards, bright even illumination with minimal shadows, clean specular highlights on bodywork', warnWith:{ 'neon-night':'','london-street':'','racetrack':'','desert':'','golden-hour':'' }, label:'Studio — High Key' },
+    'studio-low-key':  { prompt:'dramatic low-key lighting, single hard key light, deep shadow gradients, sharp rim lighting separating car from background, moody chiaroscuro', warnWith:{}, label:'Studio — Low Key' },
+    'neon-night':      { prompt:'cinematic nighttime lighting, vibrant neon sign glow, coloured light spill across bodywork, wet surface reflections, realistic bloom and lens flare on light sources, dark atmospheric shadows', warnWith:{ 'studio-white':'A white studio backdrop kills neon bloom. Switch to Studio (Black) or London Street.', 'desert':'Desert locations are daylight environments — try Golden Hour or Daytime instead.', 'transparent':'Transparent cutouts need neutral lighting. Neon glow will tint the cutout edges.' }, label:'Neon Night' },
+    'daytime-natural': { prompt:'bright natural daylight, harsh directional sunlight, crisp hard shadows, clear blue sky ambient fill, realistic outdoor illumination', warnWith:{ 'studio-white':'Natural sunlight and a studio backdrop contradict each other. Try Racetrack or Desert.', 'studio-black':'Natural sunlight and a dark studio contradict each other. Try an outdoor location.' }, label:'Daytime Natural' },
+    'golden-hour':     { prompt:'golden hour warm directional sunlight, long soft shadows, orange and amber light spilling across body panels, warm atmospheric haze, gentle lens flare', warnWith:{ 'studio-white':'Golden hour tones clash with a neutral white studio. Try an outdoor location.', 'studio-black':'Golden hour is outdoor natural light — a dark studio creates a contradiction.' }, label:'Golden Hour' },
+    'overcast':        { prompt:'overcast diffused lighting, flat even sky illumination, soft shadowless light, subtle cool-grey ambient tone, clean reflections across all panels', warnWith:{}, label:'Overcast / Diffused' },
   };
 
-  // ── Location definitions ───────────────────────────────────────────────────
   const LOCATION_MAP = {
-    'studio-white':  { prompt: 'pure white seamless paper backdrop, professional automotive photography studio, clean reflective white floor', label: 'Studio (White)' },
-    'studio-black':  { prompt: 'pure black seamless backdrop, darkened professional studio, polished dark floor with subtle car reflection', label: 'Studio (Black)' },
-    'racetrack':     { prompt: 'FIA-grade racing circuit, pit lane straight, dark tarmac with painted race markings and start/finish lines, grandstands softly blurred in background, motorsport atmosphere', label: 'Racetrack' },
-    'london-street': { prompt: 'gritty London city street, rain-soaked wet cobblestones reflecting ambient light, iconic red double-decker bus blurred in background, urban night atmosphere, glowing street lamps', label: 'London Street' },
-    'desert':        { prompt: 'vast open desert landscape, cracked salt flat stretching to the horizon, dramatic cloudless sky, golden dust haze in the air, remote and isolated', label: 'Desert' },
-    'transparent':   { prompt: 'fully transparent background, vehicle completely isolated with no backdrop, clean cutout with no colour cast on edges', label: 'Transparent / Cutout' },
-    'custom':        { prompt: null, label: 'Custom' },
+    'studio-white':  { prompt:'pure white seamless paper backdrop, professional automotive photography studio, clean reflective white floor', label:'Studio (White)' },
+    'studio-black':  { prompt:'pure black seamless backdrop, darkened professional studio, polished dark floor with subtle car reflection', label:'Studio (Black)' },
+    'racetrack':     { prompt:'FIA-grade racing circuit, pit lane straight, dark tarmac with painted race markings and start/finish lines, grandstands softly blurred in background', label:'Racetrack' },
+    'london-street': { prompt:'gritty London city street, rain-soaked wet cobblestones reflecting ambient light, iconic red double-decker bus blurred in background, glowing street lamps', label:'London Street' },
+    'desert':        { prompt:'vast open desert landscape, cracked salt flat stretching to the horizon, dramatic cloudless sky, golden dust haze in the air', label:'Desert' },
+    'transparent':   { prompt:'fully transparent background, vehicle completely isolated with no backdrop, clean cutout with no colour cast on edges', label:'Transparent / Cutout' },
+    'custom':        { prompt:null, label:'Custom' },
   };
 
-  // ── Quality definitions ────────────────────────────────────────────────────
-  // Per the AI feedback: prioritise descriptive photography/render terms over raw specs
+  const WEATHER_MAP = {
+    'none':        { prompt:null, label:null, warnStudio:false },
+    'rain':        { prompt:'light rain falling, individual raindrops visible in the air, water droplets on all glass and painted surfaces, subtle puddles forming on the ground, rain-blurred background', label:'Rain', warnStudio:true },
+    'heavy-rain':  { prompt:'heavy downpour, thick curtains of rain, water sheeting off all body panels, deep puddles with heavy splash, rain mist obscuring the background, dramatic stormy atmosphere', label:'Heavy Rain', warnStudio:true },
+    'wet':         { prompt:'wet roads after recent rainfall, deep mirror-like reflections in standing water on tarmac, water droplets still clinging to paint and glass, damp air, glistening surface sheen across the entire vehicle', label:'Wet Roads (Post-Rain)', warnStudio:false },
+    'snow':        { prompt:'active snowfall, large snowflakes drifting through the air, thin fresh snow beginning to settle on horizontal surfaces, cold blue-white ambient light, breath-like atmospheric mist', label:'Snow / Snowfall', warnStudio:true },
+    'snow-ground': { prompt:'deep snow on the ground, vehicle parked in thick settled snow, snow packed into wheel arch gaps and body creases, crisp cold daylight reflecting off bright white snow, frosted glass surfaces', label:'Snow on Ground', warnStudio:true },
+    'fog':         { prompt:'dense fog and low mist, visibility reduced, soft diffused atmospheric light, fog rolling across the ground, vehicle emerging from mist with soft halo effect on lighting', label:'Fog / Mist', warnStudio:false },
+    'dust':        { prompt:'swirling dust storm, fine orange-brown dust particles filling the air, grit and dust settled on horizontal body surfaces, reduced visibility through haze, dramatic arid atmosphere', label:'Dust Storm', warnStudio:true },
+    'heatwave':    { prompt:'extreme heatwave, visible heat haze rising from tarmac surface, mirages on the road ahead, bleached high-contrast sunlight, shimmering distortion in the distance', label:'Heatwave / Heat Haze', warnStudio:true },
+  };
+
   const QUALITY_MAP = {
-    standard: {
-      photo:  'commercial automotive photography quality, sharp focus throughout, clean colour grading, professional retouching',
-      render: 'high-quality CGI render, clean anti-aliasing, accurate materials',
-    },
-    high: {
-      photo:  'macro photography-grade sharpness, micro-texture detail on every panel, subsurface scattering in paint depth, HDR tonal range, studio-grade colour accuracy, hyper-realistic reflections',
-      render: 'photorealistic CGI, subsurface scattering on paint, ray-traced reflections and shadows, micro-detail geometry, HDR lighting, production-quality render',
-    },
-    extreme: {
-      photo:  'extreme macro photography, every panel pore, scratch and surface imperfection visible, subsurface scattering deep in paint lacquer, museum-quality reference photography, lens aberration realism, sensor-accurate noise, beyond-8K detail density',
-      render: 'reference-grade photorealism, every surface molecule rendered, subsurface scattering through clear coat, ray-traced global illumination, ultra-detail displacement mapping, film-grain realism, beyond-8K render quality',
-    },
+    standard: { photo:'commercial automotive photography quality, sharp focus throughout, clean colour grading, professional retouching', render:'high-quality CGI render, clean anti-aliasing, accurate materials' },
+    high:     { photo:'macro photography-grade sharpness, micro-texture detail on every panel, subsurface scattering in paint depth, HDR tonal range, studio-grade colour accuracy, hyper-realistic reflections', render:'photorealistic CGI, subsurface scattering on paint, ray-traced reflections and shadows, micro-detail geometry, HDR lighting, production-quality render' },
+    extreme:  { photo:'extreme macro photography, every panel pore and surface imperfection visible, subsurface scattering deep in paint lacquer, museum-quality reference photography, beyond-8K detail density', render:'reference-grade photorealism, subsurface scattering through clear coat, ray-traced global illumination, ultra-detail displacement mapping, film-grain realism, beyond-8K render quality' },
   };
 
-  // ── Resolution definitions ─────────────────────────────────────────────────
   const RESOLUTION_MAP = {
-    standard: { label: '1920×1080', tag: '1080p full HD, high detail' },
-    high:     { label: '3840×2160', tag: '4K ultra HD, very high detail' },
-    ultra:    { label: '7680×4320', tag: '8K resolution, extreme detail, macro photography sharpness' },
+    standard: { label:'1920×1080', tag:'1080p full HD, high detail' },
+    high:     { label:'3840×2160', tag:'4K ultra HD, very high detail' },
+    ultra:    { label:'7680×4320', tag:'8K resolution, extreme detail, macro photography sharpness' },
   };
 
   const ORIENTATION_MAP = {
-    landscape: { label: 'landscape', ratio: '16:9 aspect ratio, horizontal widescreen composition' },
-    portrait:  { label: 'portrait',  ratio: '9:16 aspect ratio, vertical portrait composition' },
+    landscape: { label:'landscape', ratio:'16:9 aspect ratio, horizontal widescreen composition' },
+    portrait:  { label:'portrait',  ratio:'9:16 aspect ratio, vertical portrait composition' },
   };
 
   const VIDEO_MAP = {
-    slowmo: 'ultra slow-motion capture at 240fps',
-    dolly:  'cinematic dolly push-in camera move',
-    orbit:  '360-degree orbit shot around the vehicle',
-    drone:  'sweeping drone flyover aerial cinematography',
+    slowmo:'ultra slow-motion capture at 240fps',
+    dolly: 'cinematic dolly push-in camera move',
+    orbit: '360-degree orbit shot around the vehicle',
+    drone: 'sweeping drone flyover aerial cinematography',
   };
 
   const PLATE_STYLES = {
-    uk:     { label: 'UK-style white number plate with Charles Wright typeface black lettering',      previewId: 'plate-preview-uk' },
-    us:     { label: 'US-style state licence plate with bold sans-serif characters',                  previewId: 'plate-preview-us' },
-    eu:     { label: 'EU-style white number plate with blue country identification band',              previewId: 'plate-preview-eu' },
-    custom: { label: 'custom-style number plate',                                                     previewId: 'plate-preview-custom' },
+    uk:     { label:'UK-style white number plate with Charles Wright typeface black lettering', previewId:'plate-preview-uk' },
+    us:     { label:'US-style state licence plate with bold sans-serif characters',             previewId:'plate-preview-us' },
+    eu:     { label:'EU-style white number plate with blue country identification band',        previewId:'plate-preview-eu' },
+    custom: { label:'custom-style number plate',                                                previewId:'plate-preview-custom' },
   };
 
   // ── Wheels ─────────────────────────────────────────────────────────────────
@@ -544,91 +577,76 @@
   function syncColour(pickerId, hexId) {
     const picker = $(pickerId), hex = $(hexId);
     picker.addEventListener('input', () => { hex.value = picker.value.toUpperCase(); autoGenerate(); });
-    hex.addEventListener('input', () => {
-      if (/^#[0-9a-fA-F]{6}$/.test(hex.value.trim())) picker.value = hex.value.trim();
-      autoGenerate();
-    });
+    hex.addEventListener('input',   () => { if (/^#[0-9a-fA-F]{6}$/.test(hex.value.trim())) picker.value = hex.value.trim(); autoGenerate(); });
   }
-  syncColour('extColourPicker', 'extColourHex');
-  syncColour('intColourPicker', 'intColourHex');
+  syncColour('extColourPicker','extColourHex');
+  syncColour('intColourPicker','intColourHex');
   $('extColourName').addEventListener('input', autoGenerate);
   $('intColourName').addEventListener('input', autoGenerate);
 
-  // Build a rich colour description: "Glossy Obsidian Black (#1A1A1A)" — descriptive name first, hex as reference
   function colourDesc(hexId, nameId) {
     const hex  = $(hexId).value.trim().toUpperCase();
     const name = $(nameId).value.trim();
-    // If user provided a name, use it descriptively with hex as a reference anchor
     return name ? `${name} (hex reference ${hex})` : `colour hex ${hex}`;
   }
 
-  // ── Lighting / location conflict check ────────────────────────────────────
-  function checkConflict() {
-    const lightKey = $('lighting').value;
-    const locKey   = $('location').value;
-    const lighting = LIGHTING_MAP[lightKey];
-    const warning  = $('lighting-warning');
-    const warnText = $('warning-text');
+  // ── Conflict checks ────────────────────────────────────────────────────────
+  function checkConflicts() {
+    const lightKey   = $('lighting').value;
+    const locKey     = $('location').value;
+    const weatherKey = $('weather').value;
+    const lighting   = LIGHTING_MAP[lightKey];
+    const weather    = WEATHER_MAP[weatherKey];
 
-    if (lighting && lighting.warnWith && lighting.warnWith[locKey]) {
-      warnText.textContent = lighting.warnWith[locKey];
-      warning.style.display = 'block';
-    } else {
-      warning.style.display = 'none';
-    }
+    const lWarn = $('lighting-warning'), lText = $('warning-text');
+    if (lighting?.warnWith?.[locKey]) {
+      lText.textContent = lighting.warnWith[locKey];
+      lWarn.style.display = 'block';
+    } else { lWarn.style.display = 'none'; }
+
+    const wWarn = $('weather-warning'), wText = $('weather-warning-text');
+    const isStudio = locKey === 'studio-white' || locKey === 'studio-black';
+    if (weather?.warnStudio && isStudio && weatherKey !== 'none') {
+      wText.textContent = `${weather.label} weather doesn't work in a studio. Choose an outdoor location to use this effect.`;
+      wWarn.style.display = 'block';
+    } else { wWarn.style.display = 'none'; }
   }
 
   // ── Plate preview ──────────────────────────────────────────────────────────
   function updatePlatePreview() {
-    const style    = $('plateStyle').value;
-    const chars    = $('plateChars').value.trim().toUpperCase();
-    const charsGrp = $('plate-chars-group');
+    const style = $('plateStyle').value;
+    const chars = $('plateChars').value.trim().toUpperCase();
     ['uk','us','eu','custom'].forEach(s => { $('plate-preview-' + s).style.display = 'none'; });
     if (style === 'none') {
-      charsGrp.style.display = 'none';
+      $('plate-chars-group').style.display = 'none';
     } else {
-      charsGrp.style.display = 'block';
-      if (chars) {
-        const prev = $(PLATE_STYLES[style].previewId);
-        prev.textContent = chars;
-        prev.style.display = 'inline-flex';
-      }
+      $('plate-chars-group').style.display = 'block';
+      if (chars) { const p = $(PLATE_STYLES[style].previewId); p.textContent = chars; p.style.display = 'inline-flex'; }
     }
     autoGenerate();
   }
   $('plateStyle').addEventListener('change', updatePlatePreview);
-  $('plateChars').addEventListener('input', () => {
-    $('plateChars').value = $('plateChars').value.toUpperCase();
-    updatePlatePreview();
-  });
+  $('plateChars').addEventListener('input', () => { $('plateChars').value = $('plateChars').value.toUpperCase(); updatePlatePreview(); });
 
-  // ── Location / lighting listeners ──────────────────────────────────────────
-  $('location').addEventListener('change', () => {
-    $('custom-location-group').style.display = $('location').value === 'custom' ? 'block' : 'none';
-    checkConflict();
-    autoGenerate();
-  });
-  $('lighting').addEventListener('change', () => { checkConflict(); autoGenerate(); });
+  // ── Location / lighting / weather ──────────────────────────────────────────
+  $('location').addEventListener('change', () => { $('custom-location-group').style.display = $('location').value === 'custom' ? 'block' : 'none'; checkConflicts(); autoGenerate(); });
+  $('lighting').addEventListener('change', () => { checkConflicts(); autoGenerate(); });
+  $('weather').addEventListener('change',  () => { checkConflicts(); autoGenerate(); });
   $('customLocation').addEventListener('input', autoGenerate);
 
   // ── Font preview ───────────────────────────────────────────────────────────
   function updateFontPreview() {
-    const sel    = $('overlayFont');
-    const family = sel.options[sel.selectedIndex].getAttribute('data-family');
-    const text   = $('overlayText').value.trim();
-    const wrap   = $('font-preview-wrap');
-    const prev   = $('font-preview');
+    const sel = $('overlayFont'), family = sel.options[sel.selectedIndex].getAttribute('data-family');
+    const text = $('overlayText').value.trim();
     if (family && text) {
-      prev.style.fontFamily = `'${family}', sans-serif`;
-      prev.textContent = text;
-      wrap.style.display = 'block';
-    } else {
-      wrap.style.display = 'none';
-    }
+      $('font-preview').style.fontFamily = `'${family}', sans-serif`;
+      $('font-preview').textContent = text;
+      $('font-preview-wrap').style.display = 'block';
+    } else { $('font-preview-wrap').style.display = 'none'; }
     autoGenerate();
   }
   $('overlayFont').addEventListener('change', updateFontPreview);
-  $('overlayText').addEventListener('input', updateFontPreview);
+  $('overlayText').addEventListener('input',  updateFontPreview);
 
   // ── Video toggle ───────────────────────────────────────────────────────────
   $('outputType').addEventListener('change', () => {
@@ -640,11 +658,35 @@
 
   // ── Camera indicator ───────────────────────────────────────────────────────
   function updateCameraIndicator(opt) {
-    const x   = parseFloat(opt.getAttribute('data-x'));
-    const y   = parseFloat(opt.getAttribute('data-y'));
+    const x = parseFloat(opt.getAttribute('data-x'));
+    const y = parseFloat(opt.getAttribute('data-y'));
     const rot = parseFloat(opt.getAttribute('data-rot')) + 90;
     $('camera-indicator').style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg)`;
   }
+
+  // ── Clear / reset ──────────────────────────────────────────────────────────
+  function resetAllFields() {
+    $('model').value = ''; $('lighting').value = 'studio-high-key';
+    $('wheelSize').value = 'factory-fitted OEM'; $('angle').value = $('angle').options[0].value;
+    $('location').value = 'studio-white'; $('weather').value = 'none';
+    $('plateStyle').value = 'none'; $('plateChars').value = '';
+    $('extColourPicker').value = '#1a1a1a'; $('extColourHex').value = '#1A1A1A'; $('extColourName').value = '';
+    $('intColourPicker').value = '#2c1a0e'; $('intColourHex').value = '#2C1A0E'; $('intColourName').value = '';
+    $('customLocation').value = ''; $('overlayText').value = ''; $('overlayFont').value = '';
+    $('outputType').value = 'image'; $('orientation').value = 'landscape';
+    $('resolution').value = 'standard'; $('quality').value = 'standard';
+    ['lightsOn','motion','convertible','lowered','race','tint','leather','slowmo','dolly','orbit','drone'].forEach(id => { $(id).checked = false; });
+    $('custom-location-group').style.display = 'none';
+    $('video-options').style.display = 'none';
+    $('font-preview-wrap').style.display = 'none';
+    $('output-panel-header').textContent = 'Generated Image Prompt';
+    updatePlatePreview(); checkConflicts(); autoGenerate(); flashStatus('CLEARED — READY');
+  }
+
+  $('clearBtn').addEventListener('click', () => { $('clear-modal').style.display = 'flex'; });
+  $('clear-cancel').addEventListener('click', () => { $('clear-modal').style.display = 'none'; });
+  $('clear-confirm').addEventListener('click', () => { $('clear-modal').style.display = 'none'; resetAllFields(); });
+  $('clear-modal').addEventListener('click', e => { if (e.target === $('clear-modal')) $('clear-modal').style.display = 'none'; });
 
   // ── Prompt builder ─────────────────────────────────────────────────────────
   function buildPrompt() {
@@ -656,31 +698,27 @@
     const wheelText  = isFactory ? 'factory-fitted OEM wheels' : `${wheelVal} custom alloy rims`;
     const angleEl    = $('angle');
     const angle      = angleEl.value;
-    const isLeather  = $('leather').checked;
-    const interior   = isLeather ? 'luxurious quilted leather' : 'performance textile';
+    const interior   = $('leather').checked ? 'luxurious quilted leather' : 'performance textile';
     const outputType = $('outputType').value;
     const isVideo    = outputType === 'video';
     const orientation= ORIENTATION_MAP[$('orientation').value];
     const resolution = RESOLUTION_MAP[$('resolution').value];
-    const qualKey    = $('quality').value;
-    const quality    = QUALITY_MAP[qualKey][isVideo ? 'render' : 'photo'];
+    const quality    = QUALITY_MAP[$('quality').value][isVideo ? 'render' : 'photo'];
+    const extColour  = colourDesc('extColourHex','extColourName');
+    const intColour  = colourDesc('intColourHex','intColourName');
 
-    const extColour  = colourDesc('extColourHex', 'extColourName');
-    const intColour  = colourDesc('intColourHex', 'intColourName');
-
-    // Plate
     const plateStyle = $('plateStyle').value;
     const plateChars = $('plateChars').value.trim().toUpperCase();
     const hasPlate   = plateStyle !== 'none' && plateChars.length > 0;
 
-    // Location — if custom, use the text field; otherwise use the map
     const locKey     = $('location').value;
     const locData    = LOCATION_MAP[locKey];
-    const locationStr = locKey === 'custom'
-      ? ($('customLocation').value.trim() || 'a custom environment')
-      : locData.prompt;
+    const locationStr= locKey === 'custom' ? ($('customLocation').value.trim() || 'a custom environment') : locData.prompt;
 
-    // Overlay
+    const weatherKey = $('weather').value;
+    const weather    = WEATHER_MAP[weatherKey];
+    const hasWeather = weatherKey !== 'none';
+
     const overlayText = $('overlayText').value.trim();
     const fontSel     = $('overlayFont');
     const fontVal     = fontSel.value;
@@ -695,68 +733,35 @@
       $('tint').checked        && 'limo-style dark privacy window tinting',
     ].filter(Boolean);
 
-    const videoMods = isVideo
-      ? ['slowmo','dolly','orbit','drone'].filter(id => $(id).checked).map(id => VIDEO_MAP[id])
-      : [];
+    const videoMods = isVideo ? ['slowmo','dolly','orbit','drone'].filter(id => $(id).checked).map(id => VIDEO_MAP[id]) : [];
 
     updateCameraIndicator(angleEl.options[angleEl.selectedIndex]);
 
-    const typeLabel = isVideo ? 'VIDEO' : 'IMAGE';
-
-    // ── Header block ──
     let prompt  = `>> CARBONOGRAPHY-V1.7-STRING\n`;
-    prompt     += `>> TYPE: ${typeLabel} | ORIENTATION: ${orientation.label.toUpperCase()} | RESOLUTION: ${resolution.label}\n`;
+    prompt     += `>> TYPE: ${isVideo?'VIDEO':'IMAGE'} | ORIENTATION: ${orientation.label.toUpperCase()} | RESOLUTION: ${resolution.label}\n`;
     prompt     += `>> PERSPECTIVE: ${angle.toUpperCase()}\n`;
     prompt     += `>> LIGHTING: ${lighting.label.toUpperCase()}\n`;
-    prompt     += `>> LOCATION: ${locData ? locData.label.toUpperCase() : 'CUSTOM'}\n`;
+    prompt     += `>> LOCATION: ${locData ? locData.label.toUpperCase() : 'CUSTOM'}${hasWeather ? ` | WEATHER: ${weather.label.toUpperCase()}` : ''}\n`;
     prompt     += `>> EXT COLOUR: ${extColour} | INT COLOUR: ${intColour}\n`;
     if (hasPlate) prompt += `>> PLATE: "${plateChars}" — ${PLATE_STYLES[plateStyle].label}\n`;
     if (overlayText && fontVal) prompt += `>> OVERLAY TEXT: "${overlayText}" in ${fontFamily} typeface\n`;
     prompt     += `\n`;
 
-    // ── Subject line ──
-    prompt += isVideo
-      ? `Cinematic automotive ${orientation.label} video of a ${model}. `
-      : `Professional automotive ${orientation.label} photograph of a ${model}. `;
-
-    // ── Colour (descriptive name first, hex as reference anchor) ──
+    prompt += isVideo ? `Cinematic automotive ${orientation.label} video of a ${model}. ` : `Professional automotive ${orientation.label} photograph of a ${model}. `;
     prompt += `Exterior finished in ${extColour} with deep glossy clear coat, subsurface scattering visible through paint depth. `;
     prompt += `Interior trimmed in ${intColour} ${interior}. `;
-
-    // ── Camera & wheels ──
     prompt += `Captured from a ${angle}. `;
-    prompt += isFactory
-      ? `Wheels are factory-fitted OEM specification. `
-      : `Fitted with ${wheelText}. `;
-
-    // ── Lighting (no contradiction — lighting prompt is chosen to match environment) ──
+    prompt += isFactory ? `Wheels are factory-fitted OEM specification. ` : `Fitted with ${wheelText}. `;
     prompt += `Lighting: ${lighting.prompt}. `;
-
-    // ── Background / location ──
     prompt += `Background: ${locationStr}. `;
-
-    // ── Plate ──
-    if (hasPlate) {
-      prompt += `The vehicle bears a clearly legible ${PLATE_STYLES[plateStyle].label} reading "${plateChars}", correctly mounted, with photorealistic raised characters and authentic plate materials. `;
-    }
-
-    // ── Modifications ──
+    if (hasWeather) prompt += `Weather conditions: ${weather.prompt}. `;
+    if (hasPlate)   prompt += `The vehicle bears a clearly legible ${PLATE_STYLES[plateStyle].label} reading "${plateChars}", correctly mounted, photorealistic raised characters. `;
     if (mods.length) prompt += `Vehicle specification includes: ${mods.join(', ')}. `;
-
-    // ── Video camera moves ──
     if (videoMods.length) prompt += `Camera direction: ${videoMods.join(', ')}. `;
-
-    // ── Overlay text ──
-    if (overlayText && fontVal) {
-      prompt += `Typography overlay: the text "${overlayText}" rendered in ${fontVal} typeface, bold and large, composited naturally into the image. `;
-    }
-
-    // ── Technical quality tail — descriptive photography terms first, specs as reference ──
-    if (isVideo) {
-      prompt += `Technical: ${resolution.tag}, ${quality}, cinematic colour grade, motion blur on moving elements, rack focus depth of field, photorealistic materials throughout.`;
-    } else {
-      prompt += `Technical: ${resolution.tag}, ${quality}, crisp optical sharpness, accurate colour reproduction, photorealistic render.`;
-    }
+    if (overlayText && fontVal) prompt += `Typography overlay: the text "${overlayText}" rendered in ${fontVal} typeface, bold and large, composited naturally into the image. `;
+    prompt += isVideo
+      ? `Technical: ${resolution.tag}, ${quality}, cinematic colour grade, motion blur on moving elements, rack focus depth of field, photorealistic materials throughout.`
+      : `Technical: ${resolution.tag}, ${quality}, crisp optical sharpness, accurate colour reproduction, photorealistic render.`;
 
     return prompt;
   }
@@ -771,58 +776,30 @@
     output.appendChild(cursor);
   }
 
-  // ── Status / toast / copy / export ────────────────────────────────────────
-  function flashStatus(msg) {
-    const el = $('status-msg');
-    el.textContent = msg;
-    setTimeout(() => { el.textContent = 'CARBONOGRAPHY // READY'; }, STATUS_RESET_MS);
-  }
-
-  function showToast(msg) {
-    const t = $('generator-toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3500);
-  }
+  function flashStatus(msg) { const el = $('status-msg'); el.textContent = msg; setTimeout(() => { el.textContent = 'CARBONOGRAPHY // READY'; }, STATUS_RESET_MS); }
+  function showToast(msg) { const t = $('generator-toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3500); }
 
   function openInGenerator(url, siteName) {
     if (!currentPrompt) { flashStatus('NO PROMPT TO SEND'); return; }
     navigator.clipboard.writeText(currentPrompt)
-      .then(() => { showToast(`✓ Prompt copied — paste into ${siteName} when it opens`); setTimeout(() => window.open(url, '_blank'), 400); })
-      .catch(() => { showToast(`⚠ Could not auto-copy — copy manually then paste into ${siteName}`); setTimeout(() => window.open(url, '_blank'), 800); });
+      .then(() => { showToast(`✓ Prompt copied — paste into ${siteName} when it opens`); setTimeout(() => window.open(url,'_blank'), 400); })
+      .catch(() => { showToast(`⚠ Could not auto-copy — copy manually then paste into ${siteName}`); setTimeout(() => window.open(url,'_blank'), 800); });
   }
 
-  $('ideogramBtn').addEventListener('click', () => openInGenerator('https://ideogram.ai/t/explore', 'Ideogram'));
-  $('leonardoBtn').addEventListener('click', () => openInGenerator('https://app.leonardo.ai/', 'Leonardo.ai'));
-
-  $('copyBtn').addEventListener('click', () => {
-    if (!currentPrompt) return;
-    navigator.clipboard.writeText(currentPrompt)
-      .then(() => flashStatus('COPIED TO CLIPBOARD!'))
-      .catch(() => flashStatus('COPY FAILED'));
-  });
-
+  $('ideogramBtn').addEventListener('click', () => openInGenerator('https://ideogram.ai/t/explore','Ideogram'));
+  $('leonardoBtn').addEventListener('click', () => openInGenerator('https://app.leonardo.ai/','Leonardo.ai'));
+  $('copyBtn').addEventListener('click', () => { if (!currentPrompt) return; navigator.clipboard.writeText(currentPrompt).then(() => flashStatus('COPIED TO CLIPBOARD!')).catch(() => flashStatus('COPY FAILED')); });
   $('exportBtn').addEventListener('click', () => {
     if (!currentPrompt) { flashStatus('NOTHING TO EXPORT'); return; }
-    const blob = new Blob([currentPrompt], { type: 'text/plain' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href = url;
-    a.download = `Carbonography_Prompt_${new Date().toISOString().slice(0,10)}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const blob = new Blob([currentPrompt],{type:'text/plain'}), url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = `Carbonography_Prompt_${new Date().toISOString().slice(0,10)}.txt`; a.click(); URL.revokeObjectURL(url);
   });
 
-  // ── Bind controls ──────────────────────────────────────────────────────────
-  ['model', 'wheelSize', 'angle', 'orientation', 'resolution', 'quality', 'outputType',
-   'lightsOn', 'motion', 'convertible', 'lowered', 'race', 'tint', 'leather',
-   'slowmo', 'dolly', 'orbit', 'drone'
-  ].forEach(id => {
-    const el = $(id);
-    el.addEventListener(el.type === 'checkbox' ? 'change' : 'input', autoGenerate);
-  });
+  ['model','wheelSize','angle','orientation','resolution','quality','outputType',
+   'lightsOn','motion','convertible','lowered','race','tint','leather','slowmo','dolly','orbit','drone'
+  ].forEach(id => { const el = $(id); el.addEventListener(el.type==='checkbox'?'change':'input', autoGenerate); });
 
-  document.addEventListener('DOMContentLoaded', () => { checkConflict(); autoGenerate(); });
+  document.addEventListener('DOMContentLoaded', () => { checkConflicts(); autoGenerate(); });
 </script>
 </body>
 </html>
