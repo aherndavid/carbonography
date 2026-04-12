@@ -6,6 +6,9 @@
 <title>Carbonography | Vehicle Image Generator v1.6</title>
 <link rel="stylesheet" href="/assets/global.css">
 <link rel="stylesheet" href="/assets/desktop.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@700&family=Rajdhani:wght@700&family=Russo+One&family=Racing+Sans+One&family=Aldrich&family=Exo+2:wght@800&family=Michroma&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -120,6 +123,60 @@
 
         </div><!-- /.colour-row -->
 
+        <!-- Location section -->
+        <div class="panel-header">Location &amp; Background</div>
+        <div class="controls-inner location-row">
+
+          <div class="form-group">
+            <label for="location">Background Location</label>
+            <select id="location">
+              <option value="professional automotive studio, pure white seamless backdrop, studio strobes">Studio (White)</option>
+              <option value="professional automotive studio, pure black seamless backdrop, dramatic rim lighting">Studio (Black)</option>
+              <option value="FIA-grade racing circuit, pit lane straight, tarmac with painted race markings, grandstands blurred in background">Racetrack</option>
+              <option value="gritty London city street at night, wet cobblestones reflecting neon signs, iconic red double-decker bus blurred in background, rain-soaked atmosphere">London Street</option>
+              <option value="vast open desert landscape, cracked salt flat, endless horizon, dramatic cloudless sky, golden dust haze">Desert</option>
+              <option value="fully transparent background, isolated vehicle, no backdrop, PNG-style cutout">Transparent / Cutout</option>
+              <option value="custom">Custom (see text below)</option>
+            </select>
+          </div>
+
+          <!-- Custom background text + font -->
+          <div id="custom-location-group" class="custom-location-group" style="display:none;">
+            <div class="form-group">
+              <label for="customLocation">Describe Your Background</label>
+              <input type="text" id="customLocation" placeholder="e.g. Snowy mountain pass at dusk, pine trees lining the road">
+            </div>
+          </div>
+
+          <!-- Overlay text -->
+          <div class="overlay-text-group">
+            <div class="form-group">
+              <label for="overlayText">Overlay Text (optional)</label>
+              <input type="text" id="overlayText" placeholder="e.g. GT3 RS — Born on Track">
+            </div>
+            <div class="form-group">
+              <label for="overlayFont">Text Style</label>
+              <select id="overlayFont">
+                <option value="" data-family="">— None —</option>
+                <option value="Bebas Neue, impact style, tall condensed uppercase lettering" data-family="Bebas Neue">Bebas Neue — Bold &amp; Condensed</option>
+                <option value="Orbitron, futuristic digital display font" data-family="Orbitron">Orbitron — Futuristic HUD</option>
+                <option value="Rajdhani, sharp angular modern sans-serif" data-family="Rajdhani">Rajdhani — Sharp &amp; Angular</option>
+                <option value="Russo One, strong geometric slab font" data-family="Russo One">Russo One — Geometric Slab</option>
+                <option value="Racing Sans One, motorsport-inspired italic font" data-family="Racing Sans One">Racing Sans One — Motorsport</option>
+                <option value="Aldrich, clean technical monospaced-style font" data-family="Aldrich">Aldrich — Technical &amp; Clean</option>
+                <option value="Exo 2, sporty wide sci-fi font" data-family="Exo 2">Exo 2 — Sporty &amp; Wide</option>
+                <option value="Michroma, narrow technical aerospace font" data-family="Michroma">Michroma — Aerospace</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Live font preview -->
+          <div id="font-preview-wrap" style="display:none;">
+            <div id="font-preview"></div>
+          </div>
+
+        </div><!-- /.location-row -->
+
         <!-- Output spec row -->
         <div class="controls-inner output-spec-row">
 
@@ -180,189 +237,162 @@
     <div id="status-msg">CARBONOGRAPHY // READY</div>
     <div id="bottom-bar-right">
       <button class="btn btn-outline" id="exportBtn">Export .TXT</button>
-      <button class="btn btn-primary" id="copyBtn">Copy Prompt</button>
+      <button class="btn btn-outline" id="copyBtn">Copy Prompt</button>
+      <button class="btn btn-generator" id="ideogramBtn" title="Copies prompt then opens Ideogram — paste on arrival">⚡ Ideogram</button>
+      <button class="btn btn-generator" id="leonardoBtn" title="Copies prompt then opens Leonardo.ai — paste on arrival">⚡ Leonardo</button>
     </div>
   </div>
 
 </div>
 
+<!-- Toast -->
+<div id="generator-toast"></div>
+
 <style>
-  /* ── Carbon fibre texture helper ──────────────────────────────────────────
-     Applied to every dark section EXCEPT #rig-container and #output-area.
-     A ::before overlay tints it dark so UI elements stay readable.
-  ── */
-  .carbon-bg {
-    position: relative;
-    background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/carbon.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: repeat;
-  }
-
-  .carbon-bg::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.52);
-    z-index: 0;
-    pointer-events: none;
-  }
-
-  /* Lift direct children above the overlay */
-  .carbon-bg > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  /* ── Sections that get carbon ── */
-
-  /* Top toolbar */
+  /* ── Carbon fibre texture ── */
   #top-toolbar {
     background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/carbon.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: repeat;
-    position: relative;
-    overflow: hidden;
-    border-bottom: 3px solid #8b0000;
+    background-size: cover; background-position: center; background-repeat: repeat;
+    position: relative; overflow: hidden; border-bottom: 3px solid #8b0000;
   }
-  #top-toolbar::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.45);
-    z-index: 0;
-    pointer-events: none;
-  }
-  #top-toolbar > * { position: relative; z-index: 1; }
+  #top-toolbar::before { content:''; position:absolute; inset:0; background:rgba(0,0,0,0.45); z-index:0; pointer-events:none; }
+  #top-toolbar > * { position:relative; z-index:1; }
 
-  /* Vehicle form scroll area (below rig on left) */
   #form-scroll {
     background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/carbon.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: repeat;
-    position: relative;
+    background-size: cover; background-position: center; background-repeat: repeat; position: relative;
   }
-  #form-scroll::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.55);
-    z-index: 0;
-    pointer-events: none;
-  }
-  #form-scroll > * { position: relative; z-index: 1; }
+  #form-scroll::before { content:''; position:absolute; inset:0; background:rgba(0,0,0,0.55); z-index:0; pointer-events:none; }
+  #form-scroll > * { position:relative; z-index:1; }
 
-  /* Controls panel (right side, all control rows) */
   #controls-panel {
     background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/carbon.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: repeat;
-    position: relative;
+    background-size: cover; background-position: center; background-repeat: repeat; position: relative;
   }
-  #controls-panel::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.55);
-    z-index: 0;
-    pointer-events: none;
-  }
-  #controls-panel > * { position: relative; z-index: 1; }
+  #controls-panel::before { content:''; position:absolute; inset:0; background:rgba(0,0,0,0.55); z-index:0; pointer-events:none; }
+  #controls-panel > * { position:relative; z-index:1; }
 
-  /* Bottom bar */
   #bottom-bar {
     background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/carbon.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: repeat;
-    position: relative;
+    background-size: cover; background-position: center; background-repeat: repeat; position: relative;
   }
-  #bottom-bar::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.55);
-    z-index: 0;
-    pointer-events: none;
-  }
-  #bottom-bar > * { position: relative; z-index: 1; }
+  #bottom-bar::before { content:''; position:absolute; inset:0; background:rgba(0,0,0,0.55); z-index:0; pointer-events:none; }
+  #bottom-bar > * { position:relative; z-index:1; }
 
-  /* ── Rig container — plain dark, no carbon ── */
-  #rig-container {
-    background: radial-gradient(ellipse 60% 75% at 50% 50%, #2a2a2a 0%, #000 100%) !important;
-  }
+  #rig-container { background: radial-gradient(ellipse 60% 75% at 50% 50%, #2a2a2a 0%, #000 100%) !important; }
+  #output-area   { background: #0f0f0f !important; }
 
-  /* ── Output area — plain dark, no carbon ── */
-  #output-area {
-    background: #0f0f0f !important;
-  }
-
-  /* ── Checkbox fix ── */
-  .checkbox-group input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    min-width: 18px;
-    accent-color: #8b0000;
-    cursor: pointer;
-    flex-shrink: 0;
-    opacity: 1;
-    -webkit-appearance: checkbox;
-    appearance: checkbox;
-  }
-
-  /* ── Colour section ── */
-  .colour-row {
+  /* ── Location section ── */
+  .location-row {
     display: flex;
-    gap: 24px;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .custom-location-group,
+  .overlay-text-group {
+    display: flex;
+    gap: 14px;
     flex-wrap: wrap;
   }
 
-  .colour-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    flex: 1;
-    min-width: 220px;
-  }
+  .overlay-text-group .form-group { flex: 1; min-width: 180px; }
 
-  .colour-input-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  input[type="color"] {
-    width: 44px;
-    height: 44px;
-    border: 2px solid #444;
+  /* Font preview */
+  #font-preview-wrap {
+    background: #0f0f0f;
+    border: 1px solid #333;
     border-radius: 6px;
-    padding: 2px;
-    background: #2c2c2c;
-    cursor: pointer;
-    flex-shrink: 0;
-    -webkit-appearance: none;
-    appearance: none;
+    padding: 14px 20px;
+    text-align: center;
   }
 
-  input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; border-radius: 4px; }
-  input[type="color"]::-webkit-color-swatch         { border: none; border-radius: 4px; }
+  #font-preview {
+    font-size: 28px;
+    color: #f5f5f5;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: font-family 0.2s;
+    word-break: break-word;
+  }
 
-  .hex-input {
-    width: 90px;
-    font-family: 'Consolas', 'Monaco', monospace;
-    font-size: 14px;
+  /* ── Generator buttons ── */
+  .btn-generator {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: #e0e0ff;
+    border: 1px solid #4a4a8a;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 900;
+    font-family: var(--font-ui);
     text-transform: uppercase;
     letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
     flex-shrink: 0;
   }
 
-  .colour-name-input {
-    flex: 1;
-    font-size: 14px;
+  .btn-generator:hover {
+    background: linear-gradient(135deg, #2a2a4e 0%, #26316e 50%, #1f4480 100%);
+    border-color: #7a7aca;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(100,100,200,0.3);
   }
+
+  .btn-generator:active { transform: translateY(0); }
+
+  /* Toast */
+  #generator-toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1a1a2e;
+    border: 1px solid #4a4a8a;
+    color: #e0e0ff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: var(--font-ui);
+    letter-spacing: 0.5px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 9999;
+    text-align: center;
+    white-space: nowrap;
+  }
+  #generator-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* ── Checkbox fix ── */
+  .checkbox-group input[type="checkbox"] {
+    width: 18px; height: 18px; min-width: 18px;
+    accent-color: #8b0000; cursor: pointer; flex-shrink: 0;
+    opacity: 1; -webkit-appearance: checkbox; appearance: checkbox;
+  }
+
+  /* ── Colour section ── */
+  .colour-row { display:flex; gap:24px; flex-wrap:wrap; }
+  .colour-group { display:flex; flex-direction:column; gap:8px; flex:1; min-width:220px; }
+  .colour-input-row { display:flex; align-items:center; gap:10px; }
+
+  input[type="color"] {
+    width:44px; height:44px; border:2px solid #444; border-radius:6px;
+    padding:2px; background:#2c2c2c; cursor:pointer; flex-shrink:0;
+    -webkit-appearance:none; appearance:none;
+  }
+  input[type="color"]::-webkit-color-swatch-wrapper { padding:0; border-radius:4px; }
+  input[type="color"]::-webkit-color-swatch { border:none; border-radius:4px; }
+
+  .hex-input {
+    width:90px; font-family:'Consolas','Monaco',monospace;
+    font-size:14px; text-transform:uppercase; letter-spacing:1px; flex-shrink:0;
+  }
+  .colour-name-input { flex:1; font-size:14px; }
 </style>
 
 <script>
@@ -371,10 +401,9 @@
   const STATUS_RESET_MS = 2000;
 
   const $ = id => document.getElementById(id);
-
   let currentPrompt = '';
 
-  // ── Populate wheel size dropdown ───────────────────────────────────────────
+  // ── Wheels ─────────────────────────────────────────────────────────────────
   (function populateWheels() {
     const sel = $('wheelSize');
     for (let i = WHEEL_MIN; i <= WHEEL_MAX; i++) {
@@ -385,35 +414,68 @@
     }
   })();
 
-  // ── Colour picker <-> hex input sync ──────────────────────────────────────
+  // ── Colour sync ────────────────────────────────────────────────────────────
   function syncColour(pickerId, hexId) {
-    const picker = $(pickerId);
-    const hex    = $(hexId);
-
-    picker.addEventListener('input', () => {
-      hex.value = picker.value.toUpperCase();
-      autoGenerate();
-    });
-
+    const picker = $(pickerId), hex = $(hexId);
+    picker.addEventListener('input', () => { hex.value = picker.value.toUpperCase(); autoGenerate(); });
     hex.addEventListener('input', () => {
-      const val = hex.value.trim();
-      if (/^#[0-9a-fA-F]{6}$/.test(val)) picker.value = val;
+      if (/^#[0-9a-fA-F]{6}$/.test(hex.value.trim())) picker.value = hex.value.trim();
       autoGenerate();
     });
   }
-
   syncColour('extColourPicker', 'extColourHex');
   syncColour('intColourPicker', 'intColourHex');
-
   $('extColourName').addEventListener('input', autoGenerate);
   $('intColourName').addEventListener('input', autoGenerate);
 
-  // ── Colour description helper ──────────────────────────────────────────────
   function colourDesc(hexId, nameId) {
     const hex  = $(hexId).value.trim().toUpperCase();
     const name = $(nameId).value.trim();
     return name ? `${name} (${hex})` : hex;
   }
+
+  // ── Location toggle ────────────────────────────────────────────────────────
+  $('location').addEventListener('change', () => {
+    const isCustom = $('location').value === 'custom';
+    $('custom-location-group').style.display = isCustom ? 'flex' : 'none';
+    autoGenerate();
+  });
+  $('customLocation').addEventListener('input', autoGenerate);
+
+  // ── Font preview ───────────────────────────────────────────────────────────
+  $('overlayFont').addEventListener('change', () => {
+    const sel    = $('overlayFont');
+    const family = sel.options[sel.selectedIndex].getAttribute('data-family');
+    const text   = $('overlayText').value.trim();
+    const wrap   = $('font-preview-wrap');
+    const prev   = $('font-preview');
+
+    if (family && text) {
+      prev.style.fontFamily = `'${family}', sans-serif`;
+      prev.textContent = text;
+      wrap.style.display = 'block';
+    } else {
+      wrap.style.display = 'none';
+    }
+    autoGenerate();
+  });
+
+  $('overlayText').addEventListener('input', () => {
+    const sel    = $('overlayFont');
+    const family = sel.options[sel.selectedIndex].getAttribute('data-family');
+    const text   = $('overlayText').value.trim();
+    const wrap   = $('font-preview-wrap');
+    const prev   = $('font-preview');
+
+    if (family && text) {
+      prev.style.fontFamily = `'${family}', sans-serif`;
+      prev.textContent = text;
+      wrap.style.display = 'block';
+    } else {
+      wrap.style.display = 'none';
+    }
+    autoGenerate();
+  });
 
   // ── Maps ───────────────────────────────────────────────────────────────────
   const RESOLUTION_MAP = {
@@ -440,13 +502,11 @@
     drone:  'sweeping drone flyover aerial cinematography',
   };
 
-  // ── Show/hide video options ────────────────────────────────────────────────
+  // ── Video toggle ───────────────────────────────────────────────────────────
   $('outputType').addEventListener('change', () => {
     const isVideo = $('outputType').value === 'video';
     $('video-options').style.display = isVideo ? 'flex' : 'none';
-    $('output-panel-header').textContent = isVideo
-      ? 'Generated Video Prompt'
-      : 'Generated Image Prompt';
+    $('output-panel-header').textContent = isVideo ? 'Generated Video Prompt' : 'Generated Image Prompt';
     autoGenerate();
   });
 
@@ -473,9 +533,21 @@
     const resolution  = RESOLUTION_MAP[$('resolution').value];
     const quality     = QUALITY_MAP[$('quality').value];
     const isVideo     = outputType === 'video';
-
     const extColour   = colourDesc('extColourHex', 'extColourName');
     const intColour   = colourDesc('intColourHex', 'intColourName');
+
+    // Location
+    const locSel      = $('location');
+    const isCustomLoc = locSel.value === 'custom';
+    const locationStr = isCustomLoc
+      ? ($('customLocation').value.trim() || 'a custom environment')
+      : locSel.value;
+
+    // Overlay text
+    const overlayText = $('overlayText').value.trim();
+    const fontSel     = $('overlayFont');
+    const fontVal     = fontSel.value;
+    const fontFamily  = fontSel.options[fontSel.selectedIndex].getAttribute('data-family');
 
     const mods = [
       $('lightsOn').checked    && 'headlights and taillights turned on with realistic bloom',
@@ -487,9 +559,7 @@
     ].filter(Boolean);
 
     const videoMods = isVideo
-      ? ['slowmo','dolly','orbit','drone']
-          .filter(id => $(id).checked)
-          .map(id => VIDEO_MAP[id])
+      ? ['slowmo','dolly','orbit','drone'].filter(id => $(id).checked).map(id => VIDEO_MAP[id])
       : [];
 
     updateCameraIndicator(angleEl.options[angleEl.selectedIndex]);
@@ -499,7 +569,10 @@
     let prompt  = `>> CARBONOGRAPHY-V1.6-STRING\n`;
     prompt     += `>> TYPE: ${typeLabel} | ORIENTATION: ${orientation.label.toUpperCase()} | RESOLUTION: ${resolution.label}\n`;
     prompt     += `>> PERSPECTIVE: ${angle.toUpperCase()}\n`;
-    prompt     += `>> EXT: ${extColour} | INT: ${intColour}\n\n`;
+    prompt     += `>> EXT: ${extColour} | INT: ${intColour}\n`;
+    prompt     += `>> LOCATION: ${isCustomLoc ? 'CUSTOM' : locSel.options[locSel.selectedIndex].text.toUpperCase()}\n`;
+    if (overlayText && fontVal) prompt += `>> OVERLAY: "${overlayText}" — ${fontFamily}\n`;
+    prompt     += `\n`;
 
     prompt += isVideo
       ? `A cinematic automotive video of a ${model}. `
@@ -509,9 +582,16 @@
     prompt += `The vehicle is captured from a ${angle}, emphasizing the ${wheelText}. `;
     prompt += `${orientation.ratio}. `;
     prompt += `The lighting setup is ${lighting}. `;
+    prompt += `Background: ${locationStr}. `;
 
-    if (mods.length) prompt += `Vehicle features include ${mods.join(', ')}. `;
+    if (mods.length)      prompt += `Vehicle features include ${mods.join(', ')}. `;
     if (videoMods.length) prompt += `Camera and motion direction: ${videoMods.join(', ')}. `;
+
+    if (overlayText && fontVal) {
+      prompt += `Overlay text reading "${overlayText}" rendered in a ${fontVal} typeface, large and bold, integrated into the composition. `;
+    }
+
+    prompt += `Visible interior showcases ${interior} craftsmanship. `;
 
     if (isVideo) {
       prompt += `Rendered at ${resolution.label}, ${quality}, Unreal Engine 5.4 cinematic render, ray-traced global illumination, motion blur, depth of field, photorealistic materials, cinematic colour grade.`;
@@ -522,7 +602,7 @@
     return prompt;
   }
 
-  // ── Render output ──────────────────────────────────────────────────────────
+  // ── Render ─────────────────────────────────────────────────────────────────
   function autoGenerate() {
     currentPrompt = buildPrompt();
     const output = $('output-area');
@@ -538,6 +618,31 @@
     el.textContent = msg;
     setTimeout(() => { el.textContent = 'CARBONOGRAPHY // READY'; }, STATUS_RESET_MS);
   }
+
+  // ── Toast ──────────────────────────────────────────────────────────────────
+  function showToast(msg) {
+    const t = $('generator-toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  // ── Open in generator ──────────────────────────────────────────────────────
+  function openInGenerator(url, siteName) {
+    if (!currentPrompt) { flashStatus('NO PROMPT TO SEND'); return; }
+    navigator.clipboard.writeText(currentPrompt)
+      .then(() => {
+        showToast(`✓ Prompt copied — paste it into ${siteName} when it opens`);
+        setTimeout(() => window.open(url, '_blank'), 400);
+      })
+      .catch(() => {
+        showToast(`⚠ Could not auto-copy — copy manually then paste into ${siteName}`);
+        setTimeout(() => window.open(url, '_blank'), 800);
+      });
+  }
+
+  $('ideogramBtn').addEventListener('click', () => openInGenerator('https://ideogram.ai/t/explore', 'Ideogram'));
+  $('leonardoBtn').addEventListener('click', () => openInGenerator('https://app.leonardo.ai/', 'Leonardo.ai'));
 
   // ── Copy ───────────────────────────────────────────────────────────────────
   $('copyBtn').addEventListener('click', () => {
@@ -559,16 +664,15 @@
     URL.revokeObjectURL(url);
   });
 
-  // ── Bind all controls ──────────────────────────────────────────────────────
+  // ── Bind controls ──────────────────────────────────────────────────────────
   ['model', 'lighting', 'wheelSize', 'angle', 'orientation', 'resolution', 'quality',
    'lightsOn', 'motion', 'convertible', 'lowered', 'race', 'tint', 'leather',
-   'slowmo', 'dolly', 'orbit', 'drone'
+   'slowmo', 'dolly', 'orbit', 'drone', 'location'
   ].forEach(id => {
     const el = $(id);
     el.addEventListener(el.type === 'checkbox' ? 'change' : 'input', autoGenerate);
   });
 
-  // ── Init ───────────────────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', autoGenerate);
 </script>
 </body>
