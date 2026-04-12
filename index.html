@@ -100,7 +100,6 @@
         <div class="panel-header">Colour</div>
         <div class="controls-inner colour-row">
 
-          <!-- Exterior colour -->
           <div class="colour-group">
             <label>Exterior Colour</label>
             <div class="colour-input-row">
@@ -110,7 +109,6 @@
             </div>
           </div>
 
-          <!-- Interior colour -->
           <div class="colour-group">
             <label>Interior Colour</label>
             <div class="colour-input-row">
@@ -189,36 +187,117 @@
 </div>
 
 <style>
-  /* ── Top toolbar: carbon fibre background ── */
-  #top-toolbar {
+  /* ── Carbon fibre texture helper ──────────────────────────────────────────
+     Applied to every dark section EXCEPT #rig-container and #output-area.
+     A ::before overlay tints it dark so UI elements stay readable.
+  ── */
+  .carbon-bg {
     position: relative;
-    overflow: hidden;
     background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/carbon.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: repeat;
-    /* Dark overlay so text stays readable over the texture */
-    background-color: transparent;
   }
 
-  /* Subtle dark veil over the carbon so the white text pops cleanly */
+  .carbon-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.52);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* Lift direct children above the overlay */
+  .carbon-bg > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Sections that get carbon ── */
+
+  /* Top toolbar */
+  #top-toolbar {
+    background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/carbon.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: repeat;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 3px solid #8b0000;
+  }
   #top-toolbar::before {
     content: '';
     position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, 0.45);
     z-index: 0;
+    pointer-events: none;
   }
+  #top-toolbar > * { position: relative; z-index: 1; }
 
-  /* Lift all toolbar children above the overlay */
-  #top-toolbar > * {
+  /* Vehicle form scroll area (below rig on left) */
+  #form-scroll {
+    background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/carbon.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: repeat;
     position: relative;
-    z-index: 1;
+  }
+  #form-scroll::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 0;
+    pointer-events: none;
+  }
+  #form-scroll > * { position: relative; z-index: 1; }
+
+  /* Controls panel (right side, all control rows) */
+  #controls-panel {
+    background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/carbon.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: repeat;
+    position: relative;
+  }
+  #controls-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 0;
+    pointer-events: none;
+  }
+  #controls-panel > * { position: relative; z-index: 1; }
+
+  /* Bottom bar */
+  #bottom-bar {
+    background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/carbon.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: repeat;
+    position: relative;
+  }
+  #bottom-bar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 0;
+    pointer-events: none;
+  }
+  #bottom-bar > * { position: relative; z-index: 1; }
+
+  /* ── Rig container — plain dark, no carbon ── */
+  #rig-container {
+    background: radial-gradient(ellipse 60% 75% at 50% 50%, #2a2a2a 0%, #000 100%) !important;
   }
 
-  /* Keep the red bottom border prominent */
-  #top-toolbar {
-    border-bottom: 3px solid #8b0000;
+  /* ── Output area — plain dark, no carbon ── */
+  #output-area {
+    background: #0f0f0f !important;
   }
 
   /* ── Checkbox fix ── */
@@ -318,9 +397,7 @@
 
     hex.addEventListener('input', () => {
       const val = hex.value.trim();
-      if (/^#[0-9a-fA-F]{6}$/.test(val)) {
-        picker.value = val;
-      }
+      if (/^#[0-9a-fA-F]{6}$/.test(val)) picker.value = val;
       autoGenerate();
     });
   }
