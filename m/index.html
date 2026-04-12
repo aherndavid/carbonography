@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Carbonography | v1.6 Mobile</title>
+<style>
+  :root {
+    --dark-red: #8b0000;
+    --off-white: #f5f5f5;
+    --grey: #2c2c2c;
+    --black: #000000;
+    --border-color: #444;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', 'Arial Black', sans-serif;
+    font-weight: 700;
+    background: var(--black);
+    color: var(--off-white);
+    height: 100dvh;
+    overflow: hidden;
+    font-size: 16px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #app {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    border: 2px solid #333;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  /* ── Camera perspective bar (above rig) ── */
+  #angle-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: #111;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+  }
+
+  #angle-bar label {
+    font-size: 11px;
+    color: #777;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  #angle-bar select {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  /* ── Header ── */
+  #top-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--grey);
+    border-bottom: 3px solid var(--dark-red);
+    flex-shrink: 0;
+  }
+
+  #top-toolbar .logo-text {
+    font-size: 30px;
+    color: var(--off-white);
+    letter-spacing: -1.5px;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  #version-badge {
+    font-size: 11px;
+    color: var(--dark-red);
+    font-family: 'Courier New', monospace;
+    font-weight: 900;
+    background: var(--black);
+    padding: 4px 10px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+    margin-top: 3px;
+  }
+
+  .header-logo {
+    height: 38px;
+    margin-left: auto;
+  }
+
+  /* ── Tab bar ── */
+  #tab-bar {
+    display: flex;
+    background: #111;
+    border-bottom: 2px solid var(--grey);
+    flex-shrink: 0;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 12px;
+    background: none;
+    border: none;
+    color: #666;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .tab-btn.active {
+    color: var(--off-white);
+    border-bottom-color: var(--dark-red);
+  }
+
+  /* ── Content area ── */
+  #content {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    min-height: 0;
+  }
+
+  .tab-panel {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    display: none;
+  }
+
+  .tab-panel.active { display: block; }
+
+  /* ── Rig ── */
+  #rig-container {
+    width: 100%;
+    aspect-ratio: 3 / 5;
+    background: radial-gradient(ellipse 60% 75% at 50% 50%, #2a2a2a 0%, var(--black) 100%);
+    position: relative;
+    border-bottom: 2px solid var(--grey);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  #vehicle-aerial {
+    height: 48%;
+    width: auto;
+    opacity: 0.9;
+    z-index: 1;
+  }
+
+  #camera-indicator {
+    position: absolute;
+    width: 52px;
+    height: 52px;
+    transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  #camera-icon { width: 100%; height: auto; }
+
+  /* ── Panel header ── */
+  .panel-header {
+    padding: 10px 16px;
+    background: var(--dark-red);
+    border-bottom: 1px solid var(--black);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--off-white);
+    font-weight: 900;
+  }
+
+  /* ── Form ── */
+  .form-section { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+
+  label {
+    font-size: 11px;
+    color: #999;
+    text-transform: uppercase;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+  }
+
+  input, select {
+    background: var(--grey);
+    border: 1px solid var(--border-color);
+    color: var(--off-white);
+    padding: 13px 14px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: inherit;
+    outline: none;
+    width: 100%;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  input:focus, select:focus { border-color: var(--dark-red); }
+
+  /* ── Toggle grid ── */
+  .toggle-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    background: var(--grey);
+    padding: 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+  }
+
+  .checkbox-group { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .checkbox-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    accent-color: var(--dark-red);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .checkbox-group label {
+    cursor: pointer;
+    color: var(--off-white);
+    text-transform: none;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+
+  /* ── Generate button (tab 1 bottom) ── */
+  #go-to-prompt {
+    margin: 0 16px 20px;
+    width: calc(100% - 32px);
+    padding: 16px;
+    background: var(--dark-red);
+    color: var(--off-white);
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  #go-to-prompt:active { background: #b30000; }
+
+  /* ── Prompt panel header row ── */
+  .prompt-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--dark-red);
+    border-bottom: 1px solid var(--black);
+    padding: 0 12px 0 0;
+  }
+
+  .panel-header-text {
+    padding: 10px 16px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--off-white);
+    font-weight: 900;
+  }
+
+  .btn-copy-inline {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--off-white);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+
+  .btn-copy-inline:active { background: rgba(0,0,0,0.6); }
+
+  /* ── Output panel ── */
+  #output-area {
+    padding: 20px 16px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    color: var(--off-white);
+    line-height: 1.8;
+    font-size: 15px;
+    font-weight: 700;
+    white-space: pre-wrap;
+    min-height: 200px;
+  }
+
+  #cursor {
+    display: inline-block;
+    width: 10px;
+    height: 18px;
+    background: var(--dark-red);
+    animation: blink 1s infinite;
+    vertical-align: middle;
+  }
+
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ── Bottom action bar (prompt tab) ── */
+  #action-bar {
+    position: sticky;
+    bottom: 0;
+    padding: 12px 16px;
+    background: var(--grey);
+    border-top: 3px solid var(--dark-red);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  #status-msg {
+    font-size: 11px;
+    color: #666;
+    font-weight: 900;
+    text-transform: uppercase;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .btn {
+    padding: 13px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 900;
+    font-size: 13px;
+    font-family: inherit;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .btn-primary { background: var(--dark-red); color: var(--off-white); }
+  .btn-primary:active { background: #b30000; }
+
+  .btn-outline {
+    background: transparent;
+    border: 2px solid var(--dark-red);
+    color: var(--off-white);
+  }
+  .btn-outline:active { background: var(--dark-red); }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <div id="top-toolbar">
+    <span class="logo-text">Carbonography</span>
+    <span id="version-badge">v1.6</span>
+    <img class="header-logo"
+         src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/carbonography-logo.png"
+         alt="Carbonography Logo">
+  </div>
+
+  <div id="tab-bar">
+    <button class="tab-btn active" id="tab-studio" onclick="switchTab('studio')">Studio</button>
+    <button class="tab-btn" id="tab-prompt" onclick="switchTab('prompt')">Prompt</button>
+  </div>
+
+  <div id="content">
+
+    <!-- Tab 1: Studio controls -->
+    <div class="tab-panel active" id="panel-studio">
+
+      <!-- Camera perspective sits above the rig so changes are immediately visible -->
+      <div id="angle-bar">
+        <label for="angle">Camera Perspective</label>
+        <select id="angle">
+          <option value="Front 3/4 hero shot"                   data-x="90"   data-y="-160" data-rot="135">Hero Shot (Front 3/4)</option>
+          <option value="Low-slung side profile"                 data-x="120"  data-y="0"    data-rot="180">Side Profile (Passenger)</option>
+          <option value="Aggressive rear 3/4"                   data-x="90"   data-y="160"  data-rot="225">Rear 3/4 View</option>
+          <option value="Crouching low-angle front center shot" data-x="0"    data-y="-190" data-rot="90" >Front Center (Crouched)</option>
+          <option value="Crouching low-angle rear center shot"  data-x="0"    data-y="190"  data-rot="270">Rear Center (Crouched)</option>
+          <option value="Rear side angle shot"                  data-x="-90"  data-y="160"  data-rot="315">Rear Side Angle (Driver Rear)</option>
+          <option value="Top-down bird's eye view"              data-x="0"    data-y="0"    data-rot="90" >Top Down</option>
+        </select>
+      </div>
+
+      <div id="rig-container">
+        <img id="vehicle-aerial"
+             src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/car-above.png"
+             alt="Vehicle top-down view">
+        <div id="camera-indicator">
+          <img id="camera-icon"
+               src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/camera.png"
+               alt="Camera position">
+        </div>
+      </div>
+
+      <div class="panel-header">Vehicle</div>
+      <div class="form-section">
+        <div class="form-group">
+          <label for="model">Vehicle Model</label>
+          <input type="text" id="model" placeholder="Porsche 911 GT3 RS" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="panel-header">Studio Controls</div>
+      <div class="form-section">
+
+        <div class="form-group">
+          <label for="lighting">Lighting</label>
+          <select id="lighting">
+            <option value="Daytime, bright natural sunlight with harsh shadows">Daytime</option>
+            <option value="Nighttime, cinematic street lighting and neon glows">Nighttime</option>
+            <option value="Sunrise, golden hour orange light and soft shadows">Sunrise</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="wheelSize">Wheel Diameter</label>
+          <select id="wheelSize"></select>
+        </div>
+
+        <div class="toggle-grid">
+          <div class="checkbox-group"><input type="checkbox" id="lightsOn"><label for="lightsOn">Headlights On</label></div>
+          <div class="checkbox-group"><input type="checkbox" id="motion"><label for="motion">Wheel Motion</label></div>
+          <div class="checkbox-group"><input type="checkbox" id="convertible"><label for="convertible">Convertible</label></div>
+          <div class="checkbox-group"><input type="checkbox" id="lowered"><label for="lowered">Lowered</label></div>
+          <div class="checkbox-group"><input type="checkbox" id="race"><label for="race">Race Variant</label></div>
+          <div class="checkbox-group"><input type="checkbox" id="tint"><label for="tint">Window Tint</label></div>
+          <div class="checkbox-group"><input type="checkbox" id="leather"><label for="leather">Leather Interior</label></div>
+        </div>
+
+      </div>
+
+      <button id="go-to-prompt" onclick="switchTab('prompt')">View Prompt →</button>
+
+    </div><!-- /#panel-studio -->
+
+    <!-- Tab 2: Prompt output -->
+    <div class="tab-panel" id="panel-prompt">
+      <div class="prompt-header">
+        <span class="panel-header-text">Generated Image Prompt</span>
+        <button class="btn-copy-inline" id="copyBtnInline">Copy Prompt</button>
+      </div>
+      <div id="output-area">Initialize Carbonography System...<span id="cursor"></span></div>
+      <div id="action-bar">
+        <div id="status-msg">CARBONOGRAPHY // READY</div>
+        <button class="btn btn-outline" id="exportBtn">Export</button>
+        <button class="btn btn-primary" id="copyBtn">Copy</button>
+      </div>
+    </div>
+
+  </div><!-- /#content -->
+
+</div><!-- /#app -->
+
+<script>
+  const WHEEL_MIN = 13;
+  const WHEEL_MAX = 22;
+  const STATUS_RESET_MS = 2000;
+
+  const $ = id => document.getElementById(id);
+
+  let currentPrompt = '';
+
+  // ── Wheel options ──────────────────────────────────────────────────────────
+  (function populateWheels() {
+    const sel = $('wheelSize');
+    for (let i = WHEEL_MIN; i <= WHEEL_MAX; i++) {
+      const opt = document.createElement('option');
+      opt.value = `${i}-inch`;
+      opt.textContent = `${i}" Alloy`;
+      sel.appendChild(opt);
+    }
+  })();
+
+  // ── Tab switching ──────────────────────────────────────────────────────────
+  function switchTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    $('panel-' + name).classList.add('active');
+    $('tab-' + name).classList.add('active');
+  }
+
+  // ── Camera indicator ───────────────────────────────────────────────────────
+  function updateCameraIndicator(opt) {
+    const x   = parseFloat(opt.getAttribute('data-x'));
+    const y   = parseFloat(opt.getAttribute('data-y'));
+    const rot = parseFloat(opt.getAttribute('data-rot')) + 90;
+    $('camera-indicator').style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg)`;
+  }
+
+  // ── Prompt builder ─────────────────────────────────────────────────────────
+  function buildPrompt() {
+    const model    = $('model').value.trim() || '[VEHICLE]';
+    const lighting = $('lighting').value;
+    const wheel    = $('wheelSize').value;
+    const angleEl  = $('angle');
+    const angle    = angleEl.value;
+    const interior = $('leather').checked ? 'luxurious quilted leather' : 'performance textile';
+
+    const mods = [
+      $('lightsOn').checked    && 'headlights and taillights turned on with realistic bloom',
+      $('motion').checked      && 'motion-blurred spinning wheels',
+      $('convertible').checked && 'convertible top retracted',
+      $('lowered').checked     && 'slammed lowered suspension',
+      $('race').checked        && 'racing-specification aero, widebody kit, and rear wing',
+      $('tint').checked        && 'limo-style dark tinted windows',
+    ].filter(Boolean);
+
+    updateCameraIndicator(angleEl.options[angleEl.selectedIndex]);
+
+    let prompt  = `>> CARBONOGRAPHY-V1.6-STRING\n`;
+    prompt     += `>> PERSPECTIVE: ${angle.toUpperCase()}\n\n`;
+    prompt     += `A professional automotive studio photograph of a ${model}. `;
+    prompt     += `The vehicle is captured from a ${angle}, emphasizing the ${wheel} custom rims. `;
+    prompt     += `The lighting setup is ${lighting}. `;
+    if (mods.length) prompt += `Vehicle features include ${mods.join(', ')}. `;
+    prompt     += `Visible interior showcases ${interior} craftsmanship. `;
+    prompt     += `High-end commercial quality, 8k resolution, Unreal Engine 5.4 render style, ray-traced reflections, sharp focus, vibrant colors, bokeh background.`;
+
+    return prompt;
+  }
+
+  // ── Render ─────────────────────────────────────────────────────────────────
+  function autoGenerate() {
+    currentPrompt = buildPrompt();
+    const output = $('output-area');
+    output.textContent = currentPrompt;
+    const cursor = document.createElement('span');
+    cursor.id = 'cursor';
+    output.appendChild(cursor);
+  }
+
+  // ── Status flash ───────────────────────────────────────────────────────────
+  function flashStatus(msg) {
+    const el = $('status-msg');
+    el.textContent = msg;
+    setTimeout(() => { el.textContent = 'CARBONOGRAPHY // READY'; }, STATUS_RESET_MS);
+  }
+
+  // ── Copy ───────────────────────────────────────────────────────────────────
+  function doCopy() {
+    if (!currentPrompt) return;
+    navigator.clipboard.writeText(currentPrompt)
+      .then(() => flashStatus('COPIED!'))
+      .catch(() => flashStatus('COPY FAILED'));
+  }
+
+  $('copyBtn').addEventListener('click', doCopy);
+  $('copyBtnInline').addEventListener('click', doCopy);
+
+  // ── Export ─────────────────────────────────────────────────────────────────
+  $('exportBtn').addEventListener('click', () => {
+    if (!currentPrompt) { flashStatus('NOTHING TO EXPORT'); return; }
+    const blob = new Blob([currentPrompt], { type: 'text/plain' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `Carbonography_${new Date().toISOString().slice(0, 10)}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  // ── Bind controls ──────────────────────────────────────────────────────────
+  ['model', 'lighting', 'wheelSize', 'angle',
+   'lightsOn', 'motion', 'convertible', 'lowered', 'race', 'tint', 'leather'
+  ].forEach(id => {
+    const el = $(id);
+    el.addEventListener(el.type === 'checkbox' ? 'change' : 'input', autoGenerate);
+  });
+
+  // ── Init ───────────────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', autoGenerate);
+</script>
+</body>
+</html>
