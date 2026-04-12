@@ -4,270 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Carbonography | Vehicle Image Generator v1.6</title>
-<style>
-  :root {
-    --dark-red: #8b0000;
-    --off-white: #f5f5f5;
-    --grey: #2c2c2c;
-    --black: #000000;
-    --border-color: #444;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'Inter', 'Arial Black', sans-serif;
-    font-weight: 700;
-    background: var(--black);
-    color: var(--off-white);
-    height: 100vh;
-    overflow: hidden;
-    font-size: 16px;
-  }
-
-  #app { display: flex; flex-direction: column; height: 100vh; }
-
-  /* ── Toolbar ── */
-  #top-toolbar {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 22px 40px;
-    background: var(--grey);
-    border-bottom: 3px solid var(--dark-red);
-    flex-shrink: 0;
-  }
-
-  #top-toolbar .logo-text {
-    font-size: 56px;
-    color: var(--off-white);
-    letter-spacing: -3px;
-    font-weight: 900;
-    text-transform: uppercase;
-  }
-
-  #version-badge {
-    font-size: 13px;
-    color: var(--dark-red);
-    font-family: 'Courier New', monospace;
-    font-weight: 900;
-    background: var(--black);
-    padding: 5px 12px;
-    border-radius: 2px;
-    letter-spacing: 1px;
-    margin-top: 6px;
-  }
-
-  .header-logo {
-    height: 90px;
-    margin-left: auto;
-  }
-
-  /* ── Layout ── */
-  #main { display: flex; flex: 1; min-height: 0; }
-
-  #left {
-    width: 500px;
-    display: flex;
-    flex-direction: column;
-    border-right: 2px solid var(--grey);
-    background: #0f0f0f;
-    overflow: hidden;
-  }
-
-  #form-scroll {
-    flex: 1;
-    overflow-y: auto;
-  }
-
-  #right {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background: var(--black);
-    min-width: 0;
-  }
-
-  /* ── Controls strip across top of right panel ── */
-  #controls-panel {
-    flex-shrink: 0;
-    border-bottom: 2px solid var(--grey);
-  }
-
-  .controls-inner {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding: 20px 25px;
-    align-items: flex-end;
-  }
-
-  .controls-inner .form-group { min-width: 140px; }
-  .controls-inner .form-group.wide { min-width: 220px; flex: 1; }
-
-  .toggle-inline {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 20px;
-    align-items: center;
-    border-left: 2px solid var(--border-color);
-    padding-left: 20px;
-    flex: 1;
-  }
-
-  /* ── Panel header ── */
-  .panel-header {
-    padding: 15px 20px;
-    background: var(--dark-red);
-    border-bottom: 1px solid var(--black);
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--off-white);
-    font-weight: 900;
-  }
-
-  /* ── Rig / camera preview ── */
-  #rig-container {
-    width: 100%;
-    aspect-ratio: 3 / 4;
-    background: radial-gradient(ellipse 60% 75% at 50% 50%, #2a2a2a 0%, var(--black) 100%);
-    position: relative;
-    border-bottom: 2px solid var(--grey);
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-
-  #vehicle-aerial {
-    height: 52%;
-    width: auto;
-    opacity: 0.9;
-    z-index: 1;
-  }
-
-  #camera-indicator {
-    position: absolute;
-    width: 70px;
-    height: 70px;
-    transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-    z-index: 10;
-  }
-
-  #camera-icon { width: 100%; height: auto; }
-
-  .form-group { display: flex; flex-direction: column; gap: 10px; }
-  .full-width { grid-column: span 2; }
-
-  label {
-    font-size: 13px;
-    color: #999;
-    text-transform: uppercase;
-    font-weight: 900;
-    letter-spacing: 1.5px;
-  }
-
-  input, select {
-    background: var(--grey);
-    border: 1px solid var(--border-color);
-    color: var(--off-white);
-    padding: 15px;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 700;
-    font-family: inherit;
-    outline: none;
-    transition: border-color 0.3s, background 0.3s;
-  }
-
-  input:focus, select:focus {
-    border-color: var(--dark-red);
-    background: #333;
-  }
-
-  .checkbox-group { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-  .checkbox-group input { width: 18px; height: 18px; accent-color: var(--dark-red); cursor: pointer; }
-  .checkbox-group label {
-    cursor: pointer;
-    color: var(--off-white);
-    text-transform: none;
-    font-size: 14px;
-    font-weight: 800;
-  }
-
-  /* ── Output ── */
-  #output-area {
-    flex: 1;
-    padding: 60px;
-    font-family: 'Consolas', 'Monaco', monospace;
-    color: var(--off-white);
-    line-height: 1.8;
-    font-size: 22px;
-    font-weight: 700;
-    white-space: pre-wrap;
-    overflow-y: auto;
-    border-left: 1px solid var(--grey);
-  }
-
-  /* ── Bottom bar ── */
-  #bottom-bar {
-    padding: 25px 40px;
-    background: var(--grey);
-    border-top: 3px solid var(--dark-red);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  #bottom-bar-right {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-  }
-
-  .btn {
-    padding: 16px 32px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-weight: 900;
-    font-size: 15px;
-    font-family: inherit;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    transition: background 0.2s, transform 0.2s;
-  }
-
-  .btn-primary { background: var(--dark-red); color: var(--off-white); }
-  .btn-primary:hover { background: #b30000; transform: translateY(-2px); }
-
-  .btn-outline { background: transparent; border: 2px solid var(--dark-red); color: var(--off-white); }
-  .btn-outline:hover { background: var(--dark-red); }
-
-  #status-msg {
-    font-size: 13px;
-    color: #777;
-    font-weight: 900;
-    text-transform: uppercase;
-  }
-
-  #cursor {
-    display: inline-block;
-    width: 14px;
-    height: 24px;
-    background: var(--dark-red);
-    animation: blink 1s infinite;
-    vertical-align: middle;
-  }
-
-  @keyframes blink { 50% { opacity: 0; } }
-</style>
+<link rel="stylesheet" href="/assets/global.css">
+<link rel="stylesheet" href="/assets/desktop.css">
 </head>
 <body>
 
@@ -355,10 +93,57 @@
           </div>
 
         </div><!-- /.controls-inner -->
+
+        <!-- Output spec row -->
+        <div class="controls-inner output-spec-row">
+
+          <div class="form-group">
+            <label for="outputType">Output Type</label>
+            <select id="outputType">
+              <option value="image">Image</option>
+              <option value="video">Video</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="orientation">Orientation</label>
+            <select id="orientation">
+              <option value="landscape">Landscape</option>
+              <option value="portrait">Portrait</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="resolution">Resolution</label>
+            <select id="resolution">
+              <option value="standard">Standard — 1080p</option>
+              <option value="high">High — 4K</option>
+              <option value="ultra">Ultra — 8K</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="quality">Detail Level</label>
+            <select id="quality">
+              <option value="standard">Standard</option>
+              <option value="high">High Detail</option>
+              <option value="extreme">Extreme Detail</option>
+            </select>
+          </div>
+
+          <div class="toggle-inline" id="video-options" style="display:none;">
+            <div class="checkbox-group"><input type="checkbox" id="slowmo"><label for="slowmo">Slow Motion</label></div>
+            <div class="checkbox-group"><input type="checkbox" id="dolly"><label for="dolly">Dolly Move</label></div>
+            <div class="checkbox-group"><input type="checkbox" id="orbit"><label for="orbit">Orbit Shot</label></div>
+            <div class="checkbox-group"><input type="checkbox" id="drone"><label for="drone">Drone Flyover</label></div>
+          </div>
+
+        </div><!-- /.output-spec-row -->
+
       </div><!-- /#controls-panel -->
 
       <!-- Output -->
-      <div class="panel-header">Generated Image Prompt</div>
+      <div class="panel-header" id="output-panel-header">Generated Image Prompt</div>
       <div id="output-area">Initialize Carbonography System...<span id="cursor"></span></div>
 
     </div><!-- /#right -->
@@ -379,7 +164,6 @@
   const WHEEL_MIN = 13;
   const WHEEL_MAX = 22;
   const STATUS_RESET_MS = 2000;
-  const ASSET_BASE = 'https://raw.githubusercontent.com/aherndavid/carbonography/main/assets';
 
   const $ = id => document.getElementById(id);
 
@@ -396,6 +180,41 @@
     }
   })();
 
+  // ── Output type / orientation / resolution maps ───────────────────────────
+  const RESOLUTION_MAP = {
+    standard: { label: '1920x1080',  text: '1080p Full HD resolution' },
+    high:     { label: '3840x2160',  text: '4K Ultra HD resolution' },
+    ultra:    { label: '7680x4320',  text: '8K Ultra HD resolution' },
+  };
+
+  const QUALITY_MAP = {
+    standard: 'sharp focus, clean render, commercial quality',
+    high:     'hyper-detailed surfaces, micro-texture realism, studio-grade sharpness, HDR tonal range',
+    extreme:  'extreme hyper-realism, every surface pore and scratch visible, ultra-sharp micro detail, museum-quality render, reference-grade photorealism',
+  };
+
+  const ORIENTATION_MAP = {
+    landscape: { label: 'landscape', ratio: '16:9 aspect ratio, horizontal composition' },
+    portrait:  { label: 'portrait',  ratio: '9:16 aspect ratio, vertical composition' },
+  };
+
+  const VIDEO_MAP = {
+    slowmo: 'ultra slow-motion capture at 240fps',
+    dolly:  'cinematic dolly push-in camera move',
+    orbit:  '360-degree orbit shot around the vehicle',
+    drone:  'sweeping drone flyover aerial cinematography',
+  };
+
+  // ── Show/hide video options on type change ─────────────────────────────────
+  $('outputType').addEventListener('change', () => {
+    const isVideo = $('outputType').value === 'video';
+    $('video-options').style.display = isVideo ? 'flex' : 'none';
+    $('output-panel-header').textContent = isVideo
+      ? 'Generated Video Prompt'
+      : 'Generated Image Prompt';
+    autoGenerate();
+  });
+
   // ── Camera indicator ───────────────────────────────────────────────────────
   function updateCameraIndicator(opt) {
     const x   = parseFloat(opt.getAttribute('data-x'));
@@ -406,12 +225,17 @@
 
   // ── Prompt builder ─────────────────────────────────────────────────────────
   function buildPrompt() {
-    const model    = $('model').value.trim() || '[VEHICLE]';
-    const lighting = $('lighting').value;
-    const wheel    = $('wheelSize').value;
-    const angleEl  = $('angle');
-    const angle    = angleEl.value;
-    const interior = $('leather').checked ? 'luxurious quilted leather' : 'performance textile';
+    const model       = $('model').value.trim() || '[VEHICLE]';
+    const lighting    = $('lighting').value;
+    const wheel       = $('wheelSize').value;
+    const angleEl     = $('angle');
+    const angle       = angleEl.value;
+    const interior    = $('leather').checked ? 'luxurious quilted leather' : 'performance textile';
+    const outputType  = $('outputType').value;
+    const orientation = ORIENTATION_MAP[$('orientation').value];
+    const resolution  = RESOLUTION_MAP[$('resolution').value];
+    const quality     = QUALITY_MAP[$('quality').value];
+    const isVideo     = outputType === 'video';
 
     const mods = [
       $('lightsOn').checked    && 'headlights and taillights turned on with realistic bloom',
@@ -422,16 +246,40 @@
       $('tint').checked        && 'limo-style dark tinted windows',
     ].filter(Boolean);
 
+    const videoMods = isVideo
+      ? ['slowmo','dolly','orbit','drone']
+          .filter(id => $(id).checked)
+          .map(id => VIDEO_MAP[id])
+      : [];
+
     updateCameraIndicator(angleEl.options[angleEl.selectedIndex]);
 
-    let prompt = `>> CARBONOGRAPHY-V1.6-STRING\n`;
-    prompt    += `>> PERSPECTIVE: ${angle.toUpperCase()}\n\n`;
-    prompt    += `A professional automotive studio photograph of a ${model}. `;
-    prompt    += `The vehicle is captured from a ${angle}, emphasizing the ${wheel} custom rims. `;
-    prompt    += `The lighting setup is ${lighting}. `;
+    const typeLabel = isVideo ? 'VIDEO' : 'IMAGE';
+
+    let prompt  = `>> CARBONOGRAPHY-V1.6-STRING\n`;
+    prompt     += `>> TYPE: ${typeLabel} | ORIENTATION: ${orientation.label.toUpperCase()} | RESOLUTION: ${resolution.label}\n`;
+    prompt     += `>> PERSPECTIVE: ${angle.toUpperCase()}\n\n`;
+
+    if (isVideo) {
+      prompt += `A cinematic automotive video of a ${model}. `;
+    } else {
+      prompt += `A professional automotive studio photograph of a ${model}. `;
+    }
+
+    prompt += `The vehicle is captured from a ${angle}, emphasizing the ${wheel} custom rims. `;
+    prompt += `${orientation.ratio}. `;
+    prompt += `The lighting setup is ${lighting}. `;
+
     if (mods.length) prompt += `Vehicle features include ${mods.join(', ')}. `;
-    prompt    += `Visible interior showcases ${interior} craftsmanship. `;
-    prompt    += `High-end commercial quality, 8k resolution, Unreal Engine 5.4 render style, ray-traced reflections, sharp focus, vibrant colors, bokeh background.`;
+    if (videoMods.length) prompt += `Camera and motion direction: ${videoMods.join(', ')}. `;
+
+    prompt += `Visible interior showcases ${interior} craftsmanship. `;
+
+    if (isVideo) {
+      prompt += `Rendered at ${resolution.label}, ${quality}, Unreal Engine 5.4 cinematic render, ray-traced global illumination, motion blur, depth of field, photorealistic materials, cinematic colour grade.`;
+    } else {
+      prompt += `${resolution.label} output, ${quality}, Unreal Engine 5.4 render style, ray-traced reflections, vibrant colors, bokeh background.`;
+    }
 
     return prompt;
   }
@@ -479,8 +327,9 @@
   });
 
   // ── Bind all controls ──────────────────────────────────────────────────────
-  ['model', 'lighting', 'wheelSize', 'angle',
-   'lightsOn', 'motion', 'convertible', 'lowered', 'race', 'tint', 'leather'
+  ['model', 'lighting', 'wheelSize', 'angle', 'orientation', 'resolution', 'quality',
+   'lightsOn', 'motion', 'convertible', 'lowered', 'race', 'tint', 'leather',
+   'slowmo', 'dolly', 'orbit', 'drone'
   ].forEach(id => {
     const el = $(id);
     const event = el.type === 'checkbox' ? 'change' : 'input';
