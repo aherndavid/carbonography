@@ -29,7 +29,6 @@
     <!-- Tab 1: Studio controls -->
     <div class="tab-panel active" id="panel-studio">
 
-      <!-- Camera perspective sits above the rig so changes are immediately visible -->
       <div id="angle-bar">
         <label for="angle">Camera Perspective</label>
         <select id="angle">
@@ -118,7 +117,7 @@
   const WHEEL_MAX = 22;
   const STATUS_RESET_MS = 2000;
 
-  // Design baseline: the rig dimensions these data-x/y offsets were authored against
+  // Design baseline: the rig dimensions the data-x/y offsets were authored against
   const RIG_BASELINE_W = 380;
   const RIG_BASELINE_H = 380;
 
@@ -161,7 +160,7 @@
       `translate(${xRaw * scaleX}px, ${yRaw * scaleY}px) rotate(${rot}deg)`;
   }
 
-  // Re-position camera icon whenever the viewport resizes or orientation changes
+  // Re-position camera icon on resize / orientation change
   window.addEventListener('resize', () => {
     const angleEl = $('angle');
     updateCameraIndicator(angleEl.options[angleEl.selectedIndex]);
