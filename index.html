@@ -608,18 +608,30 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
              alt="Top view">
         <div id="camera-indicator">
           <img id="camera-icon"
-               src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/camera2.png"
+               src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/camera.png"
                alt="Camera">
         </div>
         <img id="camera-aerial-overlay"
              src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/camera-aerial.png"
              alt="Aerial camera"
              style="position:absolute;width:72px;opacity:0;transition:opacity 0.3s;pointer-events:none;">
+        <img id="driver-overlay"
+             src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/man.png"
+             alt="Driver"
+             style="position:absolute;bottom:0;right:24px;height:220px;opacity:0;transition:opacity 0.3s;pointer-events:none;object-fit:contain;">
       </div>
 
       <div>
         <div class="sidebar-label" style="margin-bottom:8px;" id="sidebar-vehicle-label">Vehicle Model</div>
         <input type="text" id="model" class="vehicle-input" placeholder="Porsche 911 GT3 RS">
+      </div>
+
+      <div>
+        <div class="sidebar-label" style="margin-bottom:8px;">Driver</div>
+        <label class="toggle-item" style="width:100%;cursor:pointer;">
+          <input type="checkbox" id="includeDriver">
+          <label for="includeDriver" style="cursor:pointer;">Include Driver Figure</label>
+        </label>
       </div>
     </div>
 
@@ -1429,7 +1441,9 @@ function buildSinglePhotoPrompt() {
   p += `Lighting: ${lighting.prompt}. Background: ${locStr}. `;
   if (hasWeather) p += `Weather: ${weather.prompt}. `;
   if (hasPlate) p += `Vehicle bears a legible ${PLATE_STYLES[plateStyle].label} reading "${plateChars}", photorealistic characters. `;
+  const hasDriver = $('includeDriver').checked;
   if (mods.length) p += `Specification: ${mods.join(', ')}. `;
+  if (hasDriver) p += `A male racing driver in full race suit and helmet stands beside the vehicle, posed naturally, sharp focus, photorealistic. `;
   if (videoMods.length) p += `Camera: ${videoMods.join(', ')}. `;
   if (overlayText && fontVal) p += `Overlay text "${overlayText}" in ${fontVal} typeface, bold, composited into image. `;
   p += isVideo
@@ -1555,7 +1569,8 @@ function resetAll() {
   $('caric-mood').value=$('caric-mood').options[0].value;
   $('caric-bg').value=$('caric-bg').options[0].value;
   $('outputType').value='image'; $('orientation').value='landscape'; $('resolution').value='standard'; $('quality').value='standard';
-  ['lightsOn','motion','convertible','lowered','race','tint','leather','slowmo','dolly','orbit','drone','caric-exaggerate','caric-speedlines','caric-flames','caric-smoke'].forEach(id=>{$(id).checked=false;});
+  ['lightsOn','motion','convertible','lowered','race','tint','leather','slowmo','dolly','orbit','drone','caric-exaggerate','caric-speedlines','caric-flames','caric-smoke','includeDriver'].forEach(id=>{$(id).checked=false;});
+  $('driver-overlay').style.opacity = '0';
   $('custom-location-group').style.display='none'; $('lu-custom-location-group').style.display='none';
   $('video-options-row').style.display='none'; $('font-preview-wrap').style.display='none'; $('plate-chars-group').style.display='none';
   ['acc-name-1','acc-name-2','acc-name-3'].forEach((id,i) => { $(id).textContent = ['Ferrari 488 GTB','Lamborghini Huracán','Porsche 911 GT3 RS'][i]; });
@@ -1578,6 +1593,11 @@ $('modal').addEventListener('click', e => { if (e.target === $('modal')) $('moda
 });
 
 $('model').addEventListener('input', autoGenerate);
+
+$('includeDriver').addEventListener('change', () => {
+  $('driver-overlay').style.opacity = $('includeDriver').checked ? '1' : '0';
+  autoGenerate();
+});
 
 document.addEventListener('DOMContentLoaded', () => { checkConflicts(); autoGenerate(); });
 </script>
