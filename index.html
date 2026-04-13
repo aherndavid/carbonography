@@ -111,7 +111,7 @@ body { font-family: var(--font-ui); color: var(--text); min-height: 100vh; }
 #main { display: flex; flex: 1; overflow: hidden; }
 
 #sidebar {
-  width: 280px;
+  width: 320px;
   flex-shrink: 0;
   border-right: 2px solid var(--red);
   background: rgba(0,0,0,0.55);
@@ -129,20 +129,21 @@ body { font-family: var(--font-ui); color: var(--text); min-height: 100vh; }
   align-items: center;
   justify-content: center;
   position: relative;
-  height: 260px;
-  overflow: hidden;
+  height: 600px;
+  overflow: visible;
 }
 
-#vehicle-aerial { width: 140px; opacity: 0.95; }
+#vehicle-aerial { width: 130px; opacity: 0.95; pointer-events: none; }
 
 #camera-indicator {
   position: absolute;
-  width: 36px;
-  height: 36px;
+  width: 48px;
+  height: 48px;
   transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+  pointer-events: none;
 }
 
-#camera-icon { width: 36px; }
+#camera-icon { width: 48px; }
 
 .sidebar-label {
   font-size: 10px;
@@ -571,6 +572,10 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
                src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/camera.png"
                alt="Camera">
         </div>
+        <img id="camera-aerial-overlay"
+             src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/camera-aerial.png"
+             alt="Aerial camera"
+             style="position:absolute;width:72px;opacity:0;transition:opacity 0.3s;pointer-events:none;">
       </div>
 
       <div>
@@ -1352,8 +1357,22 @@ $('outputType').addEventListener('change', () => {
 // ── Camera indicator ─────────────────────────────────────────────────────────
 
 function updateCameraIndicator(opt) {
-  const x = parseFloat(opt.getAttribute('data-x')) * 1.4, y = parseFloat(opt.getAttribute('data-y')) * 1.4, rot = parseFloat(opt.getAttribute('data-rot')) + 90;
-  $('camera-indicator').style.transform = `translate(${x}px,${y}px) rotate(${rot}deg)`;
+  const val = opt.value;
+  const isAerial = val === "Top-down bird's eye view";
+  const indicator = $('camera-indicator');
+  const aerialOverlay = $('camera-aerial-overlay');
+
+  if (isAerial) {
+    indicator.style.opacity = '0';
+    aerialOverlay.style.opacity = '1';
+  } else {
+    const x = parseFloat(opt.getAttribute('data-x')) * 0.9;
+    const y = parseFloat(opt.getAttribute('data-y')) * 0.9;
+    const rot = parseFloat(opt.getAttribute('data-rot')) + 90;
+    indicator.style.transform = `translate(${x}px,${y}px) rotate(${rot}deg)`;
+    indicator.style.opacity = '1';
+    aerialOverlay.style.opacity = '0';
+  }
 }
 
 // ── Prompt builders ──────────────────────────────────────────────────────────
