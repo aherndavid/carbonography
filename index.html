@@ -334,6 +334,68 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
 
 #font-preview { font-size: 26px; color: #f5f5f5; letter-spacing: 2px; text-transform: uppercase; }
 
+/* ── SHOOT MODE COMPACT ── */
+.shoot-mode-bar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: #0d0d0d;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.shoot-mode-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: all 0.15s;
+}
+
+.shoot-mode-btn + .shoot-mode-btn {
+  border-left: 1px solid var(--border);
+}
+
+.shoot-mode-btn:hover { background: #141414; color: var(--text); }
+.shoot-mode-btn.active { background: rgba(107,0,0,0.25); color: #f5f5f5; border-bottom: 2px solid var(--red); }
+.shoot-mode-icon { font-size: 14px; }
+
+/* ── SHOOT MODE SECTION ── */
+.shoot-mode-section {
+  background: #111;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.shoot-mode-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.shoot-mode-label {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
 /* ── ACCORDION (Lineup) ── */
 .accordion { display: flex; flex-direction: column; gap: 8px; }
 
@@ -396,29 +458,6 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
 .acc-body.open { max-height: 600px; }
 
 .acc-body-inner { padding: 16px; border-top: 1px solid var(--border); background: #111; display: flex; flex-direction: column; gap: 14px; }
-
-/* ── MODE SELECTOR (caricature) ── */
-.mode-row { display: flex; gap: 10px; }
-.mode-btn {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  padding: 14px 8px;
-  background: rgba(0,0,0,0.3);
-  border: 2px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text-dim);
-  cursor: pointer;
-  transition: all 0.15s;
-  font-family: var(--font-ui);
-}
-
-.mode-btn:hover { border-color: var(--border-bright); color: var(--text); }
-.mode-btn.active { border-color: var(--red); color: #f5f5f5; background: rgba(107,0,0,0.15); }
-.mode-icon { font-size: 20px; }
-.mode-label { font-size: 10px; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; text-align: center; }
 
 /* ── BOTTOM BAR ── */
 #bottom-bar {
@@ -590,18 +629,16 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
       <!-- ══════════════════════════════════ SINGLE PAGE ══════════════════════════════════ -->
       <div class="page active" id="page-single">
 
-        <!-- Shoot Mode -->
-        <div class="section">
-          <div class="section-header">Shoot Mode</div>
-          <div class="section-body">
-            <div class="mode-row">
-              <button class="mode-btn active" id="mode-photo" onclick="setShootMode('photo')">
-                <span class="mode-icon">📷</span>
-                <span class="mode-label">Photo Render</span>
+        <!-- Shoot Mode — compact inline bar -->
+        <div class="shoot-mode-section">
+          <div class="shoot-mode-header">
+            <span class="shoot-mode-label">Shoot Mode</span>
+            <div class="shoot-mode-bar" style="border:none;background:transparent;gap:4px;">
+              <button class="shoot-mode-btn active" id="mode-photo" onclick="setShootMode('photo')">
+                <span class="shoot-mode-icon">📷</span> Photo Render
               </button>
-              <button class="mode-btn" id="mode-caricature" onclick="setShootMode('caricature')">
-                <span class="mode-icon">🎨</span>
-                <span class="mode-label">Caricature / Art</span>
+              <button class="shoot-mode-btn" id="mode-caricature" onclick="setShootMode('caricature')">
+                <span class="shoot-mode-icon">🎨</span> Caricature / Art
               </button>
             </div>
           </div>
@@ -782,7 +819,7 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
           </div>
         </div>
 
-        <!-- Location & Weather (shared, hidden in caricature via its own bg) -->
+        <!-- Location & Weather -->
         <div id="location-block-single">
           <div class="section">
             <div class="section-header">Location, Weather &amp; Background</div>
@@ -1121,7 +1158,7 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
 
   <!-- BOTTOM BAR -->
   <div id="bottom-bar">
-    <div id="status-msg">CARBONOGRAPHY // READY</div>
+    <div id="status-msg">READY</div>
     <div id="bar-actions">
       <button class="btn btn-clear" id="clearBtn">✕ Clear</button>
       <button class="btn btn-outline" id="exportBtn">Export .TXT</button>
@@ -1151,8 +1188,6 @@ const WHEEL_MIN = 13, WHEEL_MAX = 22;
 let currentPrompt = '';
 let currentPage = 'single';
 let shootMode = 'photo';
-
-// ── Data maps ────────────────────────────────────────────────────────────────
 
 const LIGHTING_MAP = {
   'studio-high-key': { prompt: 'softbox lighting, high-key studio strobes, white fill cards, bright even illumination, clean specular highlights on bodywork', warnWith: { 'neon-night':'', 'london-street':'', 'racetrack':'', 'desert':'', 'golden-hour':'' }, label: 'Studio — High Key' },
@@ -1211,8 +1246,6 @@ const PLATE_STYLES = {
   custom: { label: 'custom-style number plate', previewId: 'plate-preview-custom' },
 };
 
-// ── Wheels ───────────────────────────────────────────────────────────────────
-
 (function populateWheels() {
   const sel = $('wheelSize');
   for (let i = WHEEL_MIN; i <= WHEEL_MAX; i++) {
@@ -1220,8 +1253,6 @@ const PLATE_STYLES = {
     opt.value = `${i}-inch`; opt.textContent = `${i}" Alloy`; sel.appendChild(opt);
   }
 })();
-
-// ── Page switching ───────────────────────────────────────────────────────────
 
 function switchPage(page) {
   currentPage = page;
@@ -1233,8 +1264,6 @@ function switchPage(page) {
   $('sidebar-vehicle-label').textContent = page === 'lineup' ? 'Hero / Reference' : 'Vehicle Model';
   autoGenerate();
 }
-
-// ── Shoot mode (single page) ─────────────────────────────────────────────────
 
 function setShootMode(mode) {
   shootMode = mode;
@@ -1248,16 +1277,12 @@ function setShootMode(mode) {
   autoGenerate();
 }
 
-// ── Accordion ────────────────────────────────────────────────────────────────
-
 function toggleAcc(trigger) {
   const body = trigger.nextElementSibling;
   const isOpen = trigger.classList.contains('open');
   trigger.classList.toggle('open', !isOpen);
   body.classList.toggle('open', !isOpen);
 }
-
-// ── Colour sync ──────────────────────────────────────────────────────────────
 
 function syncColour(pickerId, hexId, swatchId, onChange) {
   const picker = $(pickerId), hex = $(hexId);
@@ -1296,8 +1321,6 @@ function colourDesc(hex, name) {
   return name.trim() ? `${name.trim()} (hex ref ${h})` : `colour hex ${h}`;
 }
 
-// ── Conflict checks ──────────────────────────────────────────────────────────
-
 function checkConflicts() {
   const lightKey = $('lighting').value, locKey = $('location').value, weatherKey = $('weather').value;
   const lighting = LIGHTING_MAP[lightKey], weather = WEATHER_MAP[weatherKey];
@@ -1309,8 +1332,6 @@ function checkConflicts() {
   if (weather?.warnStudio && isStudio && weatherKey !== 'none') { wWarn.textContent = `⚠ Weather conflict: ${weather.label} doesn't work in a studio — choose an outdoor location.`; wWarn.style.display = 'block'; }
   else wWarn.style.display = 'none';
 }
-
-// ── Plate ────────────────────────────────────────────────────────────────────
 
 function updatePlatePreview() {
   const style = $('plateStyle').value, chars = $('plateChars').value.trim().toUpperCase();
@@ -1326,15 +1347,11 @@ function updatePlatePreview() {
 $('plateStyle').addEventListener('change', updatePlatePreview);
 $('plateChars').addEventListener('input', () => { $('plateChars').value = $('plateChars').value.toUpperCase(); updatePlatePreview(); });
 
-// ── Location / custom ────────────────────────────────────────────────────────
-
 $('location').addEventListener('change', () => { $('custom-location-group').style.display = $('location').value === 'custom' ? 'block' : 'none'; checkConflicts(); autoGenerate(); });
 $('lighting').addEventListener('change', () => { checkConflicts(); autoGenerate(); });
 $('weather').addEventListener('change',  () => { checkConflicts(); autoGenerate(); });
 $('customLocation').addEventListener('input', autoGenerate);
 $('lu-location').addEventListener('change', () => { $('lu-custom-location-group').style.display = $('lu-location').value === 'custom' ? 'block' : 'none'; autoGenerate(); });
-
-// ── Font preview ─────────────────────────────────────────────────────────────
 
 function updateFontPreview() {
   const sel = $('overlayFont'), family = sel.options[sel.selectedIndex].getAttribute('data-family'), text = $('overlayText').value.trim();
@@ -1346,22 +1363,17 @@ function updateFontPreview() {
 $('overlayFont').addEventListener('change', updateFontPreview);
 $('overlayText').addEventListener('input', updateFontPreview);
 
-// ── Video toggle ─────────────────────────────────────────────────────────────
-
 $('outputType').addEventListener('change', () => {
   const isVideo = $('outputType').value === 'video';
   $('video-options-row').style.display = isVideo ? 'grid' : 'none';
   autoGenerate();
 });
 
-// ── Camera indicator ─────────────────────────────────────────────────────────
-
 function updateCameraIndicator(opt) {
   const val = opt.value;
   const isAerial = val === "Top-down bird's eye view";
   const indicator = $('camera-indicator');
   const aerialOverlay = $('camera-aerial-overlay');
-
   if (isAerial) {
     indicator.style.opacity = '0';
     aerialOverlay.style.opacity = '1';
@@ -1374,8 +1386,6 @@ function updateCameraIndicator(opt) {
     aerialOverlay.style.opacity = '0';
   }
 }
-
-// ── Prompt builders ──────────────────────────────────────────────────────────
 
 function buildSinglePhotoPrompt() {
   const model     = $('model').value.trim() || '[VEHICLE]';
@@ -1407,7 +1417,7 @@ function buildSinglePhotoPrompt() {
   ].filter(Boolean);
   const videoMods = isVideo ? ['slowmo','dolly','orbit','drone'].filter(id => $(id).checked).map(id => VIDEO_MAP[id]) : [];
   updateCameraIndicator(angleEl.options[angleEl.selectedIndex]);
-  let p = `>> CARBONOGRAPHY-V2.0 | SINGLE CAR | ${isVideo ? 'VIDEO' : 'IMAGE'} | ${orient.label.toUpperCase()} | ${res.label}\n\n`;
+  let p = `>> V2.0 | SINGLE CAR | ${isVideo ? 'VIDEO' : 'IMAGE'} | ${orient.label.toUpperCase()} | ${res.label}\n\n`;
   p += isVideo ? `Cinematic automotive ${orient.label} video of a ${model}. ` : `Professional automotive ${orient.label} photograph of a ${model}. `;
   p += `Exterior finished in ${extC} with deep glossy clear coat, subsurface scattering visible through paint depth. `;
   p += `Interior trimmed in ${intC} ${interior}. `;
@@ -1441,7 +1451,7 @@ function buildCaricaturePrompt() {
   ].filter(Boolean);
   const overlayText = $('overlayText').value.trim(), fontSel = $('overlayFont');
   const fontVal = fontSel.value;
-  let p = `>> CARBONOGRAPHY-V2.0 | CARICATURE / ART | ${orient.label.toUpperCase()} | ${res.label}\n\n`;
+  let p = `>> V2.0 | CARICATURE / ART | ${orient.label.toUpperCase()} | ${res.label}\n\n`;
   p += `Illustrated artwork of a ${model} in a ${style} style. `;
   p += `The vehicle is painted in ${colour}. Mood and atmosphere: ${mood}. Background: ${bg}. `;
   if (effects.length) p += `Special effects: ${effects.join(', ')}. `;
@@ -1467,7 +1477,7 @@ function buildLineupPrompt() {
   const quality = QUALITY_MAP[$('quality').value]['photo'];
   const overlayText = $('lu-overlayText')?.value.trim() || '', fontSel = $('lu-overlayFont');
   const fontVal = fontSel?.value || '';
-  let p = `>> CARBONOGRAPHY-V2.0 | THREE CAR LINEUP | ${orient.label.toUpperCase()} | ${res.label}\n\n`;
+  let p = `>> V2.0 | THREE CAR LINEUP | ${orient.label.toUpperCase()} | ${res.label}\n\n`;
   p += `Professional automotive lineup photograph featuring three cars ${arr}. ${orient.ratio}. `;
   p += `Left position: a ${m1} finished in ${c1}, positioned in a ${a1}. `;
   p += `Centre position: a ${m2} finished in ${c2}, positioned in a ${a2}, slightly prominent as the hero vehicle. `;
@@ -1480,8 +1490,6 @@ function buildLineupPrompt() {
   return p;
 }
 
-// ── Main generate ─────────────────────────────────────────────────────────────
-
 function autoGenerate() {
   if (currentPage === 'single') {
     currentPrompt = shootMode === 'photo' ? buildSinglePhotoPrompt() : buildCaricaturePrompt();
@@ -1490,19 +1498,15 @@ function autoGenerate() {
   }
 }
 
-// ── Status / toast ───────────────────────────────────────────────────────────
-
 function flashStatus(msg) {
   const el = $('status-msg'); el.textContent = msg;
-  setTimeout(() => { el.textContent = 'CARBONOGRAPHY // READY'; }, 2000);
+  setTimeout(() => { el.textContent = 'READY'; }, 2000);
 }
 
 function showToast(msg) {
   const t = $('toast'); t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3500);
 }
-
-// ── Buttons ──────────────────────────────────────────────────────────────────
 
 function openGenerator(url, name) {
   if (!currentPrompt) { flashStatus('NO PROMPT — FILL IN FIELDS FIRST'); return; }
@@ -1529,8 +1533,6 @@ $('exportBtn').addEventListener('click', () => {
 
 $('ideogramBtn').addEventListener('click', () => openGenerator('https://ideogram.ai/t/explore', 'Ideogram'));
 $('leonardoBtn').addEventListener('click', () => openGenerator('https://app.leonardo.ai/', 'Leonardo.ai'));
-
-// ── Clear / reset ─────────────────────────────────────────────────────────────
 
 function resetAll() {
   ['model','lu-model1','lu-model2','lu-model3','customLocation','overlayText','lu-overlayText',
@@ -1562,8 +1564,6 @@ $('clear-cancel').addEventListener('click', () => $('modal').classList.remove('s
 $('clear-confirm').addEventListener('click', () => { $('modal').classList.remove('show'); resetAll(); });
 $('modal').addEventListener('click', e => { if (e.target === $('modal')) $('modal').classList.remove('show'); });
 
-// ── Bind remaining controls ───────────────────────────────────────────────────
-
 ['wheelSize','angle','orientation','resolution','quality','outputType',
  'lu-angle1','lu-angle2','lu-angle3','lu-arrangement','lu-lighting','lu-location','lu-weather',
  'caric-style','caric-mood','caric-bg',
@@ -1575,8 +1575,6 @@ $('modal').addEventListener('click', e => { if (e.target === $('modal')) $('moda
 });
 
 $('model').addEventListener('input', autoGenerate);
-
-// ── Init ─────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => { checkConflicts(); autoGenerate(); });
 </script>
