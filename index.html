@@ -8,7 +8,8 @@
         :root {
             --carbon-red: #cc0000;
             --carbon-white: #ffffff;
-            --carbon-black: rgba(10, 10, 10, 0.9); /* Slight transparency for the bottom bar */
+            --carbon-black: #000000;
+            --glass-bg: rgba(255, 255, 255, 0.85); /* White glass effect */
         }
 
         * {
@@ -22,169 +23,182 @@
             height: 100%;
             width: 100%;
             background-color: #ffffff;
-            overflow: hidden; /* Prevents scrolling */
+            overflow: hidden;
         }
 
-        /* Full Screen Background Image */
-        .full-page-bg {
+        /* Full Page Backdrop */
+        .background-image {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            /* Using the RAW github link so the browser can actually see the file */
             background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/purple-lambo.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            z-index: -1;
+            z-index: 1;
         }
 
-        /* Bottom Status Bar */
-        .bottom-bar {
+        /* Overlay to keep it looking clean */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, transparent 20%, rgba(255,255,255,0.2) 100%);
+            z-index: 2;
+        }
+
+        /* Bottom Bar Layout */
+        .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            background-color: var(--carbon-black);
-            color: var(--carbon-white);
+            z-index: 10;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-top: 4px solid var(--carbon-red);
+            padding: 10px 40px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 15px 40px;
-            border-top: 3px solid var(--carbon-red);
-            backdrop-filter: blur(10px); /* Adds a modern frosted glass effect */
-            z-index: 10;
+            color: var(--carbon-black);
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
         }
 
-        /* Layout Elements */
-        .status-text {
+        /* Coming Soon Text */
+        .status-msg {
             flex: 1;
-            font-size: 1.4rem;
-            font-weight: 800;
+            font-size: 1.2rem;
+            font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
         }
 
-        .status-text span {
+        .status-msg span {
             color: var(--carbon-red);
         }
 
-        .logo-center {
+        /* Logo Area */
+        .logo-area {
             flex: 1;
             display: flex;
             justify-content: center;
         }
 
-        .logo-center img {
-            height: 70px; /* Adjust based on your logo design */
+        .logo-area img {
+            height: 70px;
             width: auto;
         }
 
-        /* Countdown Timer */
-        .timer-right {
+        /* Countdown Clock */
+        .clock-area {
             flex: 1;
             display: flex;
             justify-content: flex-end;
             gap: 20px;
         }
 
-        .timer-block {
+        .unit {
             text-align: center;
             min-width: 50px;
         }
 
-        .timer-val {
+        .number {
             display: block;
             font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--carbon-red);
+            font-weight: 800;
+            color: var(--carbon-black);
             line-height: 1;
         }
 
-        .timer-label {
-            font-size: 0.7rem;
+        .label {
+            font-size: 0.6rem;
             text-transform: uppercase;
-            color: #999;
+            color: #666;
             letter-spacing: 1px;
+            font-weight: bold;
         }
 
-        /* Responsive Design for smaller screens */
-        @media (max-width: 1000px) {
-            .bottom-bar {
+        /* Responsive */
+        @media (max-width: 850px) {
+            .bottom-nav {
                 flex-direction: column;
                 padding: 20px;
-                text-align: center;
                 gap: 15px;
             }
-            .status-text, .logo-center, .timer-right {
+            .status-msg, .logo-area, .clock-area {
                 flex: none;
                 justify-content: center;
-            }
-            .full-page-bg {
-                background-position: 70% center; /* Shifts image slightly to show car on mobile */
+                text-align: center;
             }
         }
     </style>
 </head>
 <body>
 
-    <div class="full-page-bg"></div>
+    <div class="background-image"></div>
+    <div class="overlay"></div>
 
-    <footer class="bottom-bar">
+    <footer class="bottom-nav">
         
-        <div class="status-text">
+        <div class="status-msg">
             Carbonography <span>Coming Soon</span>
         </div>
 
-        <div class="logo-center">
+        <div class="logo-area">
             <img src="carbonography-logo.png" alt="Carbonography Logo">
         </div>
 
-        <div class="timer-right" id="countdown">
-            <div class="timer-block">
-                <span class="timer-val" id="days">00</span>
-                <span class="timer-label">Days</span>
+        <div class="clock-area" id="timer">
+            <div class="unit">
+                <span class="number" id="days">00</span>
+                <span class="label">Days</span>
             </div>
-            <div class="timer-block">
-                <span class="timer-val" id="hours">00</span>
-                <span class="timer-label">Hrs</span>
+            <div class="unit">
+                <span class="number" id="hours">00</span>
+                <span class="label">Hours</span>
             </div>
-            <div class="timer-block">
-                <span class="timer-val" id="minutes">00</span>
-                <span class="timer-label">Mins</span>
+            <div class="unit">
+                <span class="number" id="mins">00</span>
+                <span class="label">Mins</span>
             </div>
-            <div class="timer-block">
-                <span class="timer-val" id="seconds">00</span>
-                <span class="timer-label">Secs</span>
+            <div class="unit">
+                <span class="number" id="secs">00</span>
+                <span class="label">Secs</span>
             </div>
         </div>
 
     </footer>
 
     <script>
-        // Set target date: May 1, 2026
-        const targetDate = new Date("May 1, 2026 00:00:00").getTime();
+        const target = new Date("May 1, 2026 00:00:00").getTime();
 
-        const updateTimer = setInterval(function() {
+        function updateClock() {
             const now = new Date().getTime();
-            const difference = targetDate - now;
+            const diff = target - now;
 
-            const d = Math.floor(difference / (1000 * 60 * 60 * 24));
-            const h = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const m = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((difference % (1000 * 60)) / 1000);
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
 
             document.getElementById("days").innerText = d.toString().padStart(2, '0');
             document.getElementById("hours").innerText = h.toString().padStart(2, '0');
-            document.getElementById("minutes").innerText = m.toString().padStart(2, '0');
-            document.getElementById("seconds").innerText = s.toString().padStart(2, '0');
+            document.getElementById("mins").innerText = m.toString().padStart(2, '0');
+            document.getElementById("secs").innerText = s.toString().padStart(2, '0');
 
-            if (difference < 0) {
-                clearInterval(updateTimer);
-                document.getElementById("countdown").innerHTML = "<span style='color:white; letter-spacing:2px;'>START YOUR ENGINES</span>";
+            if (diff < 0) {
+                document.getElementById("timer").innerHTML = "LOCKED AND LOADED";
             }
-        }, 1000);
-    </script>
+        }
 
+        setInterval(updateClock, 1000);
+        updateClock(); // Initial call
+    </script>
 </body>
 </html>
