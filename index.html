@@ -1,1605 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Carbonography | v2.0</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@700&family=Rajdhani:wght@700&family=Russo+One&family=Racing+Sans+One&family=Aldrich&family=Exo+2:wght@800&family=Michroma&display=swap" rel="stylesheet">
-<style>
-:root {
-  --red: #6b0000;
-  --red-h: #8b0000;
-  --bg: #0a0a0a;
-  --surface: #111;
-  --border: #2a2a2a;
-  --border-bright: #3a3a3a;
-  --text: #e0e0e0;
-  --text-dim: #888;
-  --font-ui: 'Rajdhani', sans-serif;
-  --radius: 8px;
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-html {
-  background-color: var(--bg);
-  background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/carbon.jpg');
-  background-size: 300px auto;
-  min-height: 100%;
-}
-
-body { font-family: var(--font-ui); color: var(--text); min-height: 100vh; }
-
-#app {
-  margin: 8px;
-  border: 2px solid var(--red);
-  border-radius: 6px;
-  overflow: hidden;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  flex-direction: column;
-  min-height: calc(100vh - 16px);
-}
-
-/* ── TOOLBAR ── */
-#toolbar {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 20px;
-  border-bottom: 2px solid var(--red);
-  background: rgba(0,0,0,0.5);
-  flex-shrink: 0;
-}
-
-.logo-text {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 26px;
-  letter-spacing: 3px;
-  color: #f5f5f5;
-}
-
-#version-badge {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: var(--text-dim);
-  background: rgba(255,255,255,0.05);
-  border: 1px solid var(--border-bright);
-  padding: 3px 8px;
-  border-radius: 4px;
-  text-transform: uppercase;
-}
-
-.toolbar-logo {
-  height: 36px;
-  margin-left: auto;
-  opacity: 0.85;
-}
-
-/* ── PAGE NAV ── */
-#page-nav {
-  display: flex;
-  border-bottom: 2px solid var(--red);
-  flex-shrink: 0;
-}
-
-.page-tab {
-  flex: 1;
-  padding: 14px 20px;
-  text-align: center;
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  cursor: pointer;
-  color: var(--text-dim);
-  background: transparent;
-  border: none;
-  border-right: 1px solid var(--border);
-  transition: all 0.2s;
-  font-family: var(--font-ui);
-}
-
-.page-tab:last-child { border-right: none; }
-.page-tab:hover { color: var(--text); background: rgba(255,255,255,0.03); }
-.page-tab.active { color: #f5f5f5; background: rgba(107,0,0,0.2); border-bottom: 2px solid var(--red); margin-bottom: -2px; }
-
-/* ── MAIN LAYOUT ── */
-#main { display: flex; flex: 1; overflow: hidden; }
-
-#sidebar {
-  width: 320px;
-  flex-shrink: 0;
-  border-right: 2px solid var(--red);
-  background: rgba(0,0,0,0.55);
-  display: flex;
-  flex-direction: column;
-  padding: 16px 14px;
-  gap: 16px;
-}
-
-#rig-container {
-  background: radial-gradient(ellipse 65% 70% at 50% 50%, #2e2e2e 0%, #000 100%);
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  height: 600px;
-  overflow: visible;
-}
-
-#vehicle-aerial { width: 130px; opacity: 0.95; pointer-events: none; }
-
-#camera-indicator {
-  position: absolute;
-  width: 48px;
-  height: 48px;
-  transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
-  pointer-events: none;
-}
-
-#camera-icon { width: 48px; }
-
-.sidebar-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  padding: 0 4px;
-}
-
-.vehicle-input {
-  width: 100%;
-  background: #0f0f0f;
-  border: 1px solid var(--border-bright);
-  border-radius: var(--radius);
-  color: var(--text);
-  font-family: var(--font-ui);
-  font-size: 15px;
-  font-weight: 600;
-  padding: 13px 14px;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-.vehicle-input:focus { border-color: var(--red); }
-.vehicle-input::placeholder { color: #3a3a3a; }
-
-/* ── CONTENT AREA ── */
-#content { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
-
-/* ── SECTIONS ── */
-.section { background: #111; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-
-.section-header {
-  background: var(--red);
-  padding: 11px 18px;
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  color: #f5f5f5;
-}
-
-.section-body { padding: 18px; display: flex; flex-direction: column; gap: 16px; }
-
-/* ── FORM ELEMENTS ── */
-.form-row { display: flex; gap: 12px; flex-wrap: wrap; }
-.form-group { display: flex; flex-direction: column; gap: 7px; flex: 1; min-width: 140px; max-width: 380px; }
-.form-group.narrow { min-width: 110px; flex: 0 0 auto; max-width: 200px; }
-.form-group.full { flex: 0 0 100%; max-width: none; }
-
-label {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--text-dim);
-}
-
-input[type="text"], select {
-  background: #0f0f0f;
-  border: 1px solid var(--border-bright);
-  border-radius: var(--radius);
-  color: var(--text);
-  font-family: var(--font-ui);
-  font-size: 15px;
-  font-weight: 600;
-  padding: 13px 14px;
-  outline: none;
-  transition: border-color 0.2s;
-  width: 100%;
-  appearance: none;
-  -webkit-appearance: none;
-  min-width: 0;
-}
-
-select {
-  background-color: #0f0f0f;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23666'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  padding-right: 36px;
-  cursor: pointer;
-}
-
-select option { background: #1a1a1a; color: var(--text); }
-
-input[type="text"]:focus, select:focus { border-color: var(--red); }
-input::placeholder { color: #444; }
-
-/* ── TOGGLES ── */
-.toggle-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
-
-.toggle-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  background: #0d0d0d;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.toggle-item:hover { border-color: var(--border-bright); background: #141414; }
-.toggle-item input[type="checkbox"] { accent-color: var(--red); width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; }
-.toggle-item label { font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: none; color: var(--text-dim); cursor: pointer; }
-
-/* ── COLOUR INPUTS ── */
-.colour-row { display: flex; gap: 20px; flex-wrap: wrap; }
-.colour-group { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 200px; }
-.colour-inputs { display: flex; align-items: center; gap: 8px; }
-
-input[type="color"] {
-  width: 42px; height: 42px;
-  border: 1px solid var(--border-bright);
-  border-radius: 6px;
-  padding: 2px;
-  background: #1a1a1a;
-  cursor: pointer;
-  flex-shrink: 0;
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; border-radius: 4px; }
-input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
-
-.hex-input { width: 96px !important; font-family: 'Courier New', monospace !important; font-size: 13px !important; letter-spacing: 1px; text-transform: uppercase; flex-shrink: 0; }
-.name-input { flex: 1; min-width: 0; }
-
-/* ── PLATE ── */
-.plate-wrap { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
-.plate-preview-area { display: flex; flex-direction: column; gap: 8px; }
-.plate-chars-input {
-  font-family: 'Courier New', monospace !important;
-  font-size: 22px !important;
-  font-weight: 900 !important;
-  letter-spacing: 5px;
-  text-transform: uppercase;
-  padding: 10px 14px !important;
-}
-
-.plate-preview {
-  display: none;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  border-radius: 4px;
-  padding: 6px 16px;
-  font-size: 20px;
-  min-width: 180px;
-  min-height: 44px;
-  border: 2px solid #555;
-}
-
-.plate-uk { background: #f5f0c8; color: #111; border-color: #bbb; border-radius: 6px; padding-left: 36px; position: relative; }
-.plate-uk::before { content: 'GB'; position: absolute; left: 0; top: 0; bottom: 0; width: 30px; background: #003399; color: #fff; font-size: 9px; font-weight: 900; display: flex; align-items: center; justify-content: center; border-radius: 3px 0 0 3px; }
-.plate-us { background: #fff; color: #1a1a6e; border-color: #1a1a6e; border-width: 3px; font-size: 18px; }
-.plate-eu { background: #fff; color: #111; border-color: #ccc; padding-left: 36px; position: relative; }
-.plate-eu::before { content: 'EU'; position: absolute; left: 0; top: 0; bottom: 0; width: 30px; background: #003399; color: #FFD700; font-size: 8px; font-weight: 900; display: flex; align-items: center; justify-content: center; border-radius: 3px 0 0 3px; }
-.plate-custom { background: #1a1a1a; color: #f5f5f5; border-color: #555; }
-
-/* ── CONFLICT WARNINGS ── */
-.conflict-warn {
-  background: rgba(107,0,0,0.2);
-  border: 1px solid var(--red);
-  border-radius: var(--radius);
-  padding: 10px 14px;
-  font-size: 12px;
-  color: #ffaaaa;
-  line-height: 1.5;
-  display: none;
-}
-
-/* ── FONT PREVIEW ── */
-#font-preview-wrap {
-  background: #0a0a0a;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 14px 20px;
-  text-align: center;
-  display: none;
-}
-
-#font-preview { font-size: 26px; color: #f5f5f5; letter-spacing: 2px; text-transform: uppercase; }
-
-/* ── SHOOT MODE COMPACT ── */
-.shoot-mode-bar {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  background: #0d0d0d;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.shoot-mode-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 14px;
-  background: transparent;
-  border: none;
-  color: var(--text-dim);
-  cursor: pointer;
-  font-family: var(--font-ui);
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  transition: all 0.15s;
-}
-
-.shoot-mode-btn + .shoot-mode-btn {
-  border-left: 1px solid var(--border);
-}
-
-.shoot-mode-btn:hover { background: #141414; color: var(--text); }
-.shoot-mode-btn.active { background: rgba(107,0,0,0.25); color: #f5f5f5; border-bottom: 2px solid var(--red); }
-.shoot-mode-icon { font-size: 14px; }
-
-/* ── SHOOT MODE SECTION ── */
-.shoot-mode-section {
-  background: #111;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.shoot-mode-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 18px;
-  border-bottom: 1px solid var(--border);
-}
-
-.shoot-mode-label {
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  color: var(--text-dim);
-}
-
-/* ── ACCORDION (Lineup) ── */
-.accordion { display: flex; flex-direction: column; gap: 8px; }
-
-.acc-item { background: #0d0d0d; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-
-.acc-trigger {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-family: var(--font-ui);
-  text-align: left;
-  transition: background 0.15s;
-}
-
-.acc-trigger:hover { background: #141414; }
-.acc-trigger.open { background: rgba(107,0,0,0.18); }
-
-.acc-label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: #f5f5f5;
-}
-
-.acc-color-swatch {
-  width: 14px;
-  height: 14px;
-  border-radius: 3px;
-  border: 1px solid var(--border-bright);
-  flex-shrink: 0;
-}
-
-.acc-car-name { color: var(--text-dim); font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: none; }
-
-.acc-chevron {
-  width: 16px;
-  height: 16px;
-  color: var(--text-dim);
-  transition: transform 0.25s;
-  flex-shrink: 0;
-}
-
-.acc-trigger.open .acc-chevron { transform: rotate(180deg); }
-
-.acc-body {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease;
-}
-
-.acc-body.open { max-height: 600px; }
-
-.acc-body-inner { padding: 16px; border-top: 1px solid var(--border); background: #111; display: flex; flex-direction: column; gap: 14px; }
-
-/* ── BOTTOM BAR ── */
-#bottom-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 20px;
-  border-top: 2px solid var(--red);
-  background: rgba(0,0,0,0.5);
-  flex-shrink: 0;
-  gap: 12px;
-}
-
-#status-msg {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  flex-shrink: 0;
-}
-
-#bar-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-
-.btn {
-  padding: 9px 16px;
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  font-family: var(--font-ui);
-  cursor: pointer;
-  border-radius: var(--radius);
-  transition: all 0.15s;
-  white-space: nowrap;
-  border: 1px solid transparent;
-}
-
-.btn-clear { background: transparent; border-color: #444; color: #777; }
-.btn-clear:hover { border-color: var(--red); color: #ff7777; background: rgba(107,0,0,0.15); }
-
-.btn-outline { background: transparent; border-color: var(--red); color: #ccc; }
-.btn-outline:hover { background: var(--red); color: #fff; }
-
-.btn-gen {
-  background: linear-gradient(135deg, #1a1a2e, #0f3460);
-  border-color: #4a4a8a;
-  color: #e0e0ff;
-}
-.btn-gen:hover { background: linear-gradient(135deg, #2a2a4e, #1f4480); border-color: #7a7aca; color: #fff; }
-
-/* ── TOAST ── */
-#toast {
-  position: fixed;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%) translateY(12px);
-  background: #1a1a2e;
-  border: 1px solid #4a4a8a;
-  color: #e0e0ff;
-  padding: 12px 20px;
-  border-radius: var(--radius);
-  font-size: 13px;
-  font-weight: 700;
-  font-family: var(--font-ui);
-  letter-spacing: 0.5px;
-  opacity: 0;
-  transition: all 0.3s;
-  pointer-events: none;
-  z-index: 9999;
-  white-space: nowrap;
-}
-
-#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-/* ── MODAL ── */
-#modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.75);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-}
-
-#modal.show { display: flex; }
-
-#modal-box {
-  background: #141414;
-  border: 2px solid var(--red);
-  border-radius: 10px;
-  padding: 28px 32px;
-  text-align: center;
-  max-width: 320px;
-  width: 90%;
-}
-
-#modal-box p { color: #f5f5f5; font-size: 15px; font-weight: 700; margin-bottom: 20px; }
-.modal-btns { display: flex; gap: 12px; justify-content: center; }
-
-/* ── PAGE VISIBILITY ── */
-.page { display: none; }
-.page.active { display: contents; }
-
-/* ── OUTPUT SPEC (shared bottom of content) ── */
-.output-spec { background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-.output-spec .section-header { background: #1a1a1a; border-bottom: 1px solid var(--border); }
-
-/* ── VIDEO OPTIONS ── */
-#video-options-row { display: none; }
-
-/* ── LINEUP MODELS SUMMARY ── */
-.lineup-note { font-size: 12px; color: var(--text-dim); line-height: 1.5; padding: 2px 0; }
-
-/* Scrollbar */
-#content::-webkit-scrollbar { width: 6px; }
-#content::-webkit-scrollbar-track { background: transparent; }
-#content::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbonography | Coming Soon</title>
+    <style>
+        :root {
+            --carbon-red: #cc0000;
+            --carbon-white: #ffffff;
+            --carbon-black: rgba(10, 10, 10, 0.9); /* Slight transparency for the bottom bar */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            background-color: #ffffff;
+            overflow: hidden; /* Prevents scrolling */
+        }
+
+        /* Full Screen Background Image */
+        .full-page-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/purple-lambo.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -1;
+        }
+
+        /* Bottom Status Bar */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--carbon-black);
+            color: var(--carbon-white);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 40px;
+            border-top: 3px solid var(--carbon-red);
+            backdrop-filter: blur(10px); /* Adds a modern frosted glass effect */
+            z-index: 10;
+        }
+
+        /* Layout Elements */
+        .status-text {
+            flex: 1;
+            font-size: 1.4rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .status-text span {
+            color: var(--carbon-red);
+        }
+
+        .logo-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .logo-center img {
+            height: 70px; /* Adjust based on your logo design */
+            width: auto;
+        }
+
+        /* Countdown Timer */
+        .timer-right {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            gap: 20px;
+        }
+
+        .timer-block {
+            text-align: center;
+            min-width: 50px;
+        }
+
+        .timer-val {
+            display: block;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--carbon-red);
+            line-height: 1;
+        }
+
+        .timer-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #999;
+            letter-spacing: 1px;
+        }
+
+        /* Responsive Design for smaller screens */
+        @media (max-width: 1000px) {
+            .bottom-bar {
+                flex-direction: column;
+                padding: 20px;
+                text-align: center;
+                gap: 15px;
+            }
+            .status-text, .logo-center, .timer-right {
+                flex: none;
+                justify-content: center;
+            }
+            .full-page-bg {
+                background-position: 70% center; /* Shifts image slightly to show car on mobile */
+            }
+        }
+    </style>
 </head>
 <body>
-<div id="app">
 
-  <!-- TOOLBAR -->
-  <div id="toolbar">
-    <span class="logo-text">Carbonography</span>
-    <span id="version-badge">v2.0 ENGINE</span>
-    <img class="toolbar-logo"
-         src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/carbonography-logo.png"
-         alt="Carbonography">
-  </div>
+    <div class="full-page-bg"></div>
 
-  <!-- PAGE NAV -->
-  <div id="page-nav">
-    <button class="page-tab active" onclick="switchPage('single')">Single Vehicle</button>
-    <button class="page-tab" onclick="switchPage('lineup')">3-Car Lineup</button>
-  </div>
-
-  <!-- MAIN -->
-  <div id="main">
-
-    <!-- SIDEBAR -->
-    <div id="sidebar">
-      <div id="rig-container">
-        <img id="vehicle-aerial"
-             src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/car-above.png"
-             alt="Top view">
-        <div id="camera-indicator">
-          <img id="camera-icon"
-               src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/camera2.png"
-               alt="Camera">
-        </div>
-        <img id="camera-aerial-overlay"
-             src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/camera-aerial.png"
-             alt="Aerial camera"
-             style="position:absolute;width:72px;opacity:0;transition:opacity 0.3s;pointer-events:none;">
-        <img id="driver-overlay"
-             src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/man.png"
-             alt="Driver"
-             style="position:absolute;bottom:0;right:24px;height:220px;opacity:0;transition:opacity 0.3s;pointer-events:none;object-fit:contain;">
-      </div>
-
-      <div>
-        <div class="sidebar-label" style="margin-bottom:8px;" id="sidebar-vehicle-label">Vehicle Model</div>
-        <input type="text" id="model" class="vehicle-input" placeholder="Porsche 911 GT3 RS">
-      </div>
-
-      <div>
-        <div class="sidebar-label" style="margin-bottom:8px;">Driver</div>
-        <label class="toggle-item" style="width:100%;cursor:pointer;">
-          <input type="checkbox" id="includeDriver">
-          <label for="includeDriver" style="cursor:pointer;">Include Driver Figure</label>
-        </label>
-      </div>
-    </div>
-
-    <!-- CONTENT -->
-    <div id="content">
-
-      <!-- ══════════════════════════════════ SINGLE PAGE ══════════════════════════════════ -->
-      <div class="page active" id="page-single">
-
-        <!-- Shoot Mode — compact inline bar -->
-        <div class="shoot-mode-section">
-          <div class="shoot-mode-header">
-            <span class="shoot-mode-label">Shoot Mode</span>
-            <div class="shoot-mode-bar" style="border:none;background:transparent;gap:4px;">
-              <button class="shoot-mode-btn active" id="mode-photo" onclick="setShootMode('photo')">
-                <span class="shoot-mode-icon">📷</span> Photo Render
-              </button>
-              <button class="shoot-mode-btn" id="mode-caricature" onclick="setShootMode('caricature')">
-                <span class="shoot-mode-icon">🎨</span> Caricature / Art
-              </button>
-            </div>
-          </div>
+    <footer class="bottom-bar">
+        
+        <div class="status-text">
+            Carbonography <span>Coming Soon</span>
         </div>
 
-        <!-- PHOTO CONTROLS -->
-        <div id="photo-controls">
-
-          <div class="section">
-            <div class="section-header">Studio Controls</div>
-            <div class="section-body">
-
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="lighting">Lighting Mood</label>
-                  <select id="lighting">
-                    <option value="studio-high-key">Studio — High Key</option>
-                    <option value="studio-low-key">Studio — Low Key / Dramatic</option>
-                    <option value="neon-night">Neon Night</option>
-                    <option value="daytime-natural">Daytime Natural</option>
-                    <option value="golden-hour">Golden Hour / Sunrise</option>
-                    <option value="overcast">Overcast / Diffused</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="wheelSize">Wheel Diameter</label>
-                  <select id="wheelSize">
-                    <option value="factory-fitted OEM">Factory Fitted</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="angle">Camera Perspective</label>
-                  <select id="angle">
-                    <option value="Front 3/4 hero shot"                   data-x="130"  data-y="-230" data-rot="135">Hero Shot (Front 3/4)</option>
-                    <option value="Low-slung side profile"                 data-x="170"  data-y="0"    data-rot="180">Side Profile (Passenger)</option>
-                    <option value="Aggressive rear 3/4"                   data-x="130"  data-y="230"  data-rot="225">Rear 3/4 View</option>
-                    <option value="Crouching low-angle front center shot" data-x="0"    data-y="-280" data-rot="90" >Front Center (Crouched)</option>
-                    <option value="Crouching low-angle rear center shot"  data-x="0"    data-y="280"  data-rot="270">Rear Center (Crouched)</option>
-                    <option value="Rear side angle shot"                  data-x="-130" data-y="230"  data-rot="315">Rear Side Angle</option>
-                    <option value="Top-down bird's eye view"              data-x="0"    data-y="0"    data-rot="90" >Top Down</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="toggle-grid">
-                <label class="toggle-item"><input type="checkbox" id="lightsOn"> <label for="lightsOn">Headlights On</label></label>
-                <label class="toggle-item"><input type="checkbox" id="motion"> <label for="motion">Wheel Motion</label></label>
-                <label class="toggle-item"><input type="checkbox" id="convertible"> <label for="convertible">Convertible</label></label>
-                <label class="toggle-item"><input type="checkbox" id="lowered"> <label for="lowered">Suspension Lowered</label></label>
-                <label class="toggle-item"><input type="checkbox" id="race"> <label for="race">Race Variant</label></label>
-                <label class="toggle-item"><input type="checkbox" id="tint"> <label for="tint">Window Tint</label></label>
-                <label class="toggle-item"><input type="checkbox" id="leather"> <label for="leather">Leather Interior</label></label>
-              </div>
-
-            </div>
-          </div>
-
-          <!-- Colour -->
-          <div class="section">
-            <div class="section-header">Colour</div>
-            <div class="section-body">
-              <div class="colour-row">
-                <div class="colour-group">
-                  <label>Exterior Colour</label>
-                  <div class="colour-inputs">
-                    <input type="color" id="extColourPicker" value="#1a1a1a">
-                    <input type="text" id="extColourHex" class="hex-input" value="#1a1a1a" maxlength="7" placeholder="#000000">
-                    <input type="text" id="extColourName" class="name-input" placeholder="e.g. Obsidian Black">
-                  </div>
-                </div>
-                <div class="colour-group">
-                  <label>Interior Colour</label>
-                  <div class="colour-inputs">
-                    <input type="color" id="intColourPicker" value="#2c1a0e">
-                    <input type="text" id="intColourHex" class="hex-input" value="#2c1a0e" maxlength="7" placeholder="#000000">
-                    <input type="text" id="intColourName" class="name-input" placeholder="e.g. Cognac Tan">
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Number Plate -->
-          <div class="section">
-            <div class="section-header">Number Plate</div>
-            <div class="section-body">
-              <div class="plate-wrap">
-                <div class="form-group" style="min-width:180px; flex: 0 0 auto;">
-                  <label for="plateStyle">Plate Style</label>
-                  <select id="plateStyle">
-                    <option value="none">No Plate / Hidden</option>
-                    <option value="uk">UK — White &amp; Yellow</option>
-                    <option value="us">US — State Style</option>
-                    <option value="eu">EU — White with Blue Band</option>
-                    <option value="custom">Custom / Other</option>
-                  </select>
-                </div>
-                <div class="form-group plate-preview-area" id="plate-chars-group" style="display:none;">
-                  <label for="plateChars">Plate Characters</label>
-                  <input type="text" id="plateChars" class="plate-chars-input" placeholder="AB12 CDE" maxlength="12" autocomplete="off" spellcheck="false">
-                  <div id="plate-preview-uk"     class="plate-preview plate-uk"></div>
-                  <div id="plate-preview-us"     class="plate-preview plate-us"></div>
-                  <div id="plate-preview-eu"     class="plate-preview plate-eu"></div>
-                  <div id="plate-preview-custom" class="plate-preview plate-custom"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div><!-- /#photo-controls -->
-
-        <!-- CARICATURE CONTROLS -->
-        <div id="caricature-controls" style="display:none;">
-          <div class="section">
-            <div class="section-header">Art Style</div>
-            <div class="section-body">
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="caric-style">Art Style</label>
-                  <select id="caric-style">
-                    <option value="classic automotive caricature illustration, exaggerated proportions, oversized wheels, squashed cabin, bold outlines, warm cel-shaded colours">Classic Caricature</option>
-                    <option value="Japanese manga-style illustration, bold ink outlines, speed lines, dynamic angles, anime aesthetic, flat colour blocking">Manga / Anime</option>
-                    <option value="vintage 1960s motorsport poster art, screen-print style, limited colour palette, bold graphic shapes, retro typography feel">Vintage Motorsport Poster</option>
-                    <option value="watercolour illustration, loose expressive brushstrokes, soft colour bleeds, artistic wet-on-wet technique">Watercolour</option>
-                    <option value="neon synthwave retrowave digital art, glowing grid lines, purple and cyan colour palette, 80s aesthetic, chrome reflections">Synthwave / Retrowave</option>
-                    <option value="flat vector graphic illustration, clean geometric shapes, minimal detail, bold solid colours, no gradients">Flat Vector / Minimal</option>
-                    <option value="pencil sketch illustration, hand-drawn graphite lines, crosshatching shading, technical drawing feel">Pencil Sketch</option>
-                    <option value="oil painting style, impressionist brushwork, rich impasto texture, dramatic lighting, painterly colour mixing">Oil Painting</option>
-                    <option value="sticker art style, thick black outline, vibrant saturated colours, glossy finish, die-cut sticker appearance, white border">Sticker Art</option>
-                    <option value="graffiti / street art style, spray-paint texture, bold drips, urban colour palette, raw energy">Graffiti / Street Art</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="caric-mood">Mood</label>
-                  <select id="caric-mood">
-                    <option value="exciting and dynamic, sense of speed and power">Dynamic — Speed &amp; Power</option>
-                    <option value="cool and minimal, calm and collected">Cool &amp; Minimal</option>
-                    <option value="playful and fun, cartoon energy">Playful &amp; Fun</option>
-                    <option value="dark and dramatic, brooding atmosphere">Dark &amp; Dramatic</option>
-                    <option value="nostalgic and warm, golden era feeling">Nostalgic &amp; Warm</option>
-                    <option value="luxury and prestigious, refined elegance">Luxury &amp; Prestige</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="caric-bg">Background</label>
-                  <select id="caric-bg">
-                    <option value="transparent / white background, isolated artwork">Transparent / White</option>
-                    <option value="dramatic racing circuit background">Racing Circuit</option>
-                    <option value="urban city skyline background">City Skyline</option>
-                    <option value="mountain road winding through dramatic scenery">Mountain Road</option>
-                    <option value="abstract colour gradient background matching the art style">Abstract / Gradient</option>
-                    <option value="garage workshop setting with tools and equipment visible">Garage / Workshop</option>
-                  </select>
-                </div>
-              </div>
-              <div class="colour-row">
-                <div class="colour-group">
-                  <label>Colour</label>
-                  <div class="colour-inputs">
-                    <input type="color" id="caric-colour" value="#cc0000">
-                    <input type="text" id="caric-hex" class="hex-input" value="#cc0000" maxlength="7">
-                    <input type="text" id="caric-name" class="name-input" placeholder="e.g. Racing Red">
-                  </div>
-                </div>
-              </div>
-              <div class="toggle-grid">
-                <label class="toggle-item"><input type="checkbox" id="caric-exaggerate"> <label for="caric-exaggerate">Exaggerate Proportions</label></label>
-                <label class="toggle-item"><input type="checkbox" id="caric-speedlines"> <label for="caric-speedlines">Speed Lines</label></label>
-                <label class="toggle-item"><input type="checkbox" id="caric-flames"> <label for="caric-flames">Flames / Fire</label></label>
-                <label class="toggle-item"><input type="checkbox" id="caric-smoke"> <label for="caric-smoke">Tyre Smoke</label></label>
-              </div>
-            </div>
-          </div>
+        <div class="logo-center">
+            <img src="carbonography-logo.png" alt="Carbonography Logo">
         </div>
 
-        <!-- Location & Weather -->
-        <div id="location-block-single">
-          <div class="section">
-            <div class="section-header">Location, Weather &amp; Background</div>
-            <div class="section-body">
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="location">Background Location</label>
-                  <select id="location">
-                    <option value="studio-white">Studio (White)</option>
-                    <option value="studio-black">Studio (Black)</option>
-                    <option value="racetrack">Racetrack</option>
-                    <option value="london-street">London Street</option>
-                    <option value="desert">Desert</option>
-                    <option value="transparent">Transparent / Cutout</option>
-                    <option value="3-car-garage">3-Car-Garage</option>
-                    <option value="custom">Custom</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="weather">Weather</label>
-                  <select id="weather">
-                    <option value="none">— Clear / None —</option>
-                    <option value="rain">Rain</option>
-                    <option value="heavy-rain">Heavy Rain / Downpour</option>
-                    <option value="wet">Wet Roads (Post-Rain)</option>
-                    <option value="snow">Snow / Snowfall</option>
-                    <option value="snow-ground">Snow on Ground</option>
-                    <option value="fog">Fog / Mist</option>
-                    <option value="dust">Dust Storm</option>
-                    <option value="heatwave">Heatwave / Heat Haze</option>
-                  </select>
-                </div>
-              </div>
-              <div id="custom-location-group" style="display:none;">
-                <div class="form-group">
-                  <label for="customLocation">Describe Background</label>
-                  <input type="text" id="customLocation" placeholder="e.g. Snowy mountain pass at dusk">
-                </div>
-              </div>
-              <div id="lighting-warning" class="conflict-warn"></div>
-              <div id="weather-warning" class="conflict-warn"></div>
+        <div class="timer-right" id="countdown">
+            <div class="timer-block">
+                <span class="timer-val" id="days">00</span>
+                <span class="timer-label">Days</span>
             </div>
-          </div>
+            <div class="timer-block">
+                <span class="timer-val" id="hours">00</span>
+                <span class="timer-label">Hrs</span>
+            </div>
+            <div class="timer-block">
+                <span class="timer-val" id="minutes">00</span>
+                <span class="timer-label">Mins</span>
+            </div>
+            <div class="timer-block">
+                <span class="timer-val" id="seconds">00</span>
+                <span class="timer-label">Secs</span>
+            </div>
         </div>
 
-        <!-- Overlay Text -->
-        <div class="section">
-          <div class="section-header">Overlay Text</div>
-          <div class="section-body">
-            <div class="form-row">
-              <div class="form-group">
-                <label for="overlayText">Text (optional)</label>
-                <input type="text" id="overlayText" placeholder="e.g. GT3 RS — Born on Track">
-              </div>
-              <div class="form-group">
-                <label for="overlayFont">Text Style</label>
-                <select id="overlayFont">
-                  <option value="" data-family="">— None —</option>
-                  <option value="Bebas Neue, impact style, tall condensed uppercase lettering" data-family="Bebas Neue">Bebas Neue — Bold &amp; Condensed</option>
-                  <option value="Orbitron, futuristic digital display font" data-family="Orbitron">Orbitron — Futuristic HUD</option>
-                  <option value="Rajdhani, sharp angular modern sans-serif" data-family="Rajdhani">Rajdhani — Sharp &amp; Angular</option>
-                  <option value="Russo One, strong geometric slab font" data-family="Russo One">Russo One — Geometric Slab</option>
-                  <option value="Racing Sans One, motorsport-inspired italic font" data-family="Racing Sans One">Racing Sans One — Motorsport</option>
-                  <option value="Aldrich, clean technical monospaced-style font" data-family="Aldrich">Aldrich — Technical &amp; Clean</option>
-                  <option value="Exo 2, sporty wide sci-fi font" data-family="Exo 2">Exo 2 — Sporty &amp; Wide</option>
-                  <option value="Michroma, narrow technical aerospace font" data-family="Michroma">Michroma — Aerospace</option>
-                </select>
-              </div>
-            </div>
-            <div id="font-preview-wrap">
-              <div id="font-preview"></div>
-            </div>
-          </div>
-        </div>
+    </footer>
 
-      </div><!-- /#page-single -->
+    <script>
+        // Set target date: May 1, 2026
+        const targetDate = new Date("May 1, 2026 00:00:00").getTime();
 
-      <!-- ══════════════════════════════════ LINEUP PAGE ══════════════════════════════════ -->
-      <div class="page" id="page-lineup">
+        const updateTimer = setInterval(function() {
+            const now = new Date().getTime();
+            const difference = targetDate - now;
 
-        <div class="section">
-          <div class="section-header">Three Car Lineup</div>
-          <div class="section-body">
-            <p class="lineup-note">Define each car below. All three share the same lighting, location and output settings.</p>
+            const d = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const h = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((difference % (1000 * 60)) / 1000);
 
-            <div class="accordion" id="lineup-accordion">
+            document.getElementById("days").innerText = d.toString().padStart(2, '0');
+            document.getElementById("hours").innerText = h.toString().padStart(2, '0');
+            document.getElementById("minutes").innerText = m.toString().padStart(2, '0');
+            document.getElementById("seconds").innerText = s.toString().padStart(2, '0');
 
-              <!-- Car 1 -->
-              <div class="acc-item">
-                <button class="acc-trigger open" onclick="toggleAcc(this)">
-                  <span class="acc-label">
-                    <span class="acc-color-swatch" id="swatch-1" style="background:#cc0000;"></span>
-                    Car 1 — Left
-                    <span class="acc-car-name" id="acc-name-1">Ferrari 488 GTB</span>
-                  </span>
-                  <svg class="acc-chevron" viewBox="0 0 16 16" fill="none"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </button>
-                <div class="acc-body open">
-                  <div class="acc-body-inner">
-                    <div class="form-group">
-                      <label for="lu-model1">Vehicle Model</label>
-                      <input type="text" id="lu-model1" placeholder="Ferrari 488 GTB">
-                    </div>
-                    <div class="colour-group">
-                      <label>Exterior Colour</label>
-                      <div class="colour-inputs">
-                        <input type="color" id="lu-colour1" value="#cc0000">
-                        <input type="text" id="lu-hex1" class="hex-input" value="#cc0000" maxlength="7">
-                        <input type="text" id="lu-name1" class="name-input" placeholder="e.g. Rosso Corsa">
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <label for="lu-angle1">Facing</label>
-                      <select id="lu-angle1">
-                        <option value="front 3/4 view facing left">Front 3/4 Facing Left</option>
-                        <option value="side profile facing right">Side Profile Facing Right</option>
-                        <option value="front facing the camera">Front Facing Camera</option>
-                        <option value="rear 3/4 angled">Rear 3/4 Angled</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            if (difference < 0) {
+                clearInterval(updateTimer);
+                document.getElementById("countdown").innerHTML = "<span style='color:white; letter-spacing:2px;'>START YOUR ENGINES</span>";
+            }
+        }, 1000);
+    </script>
 
-              <!-- Car 2 -->
-              <div class="acc-item">
-                <button class="acc-trigger" onclick="toggleAcc(this)">
-                  <span class="acc-label">
-                    <span class="acc-color-swatch" id="swatch-2" style="background:#f5c518;"></span>
-                    Car 2 — Centre
-                    <span class="acc-car-name" id="acc-name-2">Lamborghini Huracán</span>
-                  </span>
-                  <svg class="acc-chevron" viewBox="0 0 16 16" fill="none"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </button>
-                <div class="acc-body">
-                  <div class="acc-body-inner">
-                    <div class="form-group">
-                      <label for="lu-model2">Vehicle Model</label>
-                      <input type="text" id="lu-model2" placeholder="Lamborghini Huracán">
-                    </div>
-                    <div class="colour-group">
-                      <label>Exterior Colour</label>
-                      <div class="colour-inputs">
-                        <input type="color" id="lu-colour2" value="#f5c518">
-                        <input type="text" id="lu-hex2" class="hex-input" value="#f5c518" maxlength="7">
-                        <input type="text" id="lu-name2" class="name-input" placeholder="e.g. Giallo Inti">
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <label for="lu-angle2">Facing</label>
-                      <select id="lu-angle2">
-                        <option value="front facing the camera">Front Facing Camera</option>
-                        <option value="front 3/4 view facing left">Front 3/4 Facing Left</option>
-                        <option value="side profile facing right">Side Profile Facing Right</option>
-                        <option value="rear 3/4 angled">Rear 3/4 Angled</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Car 3 -->
-              <div class="acc-item">
-                <button class="acc-trigger" onclick="toggleAcc(this)">
-                  <span class="acc-label">
-                    <span class="acc-color-swatch" id="swatch-3" style="background:#1a1a1a;"></span>
-                    Car 3 — Right
-                    <span class="acc-car-name" id="acc-name-3">Porsche 911 GT3 RS</span>
-                  </span>
-                  <svg class="acc-chevron" viewBox="0 0 16 16" fill="none"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </button>
-                <div class="acc-body">
-                  <div class="acc-body-inner">
-                    <div class="form-group">
-                      <label for="lu-model3">Vehicle Model</label>
-                      <input type="text" id="lu-model3" placeholder="Porsche 911 GT3 RS">
-                    </div>
-                    <div class="colour-group">
-                      <label>Exterior Colour</label>
-                      <div class="colour-inputs">
-                        <input type="color" id="lu-colour3" value="#1a1a1a">
-                        <input type="text" id="lu-hex3" class="hex-input" value="#1a1a1a" maxlength="7">
-                        <input type="text" id="lu-name3" class="name-input" placeholder="e.g. Jet Black">
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <label for="lu-angle3">Facing</label>
-                      <select id="lu-angle3">
-                        <option value="rear 3/4 angled">Rear 3/4 Angled</option>
-                        <option value="front 3/4 view facing left">Front 3/4 Facing Left</option>
-                        <option value="side profile facing right">Side Profile Facing Right</option>
-                        <option value="front facing the camera">Front Facing Camera</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div><!-- /.accordion -->
-
-            <div class="form-group" style="margin-top:4px;">
-              <label for="lu-arrangement">Arrangement</label>
-              <select id="lu-arrangement">
-                <option value="side by side in a straight row, evenly spaced">Side by Side — Straight Row</option>
-                <option value="staggered diagonally, centre car slightly forward">Staggered — Centre Forward</option>
-                <option value="in a V-formation, centre car closest to camera">V-Formation — Centre Closest</option>
-                <option value="angled inward facing each other, chevron formation">Chevron — Facing Inward</option>
-              </select>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- Shared location/weather for lineup -->
-        <div class="section">
-          <div class="section-header">Lighting, Location &amp; Weather</div>
-          <div class="section-body">
-            <div class="form-row">
-              <div class="form-group">
-                <label for="lu-lighting">Lighting Mood</label>
-                <select id="lu-lighting">
-                  <option value="studio-high-key">Studio — High Key</option>
-                  <option value="studio-low-key">Studio — Low Key / Dramatic</option>
-                  <option value="neon-night">Neon Night</option>
-                  <option value="daytime-natural">Daytime Natural</option>
-                  <option value="golden-hour">Golden Hour / Sunrise</option>
-                  <option value="overcast">Overcast / Diffused</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="lu-location">Background Location</label>
-                <select id="lu-location">
-                  <option value="studio-white">Studio (White)</option>
-                  <option value="studio-black">Studio (Black)</option>
-                  <option value="racetrack">Racetrack</option>
-                  <option value="london-street">London Street</option>
-                  <option value="desert">Desert</option>
-                  <option value="transparent">Transparent / Cutout</option>
-                  <option value="3-car-garage">3-Car-Garage</option>
-                  <option value="custom">Custom</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="lu-weather">Weather</label>
-                <select id="lu-weather">
-                  <option value="none">— Clear / None —</option>
-                  <option value="rain">Rain</option>
-                  <option value="heavy-rain">Heavy Rain / Downpour</option>
-                  <option value="wet">Wet Roads</option>
-                  <option value="snow">Snow</option>
-                  <option value="snow-ground">Snow on Ground</option>
-                  <option value="fog">Fog / Mist</option>
-                </select>
-              </div>
-            </div>
-            <div id="lu-custom-location-group" style="display:none;">
-              <div class="form-group">
-                <label for="lu-customLocation">Describe Background</label>
-                <input type="text" id="lu-customLocation" placeholder="e.g. Snowy mountain pass at dusk">
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Overlay Text (lineup) -->
-        <div class="section">
-          <div class="section-header">Overlay Text</div>
-          <div class="section-body">
-            <div class="form-row">
-              <div class="form-group">
-                <label for="lu-overlayText">Text (optional)</label>
-                <input type="text" id="lu-overlayText" placeholder="e.g. Supercar Trio">
-              </div>
-              <div class="form-group">
-                <label for="lu-overlayFont">Text Style</label>
-                <select id="lu-overlayFont">
-                  <option value="" data-family="">— None —</option>
-                  <option value="Bebas Neue, impact style, tall condensed uppercase lettering" data-family="Bebas Neue">Bebas Neue</option>
-                  <option value="Orbitron, futuristic digital display font" data-family="Orbitron">Orbitron</option>
-                  <option value="Rajdhani, sharp angular modern sans-serif" data-family="Rajdhani">Rajdhani</option>
-                  <option value="Russo One, strong geometric slab font" data-family="Russo One">Russo One</option>
-                  <option value="Racing Sans One, motorsport-inspired italic font" data-family="Racing Sans One">Racing Sans One</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div><!-- /#page-lineup -->
-
-      <!-- ══ SHARED: Output Spec ══ -->
-      <div class="section output-spec">
-        <div class="section-header" style="background:#1a1a1a;">Output Specification</div>
-        <div class="section-body">
-          <div class="form-row">
-            <div class="form-group narrow">
-              <label for="outputType">Output</label>
-              <select id="outputType">
-                <option value="image">Image</option>
-                <option value="video">Video</option>
-              </select>
-            </div>
-            <div class="form-group narrow">
-              <label for="orientation">Orientation</label>
-              <select id="orientation">
-                <option value="landscape">Landscape</option>
-                <option value="portrait">Portrait</option>
-              </select>
-            </div>
-            <div class="form-group narrow">
-              <label for="resolution">Resolution</label>
-              <select id="resolution">
-                <option value="standard">1080p Standard</option>
-                <option value="high">4K High</option>
-                <option value="ultra">8K Ultra</option>
-              </select>
-            </div>
-            <div class="form-group narrow">
-              <label for="quality">Detail Level</label>
-              <select id="quality">
-                <option value="standard">Standard</option>
-                <option value="high">High Detail</option>
-                <option value="extreme">Extreme Detail</option>
-              </select>
-            </div>
-          </div>
-          <div class="toggle-grid" id="video-options-row">
-            <label class="toggle-item"><input type="checkbox" id="slowmo"> <label for="slowmo">Slow Motion</label></label>
-            <label class="toggle-item"><input type="checkbox" id="dolly"> <label for="dolly">Dolly Move</label></label>
-            <label class="toggle-item"><input type="checkbox" id="orbit"> <label for="orbit">Orbit Shot</label></label>
-            <label class="toggle-item"><input type="checkbox" id="drone"> <label for="drone">Drone Flyover</label></label>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /#content -->
-  </div><!-- /#main -->
-
-  <!-- BOTTOM BAR -->
-  <div id="bottom-bar">
-    <div id="status-msg">READY</div>
-    <div id="bar-actions">
-      <button class="btn btn-clear" id="clearBtn">✕ Clear</button>
-      <button class="btn btn-outline" id="exportBtn">Export .TXT</button>
-      <button class="btn btn-outline" id="copyBtn">Copy Prompt</button>
-      <button class="btn btn-gen" id="ideogramBtn">⚡ Ideogram</button>
-      <button class="btn btn-gen" id="leonardoBtn">⚡ Leonardo</button>
-    </div>
-  </div>
-
-</div><!-- /#app -->
-
-<div id="toast"></div>
-
-<div id="modal">
-  <div id="modal-box">
-    <p>Reset all fields to defaults?</p>
-    <div class="modal-btns">
-      <button class="btn btn-outline" id="clear-cancel">Cancel</button>
-      <button class="btn btn-outline" id="clear-confirm" style="border-color:var(--red);color:#f5f5f5;background:rgba(107,0,0,0.3);">Reset</button>
-    </div>
-  </div>
-</div>
-
-<script>
-const $ = id => document.getElementById(id);
-const WHEEL_MIN = 13, WHEEL_MAX = 22;
-let currentPrompt = '';
-let currentPage = 'single';
-let shootMode = 'photo';
-
-const LIGHTING_MAP = {
-  'studio-high-key': { prompt: 'softbox lighting, high-key studio strobes, white fill cards, bright even illumination, clean specular highlights on bodywork', warnWith: { 'neon-night':'', 'london-street':'', 'racetrack':'', 'desert':'', 'golden-hour':'' }, label: 'Studio — High Key' },
-  'studio-low-key':  { prompt: 'dramatic low-key lighting, single hard key light, deep shadow gradients, sharp rim lighting, moody chiaroscuro', warnWith: {}, label: 'Studio — Low Key' },
-  'neon-night':      { prompt: 'cinematic nighttime lighting, vibrant neon sign glow, coloured light spill across bodywork, wet surface reflections, realistic bloom and lens flare, dark atmospheric shadows', warnWith: { 'studio-white': 'White studio backdrop kills neon bloom — try Studio (Black) or London Street.', 'desert': 'Desert is a daylight setting — try Golden Hour instead.', 'transparent': 'Transparent cutouts need neutral lighting.' }, label: 'Neon Night' },
-  'daytime-natural': { prompt: 'bright natural daylight, harsh directional sunlight, crisp hard shadows, clear blue sky ambient fill', warnWith: { 'studio-white': 'Natural sunlight contradicts a studio backdrop. Try Racetrack or Desert.', 'studio-black': 'Natural sunlight contradicts a dark studio. Try an outdoor location.' }, label: 'Daytime Natural' },
-  'golden-hour':     { prompt: 'golden hour warm directional sunlight, long soft shadows, orange and amber light across body panels, warm atmospheric haze, gentle lens flare', warnWith: { 'studio-white': 'Golden hour tones clash with a white studio. Try an outdoor location.', 'studio-black': 'Golden hour is outdoor light — a dark studio creates a contradiction.' }, label: 'Golden Hour' },
-  'overcast':        { prompt: 'overcast diffused lighting, flat even sky illumination, soft shadowless light, cool-grey ambient tone, clean reflections across all panels', warnWith: {}, label: 'Overcast / Diffused' },
-};
-
-const LOCATION_MAP = {
-  'studio-white':  { prompt: 'pure white seamless paper backdrop, professional automotive photography studio, clean reflective white floor', label: 'Studio (White)' },
-  'studio-black':  { prompt: 'pure black seamless backdrop, darkened professional studio, polished dark floor with subtle car reflection', label: 'Studio (Black)' },
-  'racetrack':     { prompt: 'FIA-grade racing circuit, pit lane straight, dark tarmac with race markings, grandstands blurred in background', label: 'Racetrack' },
-  'london-street': { prompt: 'gritty London city street, rain-soaked wet cobblestones reflecting light, iconic red double-decker bus blurred in background, glowing street lamps', label: 'London Street' },
-  'desert':        { prompt: 'vast open desert landscape, cracked salt flat, dramatic cloudless sky, golden dust haze in the air', label: 'Desert' },
-  'transparent':   { prompt: 'fully transparent background, vehicle isolated, clean cutout with no colour cast on edges', label: 'Transparent / Cutout' },
-  '3-car-garage':  { prompt: 'cool hangar-style three-car garage, polished epoxy concrete floor with subtle reflections, dramatic industrial pendant lighting, exposed steel beams and columns, clean whitewashed walls with subtle weathering, tool cabinets and equipment tastefully visible in background, cinematic depth of field', label: '3-Car-Garage' },
-  'custom':        { prompt: null, label: 'Custom' },
-};
-
-const WEATHER_MAP = {
-  'none':        { prompt: null, label: null, warnStudio: false },
-  'rain':        { prompt: 'light rain falling, raindrops visible in air, water droplets on all surfaces, puddles forming, rain-blurred background', label: 'Rain', warnStudio: true },
-  'heavy-rain':  { prompt: 'heavy downpour, thick curtains of rain, water sheeting off body panels, deep puddles, stormy atmosphere', label: 'Heavy Rain', warnStudio: true },
-  'wet':         { prompt: 'wet roads after rainfall, mirror-like reflections in standing water, droplets clinging to paint and glass, glistening surface sheen', label: 'Wet Roads', warnStudio: false },
-  'snow':        { prompt: 'active snowfall, snowflakes drifting in air, fresh snow settling on surfaces, cold blue-white ambient light', label: 'Snow', warnStudio: true },
-  'snow-ground': { prompt: 'deep settled snow on ground, snow packed into wheel arches and creases, frosted glass, crisp cold daylight', label: 'Snow on Ground', warnStudio: true },
-  'fog':         { prompt: 'dense fog and low mist, soft diffused light, fog rolling across ground, vehicle emerging from mist', label: 'Fog / Mist', warnStudio: false },
-  'dust':        { prompt: 'swirling dust storm, orange-brown dust particles in air, grit on surfaces, reduced visibility through haze', label: 'Dust Storm', warnStudio: true },
-  'heatwave':    { prompt: 'extreme heatwave, heat haze rising from tarmac, mirages on road, bleached high-contrast sunlight, shimmering distortion', label: 'Heatwave', warnStudio: true },
-};
-
-const QUALITY_MAP = {
-  standard: { photo: 'commercial automotive photography quality, sharp focus, professional retouching', render: 'high-quality CGI render, clean anti-aliasing, accurate materials' },
-  high:     { photo: 'macro photography-grade sharpness, micro-texture detail, subsurface scattering in paint depth, HDR tonal range, hyper-realistic reflections', render: 'photorealistic CGI, subsurface scattering, ray-traced reflections and shadows, HDR lighting' },
-  extreme:  { photo: 'extreme macro photography, every panel pore visible, subsurface scattering through lacquer, beyond-8K detail density', render: 'reference-grade photorealism, subsurface scattering through clear coat, ray-traced global illumination, beyond-8K quality' },
-};
-
-const RESOLUTION_MAP = {
-  standard: { label: '1920×1080', tag: '1080p full HD, high detail' },
-  high:     { label: '3840×2160', tag: '4K ultra HD, very high detail' },
-  ultra:    { label: '7680×4320', tag: '8K resolution, extreme detail, macro photography sharpness' },
-};
-
-const ORIENTATION_MAP = {
-  landscape: { label: 'landscape', ratio: '16:9 aspect ratio, horizontal widescreen composition' },
-  portrait:  { label: 'portrait',  ratio: '9:16 aspect ratio, vertical portrait composition' },
-};
-
-const VIDEO_MAP = { slowmo: 'ultra slow-motion at 240fps', dolly: 'cinematic dolly push-in', orbit: '360-degree orbit shot', drone: 'sweeping drone flyover' };
-
-const PLATE_STYLES = {
-  uk:     { label: 'UK-style white number plate with Charles Wright typeface', previewId: 'plate-preview-uk' },
-  us:     { label: 'US-style state licence plate with bold sans-serif characters', previewId: 'plate-preview-us' },
-  eu:     { label: 'EU-style white number plate with blue country band', previewId: 'plate-preview-eu' },
-  custom: { label: 'custom-style number plate', previewId: 'plate-preview-custom' },
-};
-
-(function populateWheels() {
-  const sel = $('wheelSize');
-  for (let i = WHEEL_MIN; i <= WHEEL_MAX; i++) {
-    const opt = document.createElement('option');
-    opt.value = `${i}-inch`; opt.textContent = `${i}" Alloy`; sel.appendChild(opt);
-  }
-})();
-
-function switchPage(page) {
-  currentPage = page;
-  document.querySelectorAll('.page-tab').forEach((t, i) => {
-    t.classList.toggle('active', (i === 0 && page === 'single') || (i === 1 && page === 'lineup'));
-  });
-  $('page-single').classList.toggle('active', page === 'single');
-  $('page-lineup').classList.toggle('active', page === 'lineup');
-  $('sidebar-vehicle-label').textContent = page === 'lineup' ? 'Hero / Reference' : 'Vehicle Model';
-  autoGenerate();
-}
-
-function setShootMode(mode) {
-  shootMode = mode;
-  $('mode-photo').classList.toggle('active', mode === 'photo');
-  $('mode-caricature').classList.toggle('active', mode === 'caricature');
-  $('photo-controls').style.display = mode === 'photo' ? 'flex' : 'none';
-  $('photo-controls').style.flexDirection = 'column';
-  $('photo-controls').style.gap = '16px';
-  $('caricature-controls').style.display = mode === 'caricature' ? 'block' : 'none';
-  $('location-block-single').style.display = mode === 'caricature' ? 'none' : 'block';
-  autoGenerate();
-}
-
-function toggleAcc(trigger) {
-  const body = trigger.nextElementSibling;
-  const isOpen = trigger.classList.contains('open');
-  trigger.classList.toggle('open', !isOpen);
-  body.classList.toggle('open', !isOpen);
-}
-
-function syncColour(pickerId, hexId, swatchId, onChange) {
-  const picker = $(pickerId), hex = $(hexId);
-  if (!picker || !hex) return;
-  function update() {
-    if (swatchId && $(swatchId)) $(swatchId).style.background = picker.value;
-    onChange();
-  }
-  picker.addEventListener('input', () => { hex.value = picker.value.toUpperCase(); update(); });
-  hex.addEventListener('input', () => { if (/^#[0-9a-fA-F]{6}$/.test(hex.value.trim())) { picker.value = hex.value.trim(); update(); } });
-}
-
-syncColour('extColourPicker', 'extColourHex', null, autoGenerate);
-syncColour('intColourPicker', 'intColourHex', null, autoGenerate);
-syncColour('caric-colour', 'caric-hex', null, autoGenerate);
-syncColour('lu-colour1', 'lu-hex1', 'swatch-1', () => { updateAccLabel(1); autoGenerate(); });
-syncColour('lu-colour2', 'lu-hex2', 'swatch-2', () => { updateAccLabel(2); autoGenerate(); });
-syncColour('lu-colour3', 'lu-hex3', 'swatch-3', () => { updateAccLabel(3); autoGenerate(); });
-
-function updateAccLabel(n) {
-  const name = $('lu-model' + n).value.trim();
-  const el = $('acc-name-' + n);
-  if (el) el.textContent = name || ['', 'Ferrari 488 GTB', 'Lamborghini Huracán', 'Porsche 911 GT3 RS'][n];
-}
-
-['lu-model1', 'lu-model2', 'lu-model3'].forEach((id, i) => {
-  $(id).addEventListener('input', () => { updateAccLabel(i + 1); autoGenerate(); });
-});
-
-['extColourName', 'intColourName', 'lu-name1', 'lu-name2', 'lu-name3', 'caric-name'].forEach(id => {
-  const el = $(id); if (el) el.addEventListener('input', autoGenerate);
-});
-
-function colourDesc(hex, name) {
-  const h = hex.trim().toUpperCase();
-  return name.trim() ? `${name.trim()} (hex ref ${h})` : `colour hex ${h}`;
-}
-
-function checkConflicts() {
-  const lightKey = $('lighting').value, locKey = $('location').value, weatherKey = $('weather').value;
-  const lighting = LIGHTING_MAP[lightKey], weather = WEATHER_MAP[weatherKey];
-  const lWarn = $('lighting-warning');
-  if (lighting?.warnWith?.[locKey]) { lWarn.textContent = '⚠ Lighting conflict: ' + lighting.warnWith[locKey]; lWarn.style.display = 'block'; }
-  else lWarn.style.display = 'none';
-  const wWarn = $('weather-warning');
-  const isStudio = locKey === 'studio-white' || locKey === 'studio-black';
-  if (weather?.warnStudio && isStudio && weatherKey !== 'none') { wWarn.textContent = `⚠ Weather conflict: ${weather.label} doesn't work in a studio — choose an outdoor location.`; wWarn.style.display = 'block'; }
-  else wWarn.style.display = 'none';
-}
-
-function updatePlatePreview() {
-  const style = $('plateStyle').value, chars = $('plateChars').value.trim().toUpperCase();
-  ['uk','us','eu','custom'].forEach(s => { $('plate-preview-' + s).style.display = 'none'; });
-  if (style === 'none') { $('plate-chars-group').style.display = 'none'; }
-  else {
-    $('plate-chars-group').style.display = 'flex';
-    if (chars) { const p = $(PLATE_STYLES[style].previewId); p.textContent = chars; p.style.display = 'inline-flex'; }
-  }
-  autoGenerate();
-}
-
-$('plateStyle').addEventListener('change', updatePlatePreview);
-$('plateChars').addEventListener('input', () => { $('plateChars').value = $('plateChars').value.toUpperCase(); updatePlatePreview(); });
-
-$('location').addEventListener('change', () => { $('custom-location-group').style.display = $('location').value === 'custom' ? 'block' : 'none'; checkConflicts(); autoGenerate(); });
-$('lighting').addEventListener('change', () => { checkConflicts(); autoGenerate(); });
-$('weather').addEventListener('change',  () => { checkConflicts(); autoGenerate(); });
-$('customLocation').addEventListener('input', autoGenerate);
-$('lu-location').addEventListener('change', () => { $('lu-custom-location-group').style.display = $('lu-location').value === 'custom' ? 'block' : 'none'; autoGenerate(); });
-
-function updateFontPreview() {
-  const sel = $('overlayFont'), family = sel.options[sel.selectedIndex].getAttribute('data-family'), text = $('overlayText').value.trim();
-  if (family && text) { $('font-preview').style.fontFamily = `'${family}',sans-serif`; $('font-preview').textContent = text; $('font-preview-wrap').style.display = 'block'; }
-  else $('font-preview-wrap').style.display = 'none';
-  autoGenerate();
-}
-
-$('overlayFont').addEventListener('change', updateFontPreview);
-$('overlayText').addEventListener('input', updateFontPreview);
-
-$('outputType').addEventListener('change', () => {
-  const isVideo = $('outputType').value === 'video';
-  $('video-options-row').style.display = isVideo ? 'grid' : 'none';
-  autoGenerate();
-});
-
-function updateCameraIndicator(opt) {
-  const val = opt.value;
-  const isAerial = val === "Top-down bird's eye view";
-  const indicator = $('camera-indicator');
-  const aerialOverlay = $('camera-aerial-overlay');
-  if (isAerial) {
-    indicator.style.opacity = '0';
-    aerialOverlay.style.opacity = '1';
-  } else {
-    const x = parseFloat(opt.getAttribute('data-x')) * 0.9;
-    const y = parseFloat(opt.getAttribute('data-y')) * 0.9;
-    const rot = parseFloat(opt.getAttribute('data-rot')) + 90;
-    indicator.style.transform = `translate(${x}px,${y}px) rotate(${rot}deg)`;
-    indicator.style.opacity = '1';
-    aerialOverlay.style.opacity = '0';
-  }
-}
-
-function buildSinglePhotoPrompt() {
-  const model     = $('model').value.trim() || '[VEHICLE]';
-  const lightKey  = $('lighting').value, lighting = LIGHTING_MAP[lightKey];
-  const wheelVal  = $('wheelSize').value, isFactory = wheelVal === 'factory-fitted OEM';
-  const wheelText = isFactory ? 'factory-fitted OEM wheels' : `${wheelVal} custom alloy rims`;
-  const angleEl   = $('angle'), angle = angleEl.value;
-  const interior  = $('leather').checked ? 'luxurious quilted leather' : 'performance textile';
-  const isVideo   = $('outputType').value === 'video';
-  const orient    = ORIENTATION_MAP[$('orientation').value];
-  const res       = RESOLUTION_MAP[$('resolution').value];
-  const quality   = QUALITY_MAP[$('quality').value][isVideo ? 'render' : 'photo'];
-  const extC      = colourDesc($('extColourHex').value, $('extColourName').value);
-  const intC      = colourDesc($('intColourHex').value, $('intColourName').value);
-  const plateStyle = $('plateStyle').value, plateChars = $('plateChars').value.trim().toUpperCase();
-  const hasPlate  = plateStyle !== 'none' && plateChars.length > 0;
-  const locKey    = $('location').value, locData = LOCATION_MAP[locKey];
-  const locStr    = locKey === 'custom' ? ($('customLocation').value.trim() || 'a custom environment') : locData.prompt;
-  const weatherKey = $('weather').value, weather = WEATHER_MAP[weatherKey], hasWeather = weatherKey !== 'none';
-  const overlayText = $('overlayText').value.trim(), fontSel = $('overlayFont');
-  const fontVal   = fontSel.value, fontFamily = fontSel.options[fontSel.selectedIndex].getAttribute('data-family');
-  const mods = [
-    $('lightsOn').checked && 'headlights and taillights illuminated with realistic photon bloom',
-    $('motion').checked && 'motion-blurred spinning wheels',
-    $('convertible').checked && 'convertible soft-top retracted',
-    $('lowered').checked && 'slammed lowered suspension',
-    $('race').checked && 'full racing-specification aerodynamics, widebody kit, large rear wing',
-    $('tint').checked && 'limo-style dark privacy window tinting',
-  ].filter(Boolean);
-  const videoMods = isVideo ? ['slowmo','dolly','orbit','drone'].filter(id => $(id).checked).map(id => VIDEO_MAP[id]) : [];
-  updateCameraIndicator(angleEl.options[angleEl.selectedIndex]);
-  let p = `>> V2.0 | SINGLE CAR | ${isVideo ? 'VIDEO' : 'IMAGE'} | ${orient.label.toUpperCase()} | ${res.label}\n\n`;
-  p += isVideo ? `Cinematic automotive ${orient.label} video of a ${model}. ` : `Professional automotive ${orient.label} photograph of a ${model}. `;
-  p += `Exterior finished in ${extC} with deep glossy clear coat, subsurface scattering visible through paint depth. `;
-  p += `Interior trimmed in ${intC} ${interior}. `;
-  p += `Captured from a ${angle}. `;
-  p += isFactory ? `Wheels are factory-fitted OEM specification. ` : `Fitted with ${wheelText}. `;
-  p += `Lighting: ${lighting.prompt}. Background: ${locStr}. `;
-  if (hasWeather) p += `Weather: ${weather.prompt}. `;
-  if (hasPlate) p += `Vehicle bears a legible ${PLATE_STYLES[plateStyle].label} reading "${plateChars}", photorealistic characters. `;
-  const hasDriver = $('includeDriver').checked;
-  if (mods.length) p += `Specification: ${mods.join(', ')}. `;
-  if (hasDriver) p += `A male racing driver in full race suit and helmet stands beside the vehicle, posed naturally, sharp focus, photorealistic. `;
-  if (videoMods.length) p += `Camera: ${videoMods.join(', ')}. `;
-  if (overlayText && fontVal) p += `Overlay text "${overlayText}" in ${fontVal} typeface, bold, composited into image. `;
-  p += isVideo
-    ? `Technical: ${res.tag}, ${quality}, cinematic colour grade, motion blur, depth of field.`
-    : `Technical: ${res.tag}, ${quality}, crisp optical sharpness, photorealistic render.`;
-  return p;
-}
-
-function buildCaricaturePrompt() {
-  const model   = $('model').value.trim() || '[VEHICLE]';
-  const style   = $('caric-style').value;
-  const colour  = colourDesc($('caric-hex').value, $('caric-name').value);
-  const mood    = $('caric-mood').value;
-  const bg      = $('caric-bg').value;
-  const res     = RESOLUTION_MAP[$('resolution').value];
-  const orient  = ORIENTATION_MAP[$('orientation').value];
-  const effects = [
-    $('caric-exaggerate').checked && 'heavily exaggerated proportions — oversized wheels, squashed roofline, stretched bonnet',
-    $('caric-speedlines').checked && 'dramatic speed lines radiating from the vehicle',
-    $('caric-flames').checked && 'flames and fire effects from the exhaust and wheels',
-    $('caric-smoke').checked && 'thick billowing tyre smoke',
-  ].filter(Boolean);
-  const overlayText = $('overlayText').value.trim(), fontSel = $('overlayFont');
-  const fontVal = fontSel.value;
-  let p = `>> V2.0 | CARICATURE / ART | ${orient.label.toUpperCase()} | ${res.label}\n\n`;
-  p += `Illustrated artwork of a ${model} in a ${style} style. `;
-  p += `The vehicle is painted in ${colour}. Mood and atmosphere: ${mood}. Background: ${bg}. `;
-  if (effects.length) p += `Special effects: ${effects.join(', ')}. `;
-  if (overlayText && fontVal) p += `Typography: the text "${overlayText}" rendered in ${fontVal} typeface, large and integrated into the artwork composition. `;
-  p += `${orient.ratio}. High-quality digital illustration, ${res.tag}, consistent art direction throughout, pure illustrated artistic style.`;
-  return p;
-}
-
-function buildLineupPrompt() {
-  const m1 = $('lu-model1').value.trim() || '[CAR 1]';
-  const m2 = $('lu-model2').value.trim() || '[CAR 2]';
-  const m3 = $('lu-model3').value.trim() || '[CAR 3]';
-  const c1 = colourDesc($('lu-hex1').value, $('lu-name1').value);
-  const c2 = colourDesc($('lu-hex2').value, $('lu-name2').value);
-  const c3 = colourDesc($('lu-hex3').value, $('lu-name3').value);
-  const a1 = $('lu-angle1').value, a2 = $('lu-angle2').value, a3 = $('lu-angle3').value;
-  const arr = $('lu-arrangement').value;
-  const lightKey = $('lu-lighting').value, lighting = LIGHTING_MAP[lightKey];
-  const locKey = $('lu-location').value, locData = LOCATION_MAP[locKey];
-  const locStr = locKey === 'custom' ? ($('lu-customLocation')?.value.trim() || 'a custom environment') : locData.prompt;
-  const weatherKey = $('lu-weather').value, weather = WEATHER_MAP[weatherKey], hasWeather = weatherKey !== 'none';
-  const orient = ORIENTATION_MAP[$('orientation').value], res = RESOLUTION_MAP[$('resolution').value];
-  const quality = QUALITY_MAP[$('quality').value]['photo'];
-  const overlayText = $('lu-overlayText')?.value.trim() || '', fontSel = $('lu-overlayFont');
-  const fontVal = fontSel?.value || '';
-  let p = `>> V2.0 | THREE CAR LINEUP | ${orient.label.toUpperCase()} | ${res.label}\n\n`;
-  p += `Professional automotive lineup photograph featuring three cars ${arr}. ${orient.ratio}. `;
-  p += `Left position: a ${m1} finished in ${c1}, positioned in a ${a1}. `;
-  p += `Centre position: a ${m2} finished in ${c2}, positioned in a ${a2}, slightly prominent as the hero vehicle. `;
-  p += `Right position: a ${m3} finished in ${c3}, positioned in a ${a3}. `;
-  p += `All three vehicles share the same ground plane with consistent perspective and lighting. `;
-  p += `Lighting: ${lighting.prompt}. Background: ${locStr}. `;
-  if (hasWeather) p += `Weather conditions: ${weather.prompt}. `;
-  if (overlayText && fontVal) p += `Overlay text "${overlayText}" in ${fontVal} typeface composited across the composition. `;
-  p += `Technical: ${res.tag}, ${quality}, consistent lighting across all three vehicles, accurate scale relationships, no warping or distortion, photorealistic render.`;
-  return p;
-}
-
-function autoGenerate() {
-  if (currentPage === 'single') {
-    currentPrompt = shootMode === 'photo' ? buildSinglePhotoPrompt() : buildCaricaturePrompt();
-  } else {
-    currentPrompt = buildLineupPrompt();
-  }
-}
-
-function flashStatus(msg) {
-  const el = $('status-msg'); el.textContent = msg;
-  setTimeout(() => { el.textContent = 'READY'; }, 2000);
-}
-
-function showToast(msg) {
-  const t = $('toast'); t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3500);
-}
-
-function openGenerator(url, name) {
-  if (!currentPrompt) { flashStatus('NO PROMPT — FILL IN FIELDS FIRST'); return; }
-  navigator.clipboard.writeText(currentPrompt)
-    .then(() => { showToast(`✓ Prompt copied — paste into ${name} when it opens`); setTimeout(() => window.open(url, '_blank'), 400); })
-    .catch(() => { showToast(`⚠ Could not auto-copy — copy manually first`); setTimeout(() => window.open(url, '_blank'), 800); });
-}
-
-$('copyBtn').addEventListener('click', () => {
-  if (!currentPrompt) { flashStatus('NOTHING TO COPY YET'); return; }
-  navigator.clipboard.writeText(currentPrompt)
-    .then(() => flashStatus('COPIED!'))
-    .catch(() => flashStatus('COPY FAILED'));
-});
-
-$('exportBtn').addEventListener('click', () => {
-  if (!currentPrompt) { flashStatus('NOTHING TO EXPORT'); return; }
-  const blob = new Blob([currentPrompt], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob), a = document.createElement('a');
-  a.href = url; a.download = `Carbonography_${new Date().toISOString().slice(0,10)}.txt`; a.click();
-  URL.revokeObjectURL(url);
-  flashStatus('EXPORTED');
-});
-
-$('ideogramBtn').addEventListener('click', () => openGenerator('https://ideogram.ai/t/explore', 'Ideogram'));
-$('leonardoBtn').addEventListener('click', () => openGenerator('https://app.leonardo.ai/', 'Leonardo.ai'));
-
-function resetAll() {
-  ['model','lu-model1','lu-model2','lu-model3','customLocation','overlayText','lu-overlayText',
-   'extColourName','intColourName','lu-name1','lu-name2','lu-name3','caric-name','lu-customLocation'].forEach(id => { const el=$(id); if(el) el.value=''; });
-  $('lighting').value='studio-high-key'; $('wheelSize').value='factory-fitted OEM';
-  $('angle').value=$('angle').options[0].value; $('location').value='studio-white'; $('weather').value='none';
-  $('plateStyle').value='none'; $('plateChars').value=''; $('overlayFont').value='';
-  $('lu-lighting').value='studio-high-key'; $('lu-location').value='studio-white'; $('lu-weather').value='none';
-  $('lu-arrangement').value=$('lu-arrangement').options[0].value;
-  $('extColourPicker').value='#1a1a1a'; $('extColourHex').value='#1A1A1A';
-  $('intColourPicker').value='#2c1a0e'; $('intColourHex').value='#2C1A0E';
-  $('lu-colour1').value='#cc0000'; $('lu-hex1').value='#CC0000'; $('swatch-1').style.background='#cc0000';
-  $('lu-colour2').value='#f5c518'; $('lu-hex2').value='#F5C518'; $('swatch-2').style.background='#f5c518';
-  $('lu-colour3').value='#1a1a1a'; $('lu-hex3').value='#1A1A1A'; $('swatch-3').style.background='#1a1a1a';
-  $('caric-colour').value='#cc0000'; $('caric-hex').value='#CC0000';
-  $('caric-style').value=$('caric-style').options[0].value;
-  $('caric-mood').value=$('caric-mood').options[0].value;
-  $('caric-bg').value=$('caric-bg').options[0].value;
-  $('outputType').value='image'; $('orientation').value='landscape'; $('resolution').value='standard'; $('quality').value='standard';
-  ['lightsOn','motion','convertible','lowered','race','tint','leather','slowmo','dolly','orbit','drone','caric-exaggerate','caric-speedlines','caric-flames','caric-smoke','includeDriver'].forEach(id=>{$(id).checked=false;});
-  $('driver-overlay').style.opacity = '0';
-  $('custom-location-group').style.display='none'; $('lu-custom-location-group').style.display='none';
-  $('video-options-row').style.display='none'; $('font-preview-wrap').style.display='none'; $('plate-chars-group').style.display='none';
-  ['acc-name-1','acc-name-2','acc-name-3'].forEach((id,i) => { $(id).textContent = ['Ferrari 488 GTB','Lamborghini Huracán','Porsche 911 GT3 RS'][i]; });
-  setShootMode('photo'); switchPage('single'); checkConflicts(); autoGenerate(); flashStatus('CLEARED — READY');
-}
-
-$('clearBtn').addEventListener('click', () => $('modal').classList.add('show'));
-$('clear-cancel').addEventListener('click', () => $('modal').classList.remove('show'));
-$('clear-confirm').addEventListener('click', () => { $('modal').classList.remove('show'); resetAll(); });
-$('modal').addEventListener('click', e => { if (e.target === $('modal')) $('modal').classList.remove('show'); });
-
-['wheelSize','angle','orientation','resolution','quality','outputType',
- 'lu-angle1','lu-angle2','lu-angle3','lu-arrangement','lu-lighting','lu-location','lu-weather',
- 'caric-style','caric-mood','caric-bg',
- 'lightsOn','motion','convertible','lowered','race','tint','leather','slowmo','dolly','orbit','drone',
- 'caric-exaggerate','caric-speedlines','caric-flames','caric-smoke'
-].forEach(id => {
-  const el = $(id); if (!el) return;
-  el.addEventListener(el.type === 'checkbox' ? 'change' : 'input', autoGenerate);
-});
-
-$('model').addEventListener('input', autoGenerate);
-
-$('includeDriver').addEventListener('change', () => {
-  $('driver-overlay').style.opacity = $('includeDriver').checked ? '1' : '0';
-  autoGenerate();
-});
-
-document.addEventListener('DOMContentLoaded', () => { checkConflicts(); autoGenerate(); });
-</script>
 </body>
 </html>
