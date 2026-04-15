@@ -19,7 +19,7 @@
             min-height: 100vh; font-family: 'Segoe UI', sans-serif;
         }
 
-        /* The Entry Overlay */
+        /* Interaction Overlay */
         #overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--sky-blue);
@@ -34,11 +34,12 @@
             border-radius: 50px; cursor: pointer;
             font-family: 'Great Vibes', cursive;
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
         }
 
-        .mute-hint {
-            margin-top: 15px; font-size: 0.9rem; color: #666;
-        }
+        .start-btn:active { transform: scale(0.95); }
+
+        .mute-hint { margin-top: 15px; font-size: 0.9rem; color: #666; }
 
         /* Card Layout */
         .card-container {
@@ -50,10 +51,10 @@
             position: relative;
         }
 
-        /* Floating Music Toggle */
+        /* Manual Music Toggle */
         #music-toggle {
             position: absolute; top: 20px; right: 20px;
-            background: rgba(255,255,255,0.8);
+            background: rgba(255,255,255,0.9);
             border-radius: 50%; width: 50px; height: 50px;
             display: flex; justify-content: center; align-items: center;
             cursor: pointer; font-size: 1.5rem; z-index: 100;
@@ -70,23 +71,28 @@
 
         .logo-footer img { height: 60px; margin-top: 40px; }
 
+        .btn-print {
+            margin-top: 20px; background: #eee; border: none; padding: 10px 20px;
+            border-radius: 5px; cursor: pointer; font-weight: bold; color: #555;
+        }
+
         @media (max-width: 600px) {
-            .message { font-size: 3rem; }
+            .message { font-size: 3.2rem; }
             .from-line { font-size: 1.8rem; }
         }
 
-        @media print { #overlay, #music-toggle { display: none; } }
+        @media print { #overlay, #music-toggle, .btn-print { display: none; } }
     </style>
 </head>
 <body>
 
     <div id="overlay">
         <button class="start-btn" onclick="initCard()">Open Rich's Card ✉️</button>
-        <div class="mute-hint">Ensure your ringer/volume is UP! 🔊</div>
+        <div class="mute-hint">Turn your volume UP! 🔊</div>
     </div>
 
     <audio id="bday-music" loop preload="auto">
-        <source src="https://files.catbox.moe/87fbbv.wav" type="audio/wav">
+        <source src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/h17-lets-all-make-a-bomb.mp3" type="audio/mpeg">
     </audio>
 
     <div class="card-container">
@@ -97,9 +103,12 @@
         <div class="card-content">
             <h1 class="message">Happy Birthday, Rich</h1>
             <p class="from-line">From David, Logan & Skylar</p>
+            
             <div class="logo-footer">
                 <img src="https://carbonography.co.uk/carbonography-logo.png" alt="Carbonography Logo">
             </div>
+
+            <button class="btn-print" onclick="window.print()">Print to PDF</button>
         </div>
     </div>
 
@@ -108,12 +117,14 @@
         const toggleBtn = document.getElementById('music-toggle');
 
         function initCard() {
-            // Attempt playback
+            // Attempt to start the music
             audio.play().then(() => {
                 toggleBtn.innerText = "🔊";
-            }).catch(e => console.log("Playback blocked or loading:", e));
+            }).catch(e => {
+                console.log("Audio waiting for full load...");
+            });
 
-            // Hide overlay
+            // Hide the starter screen
             document.getElementById('overlay').style.display = 'none';
         }
 
