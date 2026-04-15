@@ -3,124 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Birthday Card for Rich</title>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <title>Happy Birthday Rich! | Carbonography</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet">
     <style>
         :root {
-            --light-blue: #e3f2fd;
-            --card-cream: #ffffff;
-            --vintage-red: #b71c1c;
-            --text-brown: #3e2723;
+            --sky-blue: #e3f2fd;
+            --white: #ffffff;
+            --accent-red: #d32f2f;
+            --carbon-dark: #220306;
         }
 
         body {
-            background-color: var(--light-blue);
+            background-color: var(--sky-blue);
             margin: 0;
             padding: 40px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
         }
 
-        /* Print Button Styling */
-        .print-actions {
+        /* Print Button */
+        .header-actions {
             margin-bottom: 30px;
+            text-align: center;
         }
 
         .btn-print {
-            background-color: var(--vintage-red);
+            background-color: var(--accent-red);
             color: white;
             border: none;
-            padding: 12px 30px;
-            font-size: 1rem;
+            padding: 15px 35px;
+            font-size: 1.1rem;
             font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3);
+            transition: all 0.3s ease;
         }
 
         .btn-print:hover {
-            background-color: #801313;
-            transform: translateY(-2px);
+            transform: scale(1.05);
+            background-color: #b71c1c;
         }
 
-        /* The Card - Made Larger */
-        .birthday-card {
-            background-color: var(--card-cream);
+        .music-hint {
+            display: block;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* The Birthday Card */
+        .card-container {
+            background-color: var(--white);
             width: 100%;
-            max-width: 900px; /* Increased size */
-            border-radius: 15px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            max-width: 900px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
             overflow: hidden;
-            border: 1px solid rgba(0,0,0,0.05);
+            border: 10px solid var(--white);
         }
 
         .card-image {
             width: 100%;
             display: block;
-            object-fit: cover;
+            border-radius: 20px 20px 0 0;
         }
 
         .card-content {
-            padding: 50px 20px;
+            padding: 60px 20px;
             text-align: center;
+            background: linear-gradient(to bottom, #ffffff, #fcfcfc);
         }
 
-        .main-message {
+        .message {
             font-family: 'Great Vibes', cursive;
-            font-size: 4.5rem; /* Larger font */
-            color: var(--vintage-red);
-            margin: 0 0 10px 0;
+            font-size: 5rem;
+            color: var(--accent-red);
+            margin: 0;
+            line-height: 1.1;
         }
 
-        .signature {
-            font-family: 'Great Vibes', cursive;
-            font-size: 2.2rem;
-            color: var(--text-brown);
-            margin-top: 10px;
+        .from-line {
+            font-family: 'Caveat', cursive;
+            font-size: 2.5rem;
+            color: #444;
+            margin-top: 20px;
         }
 
-        /* Hide print button when printing/saving to PDF */
+        .logo-footer {
+            margin-top: 40px;
+            opacity: 0.8;
+        }
+
+        .logo-footer img {
+            height: 60px;
+        }
+
+        /* Print Rules - Hide button and music hint when saving to PDF */
         @media print {
-            .print-actions {
+            .header-actions {
                 display: none;
             }
             body {
                 background-color: white;
                 padding: 0;
             }
-            .birthday-card {
+            .card-container {
                 box-shadow: none;
-                max-width: 100%;
                 border: none;
+                max-width: 100%;
             }
         }
 
-        /* Responsive scaling */
-        @media (max-width: 768px) {
-            .main-message { font-size: 3rem; }
-            .signature { font-size: 1.5rem; }
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            .message { font-size: 3.5rem; }
+            .from-line { font-size: 1.8rem; }
             body { padding: 20px 10px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="print-actions">
+    <audio id="bday-audio" loop>
+        <source src="https://files.catbox.moe/87fbbv.wav" type="audio/wav">
+    </audio>
+
+    <div class="header-actions">
         <button class="btn-print" onclick="window.print()">🖨️ Print Card to PDF</button>
+        <span class="music-hint">Tap anywhere to play music 🔊</span>
     </div>
 
-    <div class="birthday-card">
+    <div class="card-container">
         <img src="https://github.com/aherndavid/carbonography/raw/main/assets/rich-birthday.png" alt="Rich's Birthday" class="card-image">
         
         <div class="card-content">
-            <h1 class="main-message">Happy Birthday, Rich</h1>
-            <p class="signature">From David, Logan & Skylar</p>
+            <h1 class="message">Happy Birthday, Rich</h1>
+            <p class="from-line">From David, Logan & Skylar</p>
+
+            <div class="logo-footer">
+                <img src="https://carbonography.co.uk/carbonography-logo.png" alt="Carbonography Logo">
+            </div>
         </div>
     </div>
+
+    <script>
+        // Audio Trigger: Browsers require a user click/tap to play audio
+        const audio = document.getElementById('bday-audio');
+        
+        document.addEventListener('click', function() {
+            audio.play().catch(function(error) {
+                console.log("Audio play failed:", error);
+            });
+        }, { once: true });
+
+        // Also trigger on touch for mobile users
+        document.addEventListener('touchstart', function() {
+            audio.play().catch(function(error) {
+                console.log("Audio play failed:", error);
+            });
+        }, { once: true });
+    </script>
 
 </body>
 </html>
