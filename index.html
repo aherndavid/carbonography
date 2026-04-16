@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carbonography | Launching Soon</title>
+    <title>Carbonography</title>
     <style>
         * {
             margin: 0;
@@ -13,191 +13,195 @@
 
         body, html {
             height: 100%;
-            overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #000;
-            color: #fff;
+            width: 100%;
+            margin: 0;
+            overflow: hidden; /* Prevents scrollbars */
+            background-color: #111; /* Fallback color */
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: white;
         }
 
-        /* Full Screen Background Slider */
+        /* The Full-Page Image Slider */
         .slider-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
+            z-index: 1;
         }
 
         .slide {
             position: absolute;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            opacity: 0;
-            transition: opacity 2s ease-in-out; /* Smooth transition */
-        }
-
-        .slide.active {
-            opacity: 1;
-        }
-
-        /* Dark overlay for text readability */
-        .overlay {
-            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,0.8) 100%);
-            z-index: 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
         }
 
-        /* Footer Section */
-        .footer-branding {
+        .active {
+            opacity: 1;
+        }
+
+        /* Subtle dark vignette to make the bottom text pop */
+        .overlay {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+            z-index: 2;
+        }
+
+        /* Bottom Branding Bar */
+        .footer-container {
             position: fixed;
             bottom: 40px;
             left: 40px;
+            z-index: 10;
             display: flex;
             align-items: center;
-            gap: 20px;
-            z-index: 10;
+            gap: 25px;
         }
 
         .logo {
-            height: 50px;
+            height: 60px; /* Adjust based on your logo shape */
             width: auto;
-        }
-
-        .site-info {
-            display: flex;
-            align-items: center;
-            gap: 20px;
+            display: block;
         }
 
         .site-name {
-            font-size: 28px;
-            font-weight: 700;
+            font-size: 24px;
+            font-weight: 800;
             letter-spacing: 2px;
             text-transform: uppercase;
+            white-space: nowrap;
         }
 
-        /* Vertical Divider */
-        .divider {
-            width: 1px;
-            height: 30px;
-            background-color: rgba(255,255,255,0.4);
-        }
-
-        /* Countdown Style */
+        /* The Countdown Clock */
         .countdown {
             display: flex;
             gap: 15px;
-            font-family: monospace;
+            padding-left: 25px;
+            border-left: 1px solid rgba(255,255,255,0.3);
         }
 
-        .time-block {
+        .time-box {
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-width: 45px;
         }
 
         .time-value {
-            font-size: 24px;
-            font-weight: bold;
+            font-size: 22px;
+            font-weight: 300;
+            font-family: monospace;
         }
 
         .time-label {
             font-size: 9px;
             text-transform: uppercase;
+            letter-spacing: 1px;
             opacity: 0.6;
         }
 
+        /* Mobile Adjustments */
         @media (max-width: 768px) {
-            .footer-branding {
-                flex-direction: column;
-                align-items: flex-start;
+            .footer-container {
                 bottom: 20px;
                 left: 20px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
             }
-            .divider { display: none; }
+            .countdown {
+                border-left: none;
+                padding-left: 0;
+                border-top: 1px solid rgba(255,255,255,0.3);
+                padding-top: 10px;
+            }
         }
     </style>
 </head>
 <body>
 
     <div class="slider-container">
-        <div class="slide active" style="background-image: url('assets/purple-lambo.png');"></div>
-        <div class="slide" style="background-image: url('assets/dpaul-gumball-lambo.png');"></div>
+        <div class="slide active" style="background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/purple-lambo.png');"></div>
+        <div class="slide" style="background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/dpaul-gumball-lambo.png');"></div>
     </div>
 
     <div class="overlay"></div>
 
-    <div class="footer-branding">
-        <img src="assets/carbonography-logo.png" alt="Logo" class="logo">
+    <div class="footer-container">
+        <img src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/carbonography-logo.png" alt="Carbonography Logo" class="logo">
         
-        <div class="site-info">
-            <span class="site-name">Carbonography.</span>
-            <div class="divider"></div>
-            
-            <div class="countdown" id="timer">
-                <div class="time-block">
-                    <span class="time-value" id="days">00</span>
-                    <span class="time-label">Days</span>
-                </div>
-                <div class="time-block">
-                    <span class="time-value" id="hours">00</span>
-                    <span class="time-label">Hrs</span>
-                </div>
-                <div class="time-block">
-                    <span class="time-value" id="mins">00</span>
-                    <span class="time-label">Min</span>
-                </div>
-                <div class="time-block">
-                    <span class="time-value" id="secs">00</span>
-                    <span class="time-label">Sec</span>
-                </div>
+        <span class="site-name">Carbonography.</span>
+
+        <div class="countdown" id="clock">
+            <div class="time-box">
+                <span class="time-value" id="days">00</span>
+                <span class="time-label">Days</span>
+            </div>
+            <div class="time-box">
+                <span class="time-value" id="hours">00</span>
+                <span class="time-label">Hrs</span>
+            </div>
+            <div class="time-box">
+                <span class="time-value" id="mins">00</span>
+                <span class="time-label">Mins</span>
+            </div>
+            <div class="time-box">
+                <span class="time-value" id="secs">00</span>
+                <span class="time-label">Secs</span>
             </div>
         </div>
     </div>
 
     <script>
-        // BACKGROUND ROTATION
+        // 1. Image Rotation Logic (5 seconds per image)
         const slides = document.querySelectorAll('.slide');
-        let index = 0;
+        let currentIdx = 0;
 
-        function rotateImages() {
-            slides[index].classList.remove('active');
-            index = (index + 1) % slides.length;
-            slides[index].classList.add('active');
+        function cycleImages() {
+            slides[currentIdx].classList.remove('active');
+            currentIdx = (currentIdx + 1) % slides.length;
+            slides[currentIdx].classList.add('active');
         }
-        setInterval(rotateImages, 5000);
+        setInterval(cycleImages, 5000);
 
-        // COUNTDOWN TIMER TO MAY 1, 2026
-        const targetDate = new Date("May 1, 2026 00:00:00").getTime();
+        // 2. Countdown Logic for May 1, 2026
+        const target = new Date("May 1, 2026 00:00:00").getTime();
 
-        function updateTimer() {
+        function updateCountdown() {
             const now = new Date().getTime();
-            const diff = targetDate - now;
+            const diff = target - now;
 
+            // Calculations
             const d = Math.floor(diff / (1000 * 60 * 60 * 24));
             const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const s = Math.floor((diff % (1000 * 60)) / 1000);
 
-            document.getElementById("days").innerHTML = d.toString().padStart(2, '0');
-            document.getElementById("hours").innerHTML = h.toString().padStart(2, '0');
-            document.getElementById("mins").innerHTML = m.toString().padStart(2, '0');
-            document.getElementById("secs").innerHTML = s.toString().padStart(2, '0');
+            // Display (with leading zeros)
+            document.getElementById('days').innerText = d.toString().padStart(2, '0');
+            document.getElementById('hours').innerText = h.toString().padStart(2, '0');
+            document.getElementById('mins').innerText = m.toString().padStart(2, '0');
+            document.getElementById('secs').innerText = s.toString().padStart(2, '0');
 
             if (diff < 0) {
-                document.getElementById("timer").innerHTML = "WE ARE LIVE";
+                document.getElementById('clock').innerHTML = "LAUNCHED";
             }
         }
 
-        setInterval(updateTimer, 1000);
-        updateTimer();
+        setInterval(updateCountdown, 1000);
+        updateCountdown(); // Run immediately on load
     </script>
 </body>
 </html>
