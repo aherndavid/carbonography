@@ -3,102 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carbonography | Coming Soon</title>
-
-    <script>
-        if (screen.width <= 768) {
-            window.location.replace("https://www.carbonography.co.uk/m/index.html");
-        }
-    </script>
-
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#cc0000">
-    <meta name="apple-mobile-web-app-title" content="Carbonography">
-
+    <title>Carbonography | Launching Soon</title>
     <style>
-        :root {
-            --carbon-red: #cc0000;
-            --carbon-white: #ffffff;
-            --carbon-black: #000000;
-            --glass-bg: rgba(255, 255, 255, 0.85);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body, html { height: 100%; width: 100%; background-color: #ffffff; overflow: hidden; }
+        body, html {
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000;
+            color: #fff;
+        }
 
-        .background-image {
+        /* Full Screen Background Slider */
+        .slider-container {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/purple-lambo.png');
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
             background-size: cover;
             background-position: center;
-            z-index: 1;
+            opacity: 0;
+            transition: opacity 2s ease-in-out; /* Smooth transition */
         }
 
+        .slide.active {
+            opacity: 1;
+        }
+
+        /* Dark overlay for text readability */
         .overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 20%, rgba(255,255,255,0.2) 100%);
-            z-index: 2;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,0.8) 100%);
+            z-index: 0;
         }
 
-        .bottom-nav {
+        /* Footer Section */
+        .footer-branding {
             position: fixed;
-            bottom: 0; left: 0; width: 100%; z-index: 10;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border-top: 4px solid var(--carbon-red);
-            padding: 10px 40px;
+            bottom: 40px;
+            left: 40px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+            gap: 20px;
+            z-index: 10;
         }
 
-        .status-msg { flex: 1; font-size: 1.2rem; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; }
-        .status-msg span { color: var(--carbon-red); }
+        .logo {
+            height: 50px;
+            width: auto;
+        }
 
-        .logo-area { flex: 1; display: flex; justify-content: center; }
-        .logo-area img { height: 70px; width: auto; }
+        .site-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
 
-        .clock-area { flex: 1; display: flex; justify-content: flex-end; gap: 20px; }
-        .unit { text-align: center; min-width: 50px; }
-        .number { display: block; font-size: 1.8rem; font-weight: 800; line-height: 1; }
-        .label { font-size: 0.6rem; text-transform: uppercase; color: #666; letter-spacing: 1px; font-weight: bold; }
+        .site-name {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Vertical Divider */
+        .divider {
+            width: 1px;
+            height: 30px;
+            background-color: rgba(255,255,255,0.4);
+        }
+
+        /* Countdown Style */
+        .countdown {
+            display: flex;
+            gap: 15px;
+            font-family: monospace;
+        }
+
+        .time-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .time-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .time-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            opacity: 0.6;
+        }
+
+        @media (max-width: 768px) {
+            .footer-branding {
+                flex-direction: column;
+                align-items: flex-start;
+                bottom: 20px;
+                left: 20px;
+            }
+            .divider { display: none; }
+        }
     </style>
 </head>
 <body>
-    <div class="background-image"></div>
+
+    <div class="slider-container">
+        <div class="slide active" style="background-image: url('assets/purple-lambo.png');"></div>
+        <div class="slide" style="background-image: url('assets/dpaul-gumball-lambo.png');"></div>
+    </div>
+
     <div class="overlay"></div>
 
-    <footer class="bottom-nav">
-        <div class="status-msg">Carbonography <span>Coming Soon</span></div>
-        <div class="logo-area"><img src="carbonography-logo.png" alt="Carbonography Logo"></div>
-        <div class="clock-area" id="timer">
-            <div class="unit"><span class="number" id="days">00</span><span class="label">Days</span></div>
-            <div class="unit"><span class="number" id="hours">00</span><span class="label">Hours</span></div>
-            <div class="unit"><span class="number" id="mins">00</span><span class="label">Mins</span></div>
-            <div class="unit"><span class="number" id="secs">00</span><span class="label">Secs</span></div>
+    <div class="footer-branding">
+        <img src="assets/carbonography-logo.png" alt="Logo" class="logo">
+        
+        <div class="site-info">
+            <span class="site-name">Carbonography.</span>
+            <div class="divider"></div>
+            
+            <div class="countdown" id="timer">
+                <div class="time-block">
+                    <span class="time-value" id="days">00</span>
+                    <span class="time-label">Days</span>
+                </div>
+                <div class="time-block">
+                    <span class="time-value" id="hours">00</span>
+                    <span class="time-label">Hrs</span>
+                </div>
+                <div class="time-block">
+                    <span class="time-value" id="mins">00</span>
+                    <span class="time-label">Min</span>
+                </div>
+                <div class="time-block">
+                    <span class="time-value" id="secs">00</span>
+                    <span class="time-label">Sec</span>
+                </div>
+            </div>
         </div>
-    </footer>
+    </div>
 
     <script>
-        const target = new Date("May 1, 2026 00:00:00").getTime();
-        function updateClock() {
-            const now = new Date().getTime();
-            const diff = target - now;
-            const d = Math.floor(diff / (86400000));
-            const h = Math.floor((diff % 86400000) / 3600000);
-            const m = Math.floor((diff % 3600000) / 60000);
-            const s = Math.floor((diff % 60000) / 1000);
-            document.getElementById("days").innerText = d.toString().padStart(2, '0');
-            document.getElementById("hours").innerText = h.toString().padStart(2, '0');
-            document.getElementById("mins").innerText = m.toString().padStart(2, '0');
-            document.getElementById("secs").innerText = s.toString().padStart(2, '0');
+        // BACKGROUND ROTATION
+        const slides = document.querySelectorAll('.slide');
+        let index = 0;
+
+        function rotateImages() {
+            slides[index].classList.remove('active');
+            index = (index + 1) % slides.length;
+            slides[index].classList.add('active');
         }
-        setInterval(updateClock, 1000);
-        updateClock();
+        setInterval(rotateImages, 5000);
+
+        // COUNTDOWN TIMER TO MAY 1, 2026
+        const targetDate = new Date("May 1, 2026 00:00:00").getTime();
+
+        function updateTimer() {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerHTML = d.toString().padStart(2, '0');
+            document.getElementById("hours").innerHTML = h.toString().padStart(2, '0');
+            document.getElementById("mins").innerHTML = m.toString().padStart(2, '0');
+            document.getElementById("secs").innerHTML = s.toString().padStart(2, '0');
+
+            if (diff < 0) {
+                document.getElementById("timer").innerHTML = "WE ARE LIVE";
+            }
+        }
+
+        setInterval(updateTimer, 1000);
+        updateTimer();
     </script>
 </body>
 </html>
