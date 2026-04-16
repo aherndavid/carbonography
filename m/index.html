@@ -34,9 +34,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/purple-lambo.png');
+            /* Updated to your portrait/mobile version */
+            background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/purple-lambo-mobile.png');
             background-size: cover;
-            background-position: 65% center; /* Shifted to show more of the car on narrow screens */
+            background-position: center; /* Centered since it's already portrait */
             z-index: 1;
         }
 
@@ -46,11 +47,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 100%);
             z-index: 2;
         }
 
-        /* Mobile Container */
         .content-wrapper {
             position: relative;
             z-index: 10;
@@ -58,12 +58,12 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 40px 20px;
+            padding: 50px 20px;
             text-align: center;
         }
 
         .logo-area img {
-            height: 60px;
+            height: 65px;
             width: auto;
             filter: drop-shadow(0 2px 10px rgba(0,0,0,0.5));
         }
@@ -74,7 +74,7 @@
             border-radius: 20px;
             padding: 30px 20px;
             border-bottom: 5px solid var(--carbon-red);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
 
         .status-msg {
@@ -88,11 +88,10 @@
 
         .status-msg span {
             color: var(--carbon-red);
-            display: block; /* Stack "Coming Soon" below name */
-            font-size: 1.5rem;
+            display: block;
+            font-size: 1.6rem;
         }
 
-        /* Countdown Clock */
         .clock-area {
             display: flex;
             justify-content: center;
