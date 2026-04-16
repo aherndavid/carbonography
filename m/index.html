@@ -1,253 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Carbonography | v1.6 Mobile</title>
-<link rel="stylesheet" href="/assets/global.css">
-<link rel="stylesheet" href="/assets/mobile.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbonography | Mobile</title>
+    <style>
+        :root {
+            --carbon-red: #cc0000;
+            --carbon-white: #ffffff;
+            --carbon-black: #000000;
+            --glass-bg: rgba(255, 255, 255, 0.9); 
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            background-color: #000;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/purple-lambo.png');
+            background-size: cover;
+            background-position: 65% center; /* Shifted to show more of the car on narrow screens */
+            z-index: 1;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%);
+            z-index: 2;
+        }
+
+        /* Mobile Container */
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .logo-area img {
+            height: 60px;
+            width: auto;
+            filter: drop-shadow(0 2px 10px rgba(0,0,0,0.5));
+        }
+
+        .main-info {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 30px 20px;
+            border-bottom: 5px solid var(--carbon-red);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .status-msg {
+            font-size: 1.1rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            color: var(--carbon-black);
+        }
+
+        .status-msg span {
+            color: var(--carbon-red);
+            display: block; /* Stack "Coming Soon" below name */
+            font-size: 1.5rem;
+        }
+
+        /* Countdown Clock */
+        .clock-area {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .unit {
+            min-width: 60px;
+        }
+
+        .number {
+            display: block;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--carbon-black);
+        }
+
+        .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            color: #666;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 
-<div id="app">
+    <div class="background-image"></div>
+    <div class="overlay"></div>
 
-  <div id="top-toolbar">
-    <span class="logo-text">Carbonography</span>
-    <span id="version-badge">v1.6</span>
-    <img class="header-logo"
-         src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/carbonography-logo.png"
-         alt="Carbonography Logo">
-  </div>
-
-  <div id="tab-bar">
-    <button class="tab-btn active" id="tab-studio" onclick="switchTab('studio')">Studio</button>
-    <button class="tab-btn" id="tab-prompt" onclick="switchTab('prompt')">Prompt</button>
-  </div>
-
-  <div id="content">
-
-    <!-- Tab 1: Studio controls -->
-    <div class="tab-panel active" id="panel-studio">
-
-      <div id="angle-bar">
-        <label for="angle">Camera Perspective</label>
-        <select id="angle">
-          <option value="Front 3/4 hero shot"                   data-x="90"   data-y="-160" data-rot="135">FRONT ANGLE</option>
-          <option value="Low-slung side profile"                 data-x="120"  data-y="0"    data-rot="180">SIDE</option>
-          <option value="Aggressive rear 3/4"                   data-x="90"   data-y="160"  data-rot="225">REAR</option>
-          <option value="Crouching low-angle front center shot" data-x="0"    data-y="-190" data-rot="90" >FRONT</option>
-          <option value="Crouching low-angle rear center shot"  data-x="0"    data-y="190"  data-rot="270">REAR</option>
-          <option value="Rear side angle shot"                  data-x="-90"  data-y="160"  data-rot="315">REAR ANGLE</option>
-          <option value="Top-down bird's eye view"              data-x="0"    data-y="0"    data-rot="90" >ABOVE</option>
-        </select>
-      </div>
-
-      <div id="rig-container">
-        <img id="vehicle-aerial"
-             src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/car-above.png"
-             alt="Vehicle top-down view">
-        <div id="camera-indicator">
-          <img id="camera-icon"
-               src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/camera.png"
-               alt="Camera position">
-        </div>
-      </div>
-
-      <div class="panel-header">Vehicle</div>
-      <div class="form-section">
-        <div class="form-group">
-          <label for="model">Vehicle Model</label>
-          <input type="text" id="model" placeholder="Porsche 911 GT3 RS" autocomplete="off">
-        </div>
-      </div>
-
-      <div class="panel-header">Studio Controls</div>
-      <div class="form-section">
-
-        <div class="form-group">
-          <label for="lighting">Lighting</label>
-          <select id="lighting">
-            <option value="Daytime, bright natural sunlight with harsh shadows">Daytime</option>
-            <option value="Nighttime, cinematic street lighting and neon glows">Nighttime</option>
-            <option value="Sunrise, golden hour orange light and soft shadows">Sunrise</option>
-          </select>
+    <div class="content-wrapper">
+        <div class="logo-area">
+            <img src="../carbonography-logo.png" alt="Carbonography Logo">
         </div>
 
-        <div class="form-group">
-          <label for="wheelSize">Wheel Diameter</label>
-          <select id="wheelSize"></select>
+        <div class="main-info">
+            <div class="status-msg">
+                Carbonography <span>Coming Soon</span>
+            </div>
+
+            <div class="clock-area" id="timer">
+                <div class="unit">
+                    <span class="number" id="days">00</span>
+                    <span class="label">Days</span>
+                </div>
+                <div class="unit">
+                    <span class="number" id="hours">00</span>
+                    <span class="label">Hours</span>
+                </div>
+                <div class="unit">
+                    <span class="number" id="mins">00</span>
+                    <span class="label">Mins</span>
+                </div>
+                <div class="unit">
+                    <span class="number" id="secs">00</span>
+                    <span class="label">Secs</span>
+                </div>
+            </div>
         </div>
-
-        <div class="toggle-grid">
-          <div class="checkbox-group"><input type="checkbox" id="lightsOn"><label for="lightsOn">Headlights On</label></div>
-          <div class="checkbox-group"><input type="checkbox" id="motion"><label for="motion">Wheel Motion</label></div>
-          <div class="checkbox-group"><input type="checkbox" id="convertible"><label for="convertible">Convertible</label></div>
-          <div class="checkbox-group"><input type="checkbox" id="lowered"><label for="lowered">Lowered</label></div>
-          <div class="checkbox-group"><input type="checkbox" id="race"><label for="race">Race Variant</label></div>
-          <div class="checkbox-group"><input type="checkbox" id="tint"><label for="tint">Window Tint</label></div>
-          <div class="checkbox-group"><input type="checkbox" id="leather"><label for="leather">Leather Interior</label></div>
-        </div>
-
-      </div>
-
-      <button id="go-to-prompt" onclick="switchTab('prompt')">View Prompt →</button>
-
-    </div><!-- /#panel-studio -->
-
-    <!-- Tab 2: Prompt output -->
-    <div class="tab-panel" id="panel-prompt">
-      <div class="prompt-header">
-        <span class="panel-header-text">Generated Image Prompt</span>
-        <button class="btn-copy-inline" id="copyBtnInline">Copy Prompt</button>
-      </div>
-      <div id="output-area">Initialize Carbonography System...<span id="cursor"></span></div>
-      <div id="action-bar">
-        <div id="status-msg">CARBONOGRAPHY // READY</div>
-        <button class="btn btn-outline" id="exportBtn">Export</button>
-        <button class="btn btn-primary" id="copyBtn">Copy</button>
-      </div>
     </div>
 
-  </div><!-- /#content -->
+    <script>
+        const target = new Date("May 1, 2026 00:00:00").getTime();
 
-</div><!-- /#app -->
+        function updateClock() {
+            const now = new Date().getTime();
+            const diff = target - now;
 
-<script>
-  const WHEEL_MIN = 13;
-  const WHEEL_MAX = 22;
-  const STATUS_RESET_MS = 2000;
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
 
-  // Design baseline: the rig dimensions the data-x/y offsets were authored against
-  const RIG_BASELINE_W = 380;
-  const RIG_BASELINE_H = 380;
+            document.getElementById("days").innerText = d.toString().padStart(2, '0');
+            document.getElementById("hours").innerText = h.toString().padStart(2, '0');
+            document.getElementById("mins").innerText = m.toString().padStart(2, '0');
+            document.getElementById("secs").innerText = s.toString().padStart(2, '0');
 
-  const $ = id => document.getElementById(id);
+            if (diff < 0) {
+                document.getElementById("timer").innerHTML = "LOCKED AND LOADED";
+            }
+        }
 
-  let currentPrompt = '';
-
-  // ── Wheel options ──────────────────────────────────────────────────────────
-  (function populateWheels() {
-    const sel = $('wheelSize');
-    for (let i = WHEEL_MIN; i <= WHEEL_MAX; i++) {
-      const opt = document.createElement('option');
-      opt.value = `${i}-inch`;
-      opt.textContent = `${i}" Alloy`;
-      sel.appendChild(opt);
-    }
-  })();
-
-  // ── Tab switching ──────────────────────────────────────────────────────────
-  function switchTab(name) {
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    $('panel-' + name).classList.add('active');
-    $('tab-' + name).classList.add('active');
-  }
-
-  // ── Camera indicator ───────────────────────────────────────────────────────
-  // Scales the fixed design-time pixel offsets to the live rendered rig size
-  // so the camera icon stays correctly positioned on any screen width.
-  function updateCameraIndicator(opt) {
-    const xRaw = parseFloat(opt.getAttribute('data-x'));
-    const yRaw = parseFloat(opt.getAttribute('data-y'));
-    const rot  = parseFloat(opt.getAttribute('data-rot')) + 90;
-
-    const rig    = $('rig-container');
-    const scaleX = rig.offsetWidth  / RIG_BASELINE_W;
-    const scaleY = rig.offsetHeight / RIG_BASELINE_H;
-
-    $('camera-indicator').style.transform =
-      `translate(${xRaw * scaleX}px, ${yRaw * scaleY}px) rotate(${rot}deg)`;
-  }
-
-  // Re-position camera icon on resize / orientation change
-  window.addEventListener('resize', () => {
-    const angleEl = $('angle');
-    updateCameraIndicator(angleEl.options[angleEl.selectedIndex]);
-  });
-
-  // ── Prompt builder ─────────────────────────────────────────────────────────
-  function buildPrompt() {
-    const model    = $('model').value.trim() || '[VEHICLE]';
-    const lighting = $('lighting').value;
-    const wheel    = $('wheelSize').value;
-    const angleEl  = $('angle');
-    const angle    = angleEl.value;
-    const interior = $('leather').checked ? 'luxurious quilted leather' : 'performance textile';
-
-    const mods = [
-      $('lightsOn').checked    && 'headlights and taillights turned on with realistic bloom',
-      $('motion').checked      && 'motion-blurred spinning wheels',
-      $('convertible').checked && 'convertible top retracted',
-      $('lowered').checked     && 'slammed lowered suspension',
-      $('race').checked        && 'racing-specification aero, widebody kit, and rear wing',
-      $('tint').checked        && 'limo-style dark tinted windows',
-    ].filter(Boolean);
-
-    updateCameraIndicator(angleEl.options[angleEl.selectedIndex]);
-
-    let prompt  = `>> CARBONOGRAPHY-V1.6-STRING\n`;
-    prompt     += `>> PERSPECTIVE: ${angle.toUpperCase()}\n\n`;
-    prompt     += `A professional automotive studio photograph of a ${model}. `;
-    prompt     += `The vehicle is captured from a ${angle}, emphasizing the ${wheel} custom rims. `;
-    prompt     += `The lighting setup is ${lighting}. `;
-    if (mods.length) prompt += `Vehicle features include ${mods.join(', ')}. `;
-    prompt     += `Visible interior showcases ${interior} craftsmanship. `;
-    prompt     += `High-end commercial quality, 8k resolution, Unreal Engine 5.4 render style, ray-traced reflections, sharp focus, vibrant colors, bokeh background.`;
-
-    return prompt;
-  }
-
-  // ── Render ─────────────────────────────────────────────────────────────────
-  function autoGenerate() {
-    currentPrompt = buildPrompt();
-    const output = $('output-area');
-    output.textContent = currentPrompt;
-    const cursor = document.createElement('span');
-    cursor.id = 'cursor';
-    output.appendChild(cursor);
-  }
-
-  // ── Status flash ───────────────────────────────────────────────────────────
-  function flashStatus(msg) {
-    const el = $('status-msg');
-    el.textContent = msg;
-    setTimeout(() => { el.textContent = 'CARBONOGRAPHY // READY'; }, STATUS_RESET_MS);
-  }
-
-  // ── Copy ───────────────────────────────────────────────────────────────────
-  function doCopy() {
-    if (!currentPrompt) return;
-    navigator.clipboard.writeText(currentPrompt)
-      .then(() => flashStatus('COPIED!'))
-      .catch(() => flashStatus('COPY FAILED'));
-  }
-
-  $('copyBtn').addEventListener('click', doCopy);
-  $('copyBtnInline').addEventListener('click', doCopy);
-
-  // ── Export ─────────────────────────────────────────────────────────────────
-  $('exportBtn').addEventListener('click', () => {
-    if (!currentPrompt) { flashStatus('NOTHING TO EXPORT'); return; }
-    const blob = new Blob([currentPrompt], { type: 'text/plain' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href     = url;
-    a.download = `Carbonography_${new Date().toISOString().slice(0, 10)}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
-  });
-
-  // ── Bind controls ──────────────────────────────────────────────────────────
-  ['model', 'lighting', 'wheelSize', 'angle',
-   'lightsOn', 'motion', 'convertible', 'lowered', 'race', 'tint', 'leather'
-  ].forEach(id => {
-    const el = $(id);
-    el.addEventListener(el.type === 'checkbox' ? 'change' : 'input', autoGenerate);
-  });
-
-  // ── Init ───────────────────────────────────────────────────────────────────
-  document.addEventListener('DOMContentLoaded', autoGenerate);
-</script>
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
 </body>
 </html>
