@@ -4,42 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carbonography | Coming Soon</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --carbon-red: #cc0000;
             --carbon-white: #ffffff;
-            --carbon-black: rgba(10, 10, 10, 0.9); /* Slight transparency for the bottom bar */
+            --carbon-black: rgba(10, 10, 10, 0.95);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Montserrat', sans-serif;
         }
 
         body, html {
             height: 100%;
             width: 100%;
-            background-color: #ffffff;
-            overflow: hidden; /* Prevents scrolling */
+            background-color: #000;
+            overflow: hidden;
         }
 
-        /* Full Screen Background Image */
+        /* Background Image with Overlay for better text legibility */
         .full-page-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/purple-lambo.png');
+            background-image: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4)), 
+                              url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/purple-lambo.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             z-index: -1;
         }
 
-        /* Bottom Status Bar */
         .bottom-bar {
             position: fixed;
             bottom: 0;
@@ -50,23 +51,24 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 15px 40px;
-            border-top: 3px solid var(--carbon-red);
-            backdrop-filter: blur(10px); /* Adds a modern frosted glass effect */
+            padding: 20px 50px;
+            border-top: 4px solid var(--carbon-red);
+            backdrop-filter: blur(15px);
             z-index: 10;
         }
 
-        /* Layout Elements */
         .status-text {
             flex: 1;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
         }
 
         .status-text span {
             color: var(--carbon-red);
+            display: block; /* Stacked look */
+            font-size: 0.9rem;
         }
 
         .logo-center {
@@ -76,53 +78,58 @@
         }
 
         .logo-center img {
-            height: 70px; /* Adjust based on your logo design */
+            height: 60px;
             width: auto;
+            /* Added a brightness filter in case the logo is dark */
+            filter: brightness(0) invert(1); 
         }
 
-        /* Countdown Timer */
         .timer-right {
             flex: 1;
             display: flex;
             justify-content: flex-end;
-            gap: 20px;
+            gap: 25px;
         }
 
         .timer-block {
             text-align: center;
-            min-width: 50px;
+            min-width: 60px;
         }
 
         .timer-val {
             display: block;
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--carbon-red);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--carbon-white);
             line-height: 1;
         }
 
         .timer-label {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             text-transform: uppercase;
-            color: #999;
+            color: var(--carbon-red);
+            font-weight: 700;
             letter-spacing: 1px;
+            margin-top: 5px;
+            display: block;
         }
 
-        /* Responsive Design for smaller screens */
+        /* Mobile Responsive */
         @media (max-width: 1000px) {
             .bottom-bar {
                 flex-direction: column;
-                padding: 20px;
+                padding: 30px 20px;
+                gap: 20px;
                 text-align: center;
-                gap: 15px;
             }
             .status-text, .logo-center, .timer-right {
                 flex: none;
                 justify-content: center;
             }
             .full-page-bg {
-                background-position: 70% center; /* Shifts image slightly to show car on mobile */
+                background-position: 75% center;
             }
+            .timer-right { gap: 15px; }
         }
     </style>
 </head>
@@ -131,13 +138,12 @@
     <div class="full-page-bg"></div>
 
     <footer class="bottom-bar">
-        
         <div class="status-text">
             Carbonography <span>Coming Soon</span>
         </div>
 
         <div class="logo-center">
-            <img src="carbonography-logo.png" alt="Carbonography Logo">
+            <img src="carbonography-logo.png" alt="Carbonography Logo" onerror="this.style.display='none'">
         </div>
 
         <div class="timer-right" id="countdown">
@@ -158,16 +164,20 @@
                 <span class="timer-label">Secs</span>
             </div>
         </div>
-
     </footer>
 
     <script>
-        // Set target date: May 1, 2026
         const targetDate = new Date("May 1, 2026 00:00:00").getTime();
 
-        const updateTimer = setInterval(function() {
+        function updateTimer() {
             const now = new Date().getTime();
             const difference = targetDate - now;
+
+            if (difference <= 0) {
+                document.getElementById("countdown").innerHTML = 
+                    "<span style='color:var(--carbon-red); font-weight:800; letter-spacing:2px;'>START YOUR ENGINES</span>";
+                return;
+            }
 
             const d = Math.floor(difference / (1000 * 60 * 60 * 24));
             const h = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -178,12 +188,11 @@
             document.getElementById("hours").innerText = h.toString().padStart(2, '0');
             document.getElementById("minutes").innerText = m.toString().padStart(2, '0');
             document.getElementById("seconds").innerText = s.toString().padStart(2, '0');
+        }
 
-            if (difference < 0) {
-                clearInterval(updateTimer);
-                document.getElementById("countdown").innerHTML = "<span style='color:white; letter-spacing:2px;'>START YOUR ENGINES</span>";
-            }
-        }, 1000);
+        // Initialize immediately and then every second
+        updateTimer();
+        setInterval(updateTimer, 1000);
     </script>
 
 </body>
