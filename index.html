@@ -3,222 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carbonography</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400..900&display=swap" rel="stylesheet">
-
+    <title>Carbonography | Coming Soon</title>
     <style>
-        /* 1. CUSTOM FONT SETUP 
-           Replace 'lotus-eden-italic.woff2' with the actual path to your font file 
-        */
-        @font-face {
-            font-family: 'Lotus Eden';
-            src: url('assets/fonts/lotus-eden-italic.woff2') format('woff2');
-            font-weight: bold;
-            font-style: italic;
+        :root {
+            --carbon-red: #cc0000;
+            --carbon-white: #ffffff;
+            --carbon-black: rgba(10, 10, 10, 0.9); /* Slight transparency for the bottom bar */
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         body, html {
             height: 100%;
             width: 100%;
-            margin: 0;
-            overflow: hidden; 
-            background-color: #111;
-            font-family: 'Inter', sans-serif;
-            color: white;
+            background-color: #ffffff;
+            overflow: hidden; /* Prevents scrolling */
         }
 
-        /* --- Slider Logic --- */
-        .slider-container {
+        /* Full Screen Background Image */
+        .full-page-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1;
-        }
-
-        .slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/purple-lambo.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            opacity: 0;
-            transition: opacity 1.5s ease-in-out;
+            z-index: -1;
         }
 
-        .active {
-            opacity: 1;
-        }
-
-        .overlay {
+        /* Bottom Status Bar */
+        .bottom-bar {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 40%;
-            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
-            z-index: 2;
-        }
-
-        /* --- Branding --- */
-        .footer-container {
-            position: fixed;
-            bottom: 40px;
-            left: 40px;
+            background-color: var(--carbon-black);
+            color: var(--carbon-white);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 40px;
+            border-top: 3px solid var(--carbon-red);
+            backdrop-filter: blur(10px); /* Adds a modern frosted glass effect */
             z-index: 10;
-            display: flex;
-            align-items: center;
-            gap: 30px;
         }
 
-        .logo {
-            height: 100px; /* Scaled to match the elegant text */
+        /* Layout Elements */
+        .status-text {
+            flex: 1;
+            font-size: 1.4rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .status-text span {
+            color: var(--carbon-red);
+        }
+
+        .logo-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .logo-center img {
+            height: 70px; /* Adjust based on your logo design */
             width: auto;
-            display: block;
         }
 
-        .site-name {
-            /* Applies Lotus Eden, falls back to Playfair Display */
-            font-family: 'Lotus Eden', 'Playfair Display', serif; 
-            font-size: 38px;
-            font-weight: 400;
-            font-style: italic;      /* Made it Italic */
-            text-transform: uppercase; /* Made it Uppercase */
-            letter-spacing: .5px;     /* Increased spacing for that luxury look */
-            line-height: 2;
-            white-space: nowrap;
-        }
-
-        /* --- Countdown --- */
-        .countdown {
+        /* Countdown Timer */
+        .timer-right {
+            flex: 1;
             display: flex;
-            gap: 15px;
-            padding-left: 30px;
-            border-left: 1px solid rgba(255,255,255,0.2);
+            justify-content: flex-end;
+            gap: 20px;
         }
 
-        .time-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .timer-block {
+            text-align: center;
             min-width: 50px;
         }
 
-        .time-value {
-            font-size: 40px;
-            font-weight: 700;
-            font-family: monospace;
+        .timer-val {
+            display: block;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--carbon-red);
+            line-height: 1;
         }
 
-        .time-label {
-            font-size: 11px;
+        .timer-label {
+            font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            opacity: 0.5;
+            color: #999;
+            letter-spacing: 1px;
         }
 
-        /* Mobile Adjustments */
-        @media (max-width: 768px) {
-            .footer-container {
-                bottom: 20px;
-                left: 20px;
+        /* Responsive Design for smaller screens */
+        @media (max-width: 1000px) {
+            .bottom-bar {
                 flex-direction: column;
-                align-items: flex-start;
+                padding: 20px;
+                text-align: center;
                 gap: 15px;
             }
-            .site-name {
-                font-size: 28px;
+            .status-text, .logo-center, .timer-right {
+                flex: none;
+                justify-content: center;
             }
-            .countdown {
-                border-left: none;
-                padding-left: 0;
-                border-top: 1px solid rgba(255,255,255,0.2);
-                padding-top: 15px;
+            .full-page-bg {
+                background-position: 70% center; /* Shifts image slightly to show car on mobile */
             }
         }
     </style>
 </head>
 <body>
 
-    <div class="slider-container">
-        <div class="slide active" style="background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/purple-lambo.png');"></div>
-        <div class="slide" style="background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/dpaul-gumball-lambo.png');"></div>
-    </div>
+    <div class="full-page-bg"></div>
 
-    <div class="overlay"></div>
-
-    <div class="footer-container">
-        <img src="https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/carbonography-logo.png" alt="Carbonography Logo" class="logo">
+    <footer class="bottom-bar">
         
-        <span class="site-name">Carbonography</span>
+        <div class="status-text">
+            Carbonography <span>Coming Soon</span>
+        </div>
 
-        <div class="countdown" id="clock">
-            <div class="time-box">
-                <span class="time-value" id="days">00</span>
-                <span class="time-label">Days</span>
+        <div class="logo-center">
+            <img src="carbonography-logo.png" alt="Carbonography Logo">
+        </div>
+
+        <div class="timer-right" id="countdown">
+            <div class="timer-block">
+                <span class="timer-val" id="days">00</span>
+                <span class="timer-label">Days</span>
             </div>
-            <div class="time-box">
-                <span class="time-value" id="hours">00</span>
-                <span class="time-label">Hrs</span>
+            <div class="timer-block">
+                <span class="timer-val" id="hours">00</span>
+                <span class="timer-label">Hrs</span>
             </div>
-            <div class="time-box">
-                <span class="time-value" id="mins">00</span>
-                <span class="time-label">Mins</span>
+            <div class="timer-block">
+                <span class="timer-val" id="minutes">00</span>
+                <span class="timer-label">Mins</span>
             </div>
-            <div class="time-box">
-                <span class="time-value" id="secs">00</span>
-                <span class="time-label">Secs</span>
+            <div class="timer-block">
+                <span class="timer-val" id="seconds">00</span>
+                <span class="timer-label">Secs</span>
             </div>
         </div>
-    </div>
+
+    </footer>
 
     <script>
-        const slides = document.querySelectorAll('.slide');
-        let currentIdx = 0;
+        // Set target date: May 1, 2026
+        const targetDate = new Date("May 1, 2026 00:00:00").getTime();
 
-        function cycleImages() {
-            slides[currentIdx].classList.remove('active');
-            currentIdx = (currentIdx + 1) % slides.length;
-            slides[currentIdx].classList.add('active');
-        }
-        setInterval(cycleImages, 10000); // 10 seconds
-
-        const target = new Date("May 1, 2026 00:00:00").getTime();
-
-        function updateCountdown() {
+        const updateTimer = setInterval(function() {
             const now = new Date().getTime();
-            const diff = target - now;
+            const difference = targetDate - now;
 
-            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((diff % (1000 * 60)) / 1000);
+            const d = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const h = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((difference % (1000 * 60)) / 1000);
 
-            document.getElementById('days').innerText = d.toString().padStart(2, '0');
-            document.getElementById('hours').innerText = h.toString().padStart(2, '0');
-            document.getElementById('mins').innerText = m.toString().padStart(2, '0');
-            document.getElementById('secs').innerText = s.toString().padStart(2, '0');
+            document.getElementById("days").innerText = d.toString().padStart(2, '0');
+            document.getElementById("hours").innerText = h.toString().padStart(2, '0');
+            document.getElementById("minutes").innerText = m.toString().padStart(2, '0');
+            document.getElementById("seconds").innerText = s.toString().padStart(2, '0');
 
-            if (diff < 0) {
-                document.getElementById('clock').innerHTML = "LAUNCHED";
+            if (difference < 0) {
+                clearInterval(updateTimer);
+                document.getElementById("countdown").innerHTML = "<span style='color:white; letter-spacing:2px;'>START YOUR ENGINES</span>";
             }
-        }
-
-        setInterval(updateCountdown, 1000);
-        updateCountdown(); 
+        }, 1000);
     </script>
+
 </body>
 </html>
