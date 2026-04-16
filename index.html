@@ -1,69 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-
-<meta name="apple-mobile-web-app-title" content="Carbonography">
 <head>
-    <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#cc0000">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carbonography | Coming Soon</title>
+
+    <script>
+        if (screen.width <= 768) {
+            window.location.replace("https://www.carbonography.co.uk/m/index.html");
+        }
+    </script>
+
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#cc0000">
+    <meta name="apple-mobile-web-app-title" content="Carbonography">
+
     <style>
         :root {
             --carbon-red: #cc0000;
             --carbon-white: #ffffff;
             --carbon-black: #000000;
-            --glass-bg: rgba(255, 255, 255, 0.85); /* White glass effect */
+            --glass-bg: rgba(255, 255, 255, 0.85);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body, html { height: 100%; width: 100%; background-color: #ffffff; overflow: hidden; }
 
-        body, html {
-            height: 100%;
-            width: 100%;
-            background-color: #ffffff;
-            overflow: hidden;
-        }
-
-        /* Full Page Backdrop */
         .background-image {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            /* Using the RAW github link so the browser can actually see the file */
+            top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('https://raw.githubusercontent.com/aherndavid/carbonography/main/assets/purple-lambo.png');
             background-size: cover;
             background-position: center;
-            background-repeat: no-repeat;
             z-index: 1;
         }
 
-        /* Overlay to keep it looking clean */
         .overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle, transparent 20%, rgba(255,255,255,0.2) 100%);
             z-index: 2;
         }
 
-        /* Bottom Bar Layout */
         .bottom-nav {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            z-index: 10;
+            bottom: 0; left: 0; width: 100%; z-index: 10;
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
             border-top: 4px solid var(--carbon-red);
@@ -71,139 +53,52 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            color: var(--carbon-black);
             box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
         }
 
-        /* Coming Soon Text */
-        .status-msg {
-            flex: 1;
-            font-size: 1.2rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-        }
+        .status-msg { flex: 1; font-size: 1.2rem; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; }
+        .status-msg span { color: var(--carbon-red); }
 
-        .status-msg span {
-            color: var(--carbon-red);
-        }
+        .logo-area { flex: 1; display: flex; justify-content: center; }
+        .logo-area img { height: 70px; width: auto; }
 
-        /* Logo Area */
-        .logo-area {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-        }
-
-        .logo-area img {
-            height: 70px;
-            width: auto;
-        }
-
-        /* Countdown Clock */
-        .clock-area {
-            flex: 1;
-            display: flex;
-            justify-content: flex-end;
-            gap: 20px;
-        }
-
-        .unit {
-            text-align: center;
-            min-width: 50px;
-        }
-
-        .number {
-            display: block;
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--carbon-black);
-            line-height: 1;
-        }
-
-        .label {
-            font-size: 0.6rem;
-            text-transform: uppercase;
-            color: #666;
-            letter-spacing: 1px;
-            font-weight: bold;
-        }
-
-        /* Responsive */
-        @media (max-width: 850px) {
-            .bottom-nav {
-                flex-direction: column;
-                padding: 20px;
-                gap: 15px;
-            }
-            .status-msg, .logo-area, .clock-area {
-                flex: none;
-                justify-content: center;
-                text-align: center;
-            }
-        }
+        .clock-area { flex: 1; display: flex; justify-content: flex-end; gap: 20px; }
+        .unit { text-align: center; min-width: 50px; }
+        .number { display: block; font-size: 1.8rem; font-weight: 800; line-height: 1; }
+        .label { font-size: 0.6rem; text-transform: uppercase; color: #666; letter-spacing: 1px; font-weight: bold; }
     </style>
 </head>
 <body>
-
     <div class="background-image"></div>
     <div class="overlay"></div>
 
     <footer class="bottom-nav">
-        
-        <div class="status-msg">
-            Carbonography <span>Coming Soon</span>
-        </div>
-
-        <div class="logo-area">
-            <img src="carbonography-logo.png" alt="Carbonography Logo">
-        </div>
-
+        <div class="status-msg">Carbonography <span>Coming Soon</span></div>
+        <div class="logo-area"><img src="carbonography-logo.png" alt="Carbonography Logo"></div>
         <div class="clock-area" id="timer">
-            <div class="unit">
-                <span class="number" id="days">00</span>
-                <span class="label">Days</span>
-            </div>
-            <div class="unit">
-                <span class="number" id="hours">00</span>
-                <span class="label">Hours</span>
-            </div>
-            <div class="unit">
-                <span class="number" id="mins">00</span>
-                <span class="label">Mins</span>
-            </div>
-            <div class="unit">
-                <span class="number" id="secs">00</span>
-                <span class="label">Secs</span>
-            </div>
+            <div class="unit"><span class="number" id="days">00</span><span class="label">Days</span></div>
+            <div class="unit"><span class="number" id="hours">00</span><span class="label">Hours</span></div>
+            <div class="unit"><span class="number" id="mins">00</span><span class="label">Mins</span></div>
+            <div class="unit"><span class="number" id="secs">00</span><span class="label">Secs</span></div>
         </div>
-
     </footer>
 
     <script>
         const target = new Date("May 1, 2026 00:00:00").getTime();
-
         function updateClock() {
             const now = new Date().getTime();
             const diff = target - now;
-
-            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((diff % (1000 * 60)) / 1000);
-
+            const d = Math.floor(diff / (86400000));
+            const h = Math.floor((diff % 86400000) / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
             document.getElementById("days").innerText = d.toString().padStart(2, '0');
             document.getElementById("hours").innerText = h.toString().padStart(2, '0');
             document.getElementById("mins").innerText = m.toString().padStart(2, '0');
             document.getElementById("secs").innerText = s.toString().padStart(2, '0');
-
-            if (diff < 0) {
-                document.getElementById("timer").innerHTML = "LOCKED AND LOADED";
-            }
         }
-
         setInterval(updateClock, 1000);
-        updateClock(); // Initial call
+        updateClock();
     </script>
 </body>
 </html>
