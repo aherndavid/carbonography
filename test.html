@@ -5,27 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carbonography</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body, html { height: 100%; font-family: sans-serif; overflow: hidden; background-color: #111; }
+        /* 1. RESET & BASE STYLES */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        .background-container {
+        body, html {
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden; /* Prevent scrolling */
+            background-color: #000;
+        }
+
+        /* 2. GALLERY / STAGE STYLES */
+        .stage {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-size: cover;
-            background-position: center;
-            z-index: -1;
-            transition: background-image 1.5s ease-in-out;
+            z-index: 0;
         }
 
+        .frame {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0; /* Hidden by default */
+            transition: opacity 1.5s ease-in-out; /* Smooth cross-fade */
+        }
+
+        .slide.active {
+            opacity: 1; /* Visible when active */
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 3. UI OVERLAYS (Bottom Bar) */
         .bottom-bar {
             position: fixed;
             bottom: 0;
+            left: 0;
             width: 100%;
             height: 80px;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.8); 
             backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
@@ -33,64 +70,150 @@
             padding: 0 40px;
             color: white;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10; /* Ensures bar is above images */
         }
 
-        .countdown-container { display: flex; gap: 20px; }
-        .countdown-item { display: flex; flex-direction: column; text-align: center; }
-        .countdown-value { font-size: 22px; font-weight: bold; }
-        .countdown-label { font-size: 10px; text-transform: uppercase; opacity: 0.7; }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand h1 {
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .logo {
+            height: 40px;
+            width: auto;
+        }
+
+        /* 4. COUNTDOWN STYLES */
+        .countdown-container {
+            display: flex;
+            gap: 20px;
+            text-align: center;
+        }
+
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .countdown-value {
+            font-size: 22px;
+            font-weight: bold;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .countdown-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            opacity: 0.7;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .bottom-bar {
+                flex-direction: column;
+                height: auto;
+                padding: 15px;
+                gap: 10px;
+            }
+            .brand h1 { font-size: 18px; }
+            .countdown-value { font-size: 18px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="background-container" id="bg-slide"></div>
+    <div class="stage">
+        <div class="frame" id="gallery">
+            <div class="slide active"><img src="assets/purple-lambo-a.png" alt="Slide 1"></div>
+            <div class="slide"><img src="assets/purple-lambo-b.png" alt="Slide 2"></div>
+            <div class="slide"><img src="assets/purple-lambo-c.png" alt="Slide 3"></div>
+             <div class="slide"><img src="assets/purple-lambo-d.png" alt="Slide 3"></div>
+        </div>
+    </div>
 
     <div class="bottom-bar">
         <div class="brand">
             <h1>Carbonography</h1>
+            <img src="https://raw.githubusercontent.com/aherndavid/carbonography/main/carbonography-logo.png" alt="Logo" class="logo">
         </div>
 
         <div class="countdown-container" id="countdown">
-            <div class="countdown-item"><span class="countdown-value" id="days">00</span><span class="countdown-label">Days</span></div>
-            <div class="countdown-item"><span class="countdown-value" id="hours">00</span><span class="countdown-label">Hrs</span></div>
-            <div class="countdown-item"><span class="countdown-value" id="minutes">00</span><span class="countdown-label">Min</span></div>
-            <div class="countdown-item"><span class="countdown-value" id="seconds">00</span><span class="countdown-label">Sec</span></div>
+            <div class="countdown-item">
+                <span class="countdown-value" id="days">00</span>
+                <span class="countdown-label">Days</span>
+            </div>
+            <div class="countdown-item">
+                <span class="countdown-value" id="hours">00</span>
+                <span class="countdown-label">Hrs</span>
+            </div>
+            <div class="countdown-item">
+                <span class="countdown-value" id="minutes">00</span>
+                <span class="countdown-label">Min</span>
+            </div>
+            <div class="countdown-item">
+                <span class="countdown-value" id="seconds">00</span>
+                <span class="countdown-label">Sec</span>
+            </div>
         </div>
     </div>
 
     <script>
-        // --- 1. TEST WITH PLACEHOLDERS FIRST ---
-        // Replace these with your FIXED raw github links once this works.
-        const images = [
-            "https://picsum.photos/id/10/1920/1080",
-            "https://picsum.photos/id/20/1920/1080",
-            "https://picsum.photos/id/30/1920/1080"
-        ];
-
-        let currentIndex = 0;
-        const bgContainer = document.getElementById('bg-slide');
-
-        function changeBackground() {
-            console.log("Changing to image:", images[currentIndex]); // Check your F12 console
-            bgContainer.style.backgroundImage = `url('${images[currentIndex]}')`;
-            currentIndex = (currentIndex + 1) % images.length;
-        }
-
-        changeBackground(); 
-        setInterval(changeBackground, 10000); 
-
-        // --- 2. COUNTDOWN ---
+        /**
+         * 1. COUNTDOWN LOGIC
+         */
         const targetDate = new Date("May 1, 2026 00:00:00").getTime();
+
         function updateCountdown() {
             const now = new Date().getTime();
             const distance = targetDate - now;
-            document.getElementById("days").innerText = Math.floor(distance / (86400000)).toString().padStart(2, '0');
-            document.getElementById("hours").innerText = Math.floor((distance % 86400000) / 3600000).toString().padStart(2, '0');
-            document.getElementById("minutes").innerText = Math.floor((distance % 3600000) / 60000).toString().padStart(2, '0');
-            document.getElementById("seconds").innerText = Math.floor((distance % 60000) / 1000).toString().padStart(2, '0');
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerText = days.toString().padStart(2, '0');
+            document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
+            document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
+            document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
+
+            if (distance < 0) {
+                clearInterval(timerInterval);
+                document.getElementById("countdown").innerHTML = "LAUNCHED";
+            }
         }
-        setInterval(updateCountdown, 1000);
+
         updateCountdown();
+        const timerInterval = setInterval(updateCountdown, 1000);
+
+        /**
+         * 2. IMAGE ROTATION LOGIC
+         */
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function showNextSlide() {
+            // Remove active class from current
+            slides[currentSlide].classList.remove('active');
+            
+            // Increment index
+            currentSlide = (currentSlide + 1) % totalSlides;
+            
+            // Add active class to next
+            slides[currentSlide].classList.add('active');
+        }
+
+        // Rotate every 5 seconds
+        setInterval(showNextSlide, 5000);
     </script>
 </body>
 </html>
