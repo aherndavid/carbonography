@@ -5,7 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carbonography</title>
     <style>
-        /* 1. RESET & BASE STYLES */
+        /* 1. IMPORT CUSTOM FONT */
+        @font-face {
+            font-family: 'Lotus Eden';
+            /* Ensure the path to your font file is correct */
+            src: url('fonts/Lotus-Eden-Black-Italic.woff2') format('woff2'),
+                 url('fonts/Lotus-Eden-Black-Italic.ttf') format('truetype');
+            font-weight: 900; /* 'Black' usually maps to 900 */
+            font-style: italic;
+        }
+
+        /* 2. RESET & BASE STYLES */
         * {
             margin: 0;
             padding: 0;
@@ -14,12 +24,13 @@
 
         body, html {
             height: 100%;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden; /* Prevent scrolling */
+            /* Applied the new font here */
+            font-family: 'Lotus Eden', 'Segoe UI', Tahoma, sans-serif;
+            overflow: hidden;
             background-color: #000;
         }
 
-        /* 2. GALLERY / STAGE STYLES */
+        /* 3. GALLERY / STAGE STYLES */
         .stage {
             position: fixed;
             top: 0;
@@ -41,12 +52,12 @@
             left: 0;
             width: 100%;
             height: 100%;
-            opacity: 0; /* Hidden by default */
-            transition: opacity 1.5s ease-in-out; /* Smooth cross-fade */
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
         }
 
         .slide.active {
-            opacity: 1; /* Visible when active */
+            opacity: 1;
         }
 
         .slide img {
@@ -55,13 +66,13 @@
             object-fit: cover;
         }
 
-        /* 3. UI OVERLAYS (Bottom Bar) */
+        /* 4. UI OVERLAYS (Bottom Bar) */
         .bottom-bar {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 80px;
+            height: 90px;
             background: rgba(0, 0, 0, 0.8); 
             backdrop-filter: blur(10px);
             display: flex;
@@ -70,7 +81,7 @@
             padding: 0 40px;
             color: white;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 10; /* Ensures bar is above images */
+            z-index: 10;
         }
 
         .brand {
@@ -80,21 +91,21 @@
         }
 
         .brand h1 {
-            font-size: 24px;
-            font-weight: 300;
-            letter-spacing: 2px;
+            font-size: 34px;
+            /* Note: Removed 'font-weight: 500' so the 'Black' weight of your font shows correctly */
+            letter-spacing: 1px;
             text-transform: uppercase;
         }
 
         .logo {
-            height: 40px;
+            height: 90px;
             width: auto;
         }
 
-        /* 4. COUNTDOWN STYLES */
+        /* 5. COUNTDOWN STYLES */
         .countdown-container {
             display: flex;
-            gap: 20px;
+            gap: 10px;
             text-align: center;
         }
 
@@ -110,12 +121,11 @@
         }
 
         .countdown-label {
-            font-size: 10px;
+            font-size: 20px;
             text-transform: uppercase;
             opacity: 0.7;
         }
 
-        /* Responsive adjustments */
         @media (max-width: 768px) {
             .bottom-bar {
                 flex-direction: column;
@@ -135,7 +145,7 @@
             <div class="slide active"><img src="assets/purple-lambo-a.png" alt="Slide 1"></div>
             <div class="slide"><img src="assets/purple-lambo-b.png" alt="Slide 2"></div>
             <div class="slide"><img src="assets/purple-lambo-c.png" alt="Slide 3"></div>
-             <div class="slide"><img src="assets/purple-lambo-d.png" alt="Slide 3"></div>
+            <div class="slide"><img src="assets/purple-lambo-d.png" alt="Slide 4"></div>
         </div>
     </div>
 
@@ -166,9 +176,6 @@
     </div>
 
     <script>
-        /**
-         * 1. COUNTDOWN LOGIC
-         */
         const targetDate = new Date("May 1, 2026 00:00:00").getTime();
 
         function updateCountdown() {
@@ -194,25 +201,16 @@
         updateCountdown();
         const timerInterval = setInterval(updateCountdown, 1000);
 
-        /**
-         * 2. IMAGE ROTATION LOGIC
-         */
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         const totalSlides = slides.length;
 
         function showNextSlide() {
-            // Remove active class from current
             slides[currentSlide].classList.remove('active');
-            
-            // Increment index
             currentSlide = (currentSlide + 1) % totalSlides;
-            
-            // Add active class to next
             slides[currentSlide].classList.add('active');
         }
 
-        // Rotate every 5 seconds
         setInterval(showNextSlide, 5000);
     </script>
 </body>
