@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=.20">
     <title>Carbonography | Mobile</title>
     <style>
-        /* 1. IMPORT CUSTOM FONT (Paths adjusted for /m/ folder) */
+        /* 1. IMPORT CUSTOM FONT */
         @font-face {
             font-family: 'Lotus Eden';
             src: url('../fonts/Lotus-Eden-Black-Italic.woff2') format('woff2'),
@@ -61,72 +61,76 @@
         .slide img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Ensures cars look good on tall screens */
+            object-fit: cover;
         }
 
-        /* 4. MOBILE UI OVERLAY (Stacked Layout) */
+        /* 4. MOBILE UI OVERLAY (Transparent & Larger) */
         .ui-container {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            padding: 30px 20px 50px 20px; /* Extra bottom padding for mobile home bars */
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9) 30%);
-            backdrop-filter: blur(8px);
+            padding: 30px 20px 60px 20px; 
+            /* Removed background, blur, and border to lay directly over images */
+            background: none; 
+            backdrop-filter: none;
             color: white;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 15px; /* Tighter gap between logo/text and countdown */
             z-index: 10;
             text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            /* Added text-shadow for readability against varying backgrounds */
+            text-shadow: 0px 4px 15px rgba(0, 0, 0, 0.8);
         }
 
         .brand-mobile {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 5px;
         }
 
         .brand-mobile h1 {
-            font-size: 30px;
-            letter-spacing: 0.1px;
+            font-size: 85px; /* Significantly larger */
+            letter-spacing: -4px; /* Pulls letters closer together */
             text-transform: uppercase;
-            line-height: 0.5;
+            line-height: 0.8;
+            margin-top: 10px;
         }
 
         .logo-mobile {
-            height: 90px; /* Scaled for mobile */
+            height: 110px; /* Increased logo size */
             width: auto;
         }
 
-        /* 5. MOBILE COUNTDOWN */
+        /* 5. MOBILE COUNTDOWN (Larger) */
         .countdown-container {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 20px;
             width: 100%;
         }
 
         .countdown-item {
             display: flex;
             flex-direction: column;
-            min-width: 55px;
+            min-width: 70px;
         }
 
         .countdown-value {
-            font-size: 24px;
+            font-size: 48px; /* Doubled the size */
             font-weight: bold;
             font-variant-numeric: tabular-nums;
+            line-height: 1;
         }
 
         .countdown-label {
-            font-size: 12px;
+            font-size: 14px;
             text-transform: uppercase;
-            opacity: 0.7;
-            letter-spacing: 1px;
+            opacity: 0.9;
+            letter-spacing: 2px;
         }
     </style>
 </head>
@@ -168,7 +172,6 @@
     </div>
 
     <script>
-        // Target Date
         const targetDate = new Date("May 1, 2026 00:00:00").getTime();
 
         function updateCountdown() {
@@ -194,7 +197,6 @@
         updateCountdown();
         const timerInterval = setInterval(updateCountdown, 1000);
 
-        // Rotation Logic
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         const totalSlides = slides.length;
