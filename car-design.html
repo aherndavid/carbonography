@@ -4,8 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Carbonography | Automotive AI Prompt Engine v1.7</title>
-<link rel="stylesheet" href="/assets/global.css">
-<link rel="stylesheet" href="/assets/desktop.css">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@700&family=Rajdhani:wght@700&family=Russo+One&family=Racing+Sans+One&family=Aldrich&family=Exo+2:wght@800&family=Michroma&family=Geist+Mono:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -67,6 +66,11 @@ html, body {
   -webkit-font-smoothing: antialiased;
   overflow: hidden;
 }
+
+img    { display: block; max-width: 100%; }
+button { font: inherit; border: none; cursor: pointer; }
+label  { cursor: pointer; }
+a      { color: inherit; text-decoration: none; }
 
 /* ── App shell ─────────────────────────────────────────────────── */
 #app {
@@ -926,13 +930,13 @@ input[type="color"]::-webkit-color-swatch         { border: none; border-radius:
             <div class="form-group wide">
               <label for="angle">Camera Perspective</label>
               <select id="angle">
-                <option value="Front 3/4 hero shot"                   data-x="130"  data-y="-230" data-rot="135">Hero Shot (Front 3/4)</option>
-                <option value="Low-slung side profile"                 data-x="170"  data-y="0"    data-rot="180">Side Profile (Passenger)</option>
-                <option value="Aggressive rear 3/4"                   data-x="130"  data-y="230"  data-rot="225">Rear 3/4 View</option>
-                <option value="Crouching low-angle front center shot" data-x="0"    data-y="-280" data-rot="90" >Front Center (Crouched)</option>
-                <option value="Crouching low-angle rear center shot"  data-x="0"    data-y="280"  data-rot="270">Rear Center (Crouched)</option>
-                <option value="Rear side angle shot"                  data-x="-130" data-y="230"  data-rot="315">Rear Side Angle (Driver Rear)</option>
-                <option value="Top-down bird's eye view"              data-x="0"    data-y="0"    data-rot="90" >Top Down</option>
+                <option value="Front 3/4 hero shot"                   data-x="80"  data-y="-100" data-rot="135">Hero Shot (Front 3/4)</option>
+                <option value="Low-slung side profile"                 data-x="95"  data-y="0"    data-rot="180">Side Profile (Passenger)</option>
+                <option value="Aggressive rear 3/4"                   data-x="80"  data-y="100"  data-rot="225">Rear 3/4 View</option>
+                <option value="Crouching low-angle front center shot" data-x="0"   data-y="-120" data-rot="90" >Front Center (Crouched)</option>
+                <option value="Crouching low-angle rear center shot"  data-x="0"   data-y="120"  data-rot="270">Rear Center (Crouched)</option>
+                <option value="Rear side angle shot"                  data-x="-80" data-y="100"  data-rot="315">Rear Side Angle (Driver Rear)</option>
+                <option value="Top-down bird's eye view"              data-x="0"   data-y="0"    data-rot="90" >Top Down</option>
               </select>
             </div>
 
