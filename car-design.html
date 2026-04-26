@@ -415,7 +415,7 @@ select option {
 
 .mode-btn.active::after { transform: scaleX(1); }
 
-.mode-icon  { font-size: 17px; line-height: 1; }
+.mode-icon  { width: 48px; height: auto; object-fit: contain; }
 .mode-label { font-size: 8px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; text-align: center; }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -888,11 +888,11 @@ input[type="color"]::-webkit-color-swatch         { border: none; border-radius:
         <div class="controls-inner">
           <div class="mode-grid">
             <button class="mode-btn active" id="mode-single" onclick="setMode('single')">
-              <span class="mode-icon">🚗</span>
+              <img class="mode-icon" src="/assets/one-car.png" alt="Single Car">
               <span class="mode-label">Single Car</span>
             </button>
             <button class="mode-btn" id="mode-lineup" onclick="setMode('lineup')">
-              <span class="mode-icon">🚗🚗🚗</span>
+              <img class="mode-icon" src="/assets/three-car.png" alt="Three Car Lineup">
               <span class="mode-label">Three Car Lineup</span>
             </button>
             <button class="mode-btn" id="mode-caricature" onclick="setMode('caricature')">
@@ -1327,8 +1327,7 @@ input[type="color"]::-webkit-color-swatch         { border: none; border-radius:
       $('mode-' + m).classList.toggle('active', m === mode);
     });
     $('shared-location-block').style.display = mode === 'caricature' ? 'none' : 'block';
-    $('vehicle-aerial').src = mode === 'lineup' ? '/assets/three-car.png' : '/assets/one-car.png';
-    $('camera-indicator').style.display = mode === 'lineup' ? 'none' : 'block';
+
     autoGenerate();
   }
 
