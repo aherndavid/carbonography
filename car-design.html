@@ -857,7 +857,7 @@ input[type="color"]::-webkit-color-swatch         { border: none; border-radius:
 
       <div id="rig-container">
         <img id="vehicle-aerial"
-             src="/assets/car-above.png"
+             src="/assets/one-car.png"
              alt="Vehicle top-down view">
         <div id="camera-indicator">
           <img id="camera-icon"
@@ -1327,6 +1327,8 @@ input[type="color"]::-webkit-color-swatch         { border: none; border-radius:
       $('mode-' + m).classList.toggle('active', m === mode);
     });
     $('shared-location-block').style.display = mode === 'caricature' ? 'none' : 'block';
+    $('vehicle-aerial').src = mode === 'lineup' ? '/assets/three-car.png' : '/assets/one-car.png';
+    $('camera-indicator').style.display = mode === 'lineup' ? 'none' : 'block';
     autoGenerate();
   }
 
