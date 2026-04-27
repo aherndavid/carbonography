@@ -74,10 +74,21 @@ a      { color: inherit; text-decoration: none; }
 
 /* ── App shell ─────────────────────────────────────────────────── */
 #app {
-  display: grid;
-  grid-template-rows: 52px 1fr 48px;
   height: 100vh;
   background: var(--bg-base);
+  position: relative;
+}
+
+/* Pages fill the full viewport and stack on top of each other */
+.page {
+  display: none;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.page.active {
+  display: flex;
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -149,11 +160,21 @@ a      { color: inherit; text-decoration: none; }
 /* ══════════════════════════════════════════════════════════════════
    MAIN LAYOUT
 ══════════════════════════════════════════════════════════════════ */
+
+/* Page 2 internal layout: navbar + main area + bottom bar */
+#page2 {
+  display: none;
+  flex-direction: column;
+  height: 100vh;
+}
+#page2.active { display: flex; }
+
 #main {
   display: grid;
   grid-template-columns: 260px 1fr;
   overflow: hidden;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
 }
 
 /* ── LEFT COLUMN ────────────────────────────────────────────────── */
@@ -840,16 +861,15 @@ input[type="color"]::-webkit-color-swatch         { border: none; border-radius:
 #tab-bar         { border-bottom-color: var(--border-dim) !important; }
 
 /* ══════════════════════════════════════════════════════════════════
-   PAGE SYSTEM
+   PAGE SYSTEM — rules defined above in app shell
 ══════════════════════════════════════════════════════════════════ */
-.page { display: none; height: 100%; }
-.page.active { display: flex; flex-direction: column; }
 
 /* ══════════════════════════════════════════════════════════════════
    PAGE 1 — ANGLE SELECTOR
 ══════════════════════════════════════════════════════════════════ */
 #page1-body {
   flex: 1;
+  min-height: 0;
   display: grid;
   grid-template-columns: 1fr 480px;
   overflow: hidden;
@@ -1838,11 +1858,15 @@ input[type="color"]::-webkit-color-swatch         { border: none; border-radius:
   function setMode(mode) {
     currentMode = mode;
     ['single','lineup','caricature'].forEach(m => {
-      $('panel-' + m).style.display = m === mode ? 'block' : 'none';
-      $('mode-' + m).classList.toggle('active', m === mode);
+      const panel = $('panel-' + m);
+      if (panel) panel.style.display = m === mode ? 'block' : 'none';
+      const btn = $('mode-' + m);
+      if (btn) btn.classList.toggle('active', m === mode);
+      const p1btn = $('p1-mode-' + m);
+      if (p1btn) p1btn.classList.toggle('active', m === mode);
     });
-    $('shared-location-block').style.display = mode === 'caricature' ? 'none' : 'block';
-
+    const locBlock = $('shared-location-block');
+    if (locBlock) locBlock.style.display = mode === 'caricature' ? 'none' : 'block';
     autoGenerate();
   }
 
@@ -2104,10 +2128,11 @@ input[type="color"]::-webkit-color-swatch         { border: none; border-radius:
   }
 
   function autoGenerate() {
+    const output = $('output-area');
+    if (!output) return; // page 2 not in view yet
     if (currentMode === 'single')      currentPrompt = buildSinglePrompt();
     else if (currentMode === 'lineup') currentPrompt = buildLineupPrompt();
     else                               currentPrompt = buildCaricaturePrompt();
-    const output = $('output-area');
     output.textContent = currentPrompt;
     const cursor = document.createElement('span');
     cursor.id = 'cursor'; output.appendChild(cursor);
@@ -2238,16 +2263,8 @@ input[type="color"]::-webkit-color-swatch         { border: none; border-radius:
     btn.addEventListener('click', () => selectAngle(btn.dataset.angle));
   });
 
-  // Sync p1 mode buttons with global setMode
-  const _origSetMode = setMode;
-  function setMode(mode) {
-    _origSetMode(mode);
-    // Sync p1 mode buttons
-    ['single','lineup','caricature'].forEach(m => {
-      const b = $('p1-mode-' + m);
-      if (b) b.classList.toggle('active', m === mode);
-    });
-  }
+  // Sync p1 mode buttons when mode changes
+  // (hooked into the existing setMode via the buttons' onclick)
 
 </script>
 </body>
