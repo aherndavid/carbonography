@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=.20">
-    <title>Carbonography | Mobile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Carbonography</title>
     <style>
-        /* 1. IMPORT CUSTOM FONT */
         @font-face {
             font-family: 'Lotus Eden';
             src: url('../fonts/Lotus-Eden-Black-Italic.woff2') format('woff2'),
@@ -14,7 +13,6 @@
             font-style: italic;
         }
 
-        /* 2. RESET & BASE STYLES */
         * {
             margin: 0;
             padding: 0;
@@ -23,12 +21,13 @@
 
         body, html {
             height: 100%;
+            width: 100%;
             font-family: 'Lotus Eden', 'Segoe UI', Tahoma, sans-serif;
             overflow: hidden;
             background-color: #000;
         }
 
-        /* 3. MOBILE GALLERY STYLES */
+        /* FULLSCREEN GALLERY */
         .stage {
             position: fixed;
             top: 0;
@@ -36,12 +35,6 @@
             width: 100%;
             height: 100%;
             z-index: 0;
-        }
-
-        .frame {
-            width: 100%;
-            height: 100%;
-            position: relative;
         }
 
         .slide {
@@ -62,93 +55,98 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center;
         }
 
-        /* 4. MOBILE UI OVERLAY (Transparent & Larger) */
-        .ui-container {
+        /* BOTTOM BAR */
+        .bottom-bar {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            padding: 30px 20px 60px 20px; 
-            /* Removed background, blur, and border to lay directly over images */
-            background: none; 
-            backdrop-filter: none;
-            color: white;
+            background: rgba(0, 0, 0, 0.82);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px; /* Tighter gap between logo/text and countdown */
+            justify-content: center;
+            padding: 14px 20px 20px;
+            gap: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
             z-index: 10;
-            text-align: center;
-            /* Added text-shadow for readability against varying backgrounds */
-            text-shadow: 0px 4px 15px rgba(0, 0, 0, 0.8);
         }
 
-        .brand-mobile {
+        .brand {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 5px;
+            gap: 10px;
         }
 
-        .brand-mobile h1 {
-            font-size: 85px; /* Significantly larger */
-            letter-spacing: -4px; /* Pulls letters closer together */
+        .brand h1 {
+            font-size: 26px;
+            letter-spacing: 1px;
             text-transform: uppercase;
-            line-height: 0.8;
-            margin-top: 10px;
+            color: #fff;
         }
 
-        .logo-mobile {
-            height: 110px; /* Increased logo size */
+        .logo {
+            height: 50px;
             width: auto;
         }
 
-        /* 5. MOBILE COUNTDOWN (Larger) */
+        /* COUNTDOWN */
         .countdown-container {
             display: flex;
-            justify-content: center;
-            gap: 20px;
-            width: 100%;
+            gap: 14px;
+            text-align: center;
         }
 
         .countdown-item {
             display: flex;
             flex-direction: column;
-            min-width: 70px;
+            align-items: center;
+            min-width: 48px;
         }
 
         .countdown-value {
-            font-size: 48px; /* Doubled the size */
+            font-size: 20px;
             font-weight: bold;
             font-variant-numeric: tabular-nums;
+            color: #fff;
             line-height: 1;
         }
 
         .countdown-label {
-            font-size: 14px;
+            font-size: 11px;
             text-transform: uppercase;
-            opacity: 0.9;
-            letter-spacing: 2px;
+            opacity: 0.6;
+            color: #fff;
+            margin-top: 3px;
+            letter-spacing: 0.5px;
+        }
+
+        .countdown-sep {
+            font-size: 20px;
+            color: rgba(255,255,255,0.3);
+            align-self: flex-start;
+            padding-top: 1px;
         }
     </style>
 </head>
 <body>
 
-    <div class="stage">
-        <div class="frame" id="gallery">
-            <div class="slide active"><img src="../assets/purple-lambo-m-2.png" alt="Slide 1"></div>
-            <div class="slide"><img src="../assets/purple-lambo-m-1.png" alt="Slide 2"></div>
-            <div class="slide"><img src="../assets/purple-lambo-m-3.png" alt="Slide 3"></div>
-            <div class="slide"><img src="../assets/purple-lambo-m-4.png" alt="Slide 4"></div>
-        </div>
+    <div class="stage" id="gallery">
+        <div class="slide active"><img src="../assets/purple-lambo-m-1.png" alt="Slide 1"></div>
+        <div class="slide"><img src="../assets/purple-lambo-m-2.png" alt="Slide 2"></div>
+        <div class="slide"><img src="../assets/purple-lambo-m-3.png" alt="Slide 3"></div>
+        <div class="slide"><img src="../assets/purple-lambo-m-4.png" alt="Slide 4"></div>
     </div>
 
-    <div class="ui-container">
-        <div class="brand-mobile">
-            <img src="https://raw.githubusercontent.com/aherndavid/carbonography/main/carbonography-logo.png" alt="Logo" class="logo-mobile">
+    <div class="bottom-bar">
+        <div class="brand">
             <h1>Carbonography</h1>
+            <img src="https://raw.githubusercontent.com/aherndavid/carbonography/main/carbonography-logo.png" alt="Logo" class="logo">
         </div>
 
         <div class="countdown-container" id="countdown">
@@ -172,11 +170,17 @@
     </div>
 
     <script>
-        const targetDate = new Date("May 1, 2026 00:00:00").getTime();
+        const targetDate = new Date("May 20, 2026 00:00:00").getTime();
 
         function updateCountdown() {
             const now = new Date().getTime();
             const distance = targetDate - now;
+
+            if (distance < 0) {
+                clearInterval(timerInterval);
+                document.getElementById("countdown").innerHTML = '<span style="color:#fff;font-size:22px;letter-spacing:2px;">LAUNCHED</span>';
+                return;
+            }
 
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -187,23 +191,18 @@
             document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
             document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
             document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
-
-            if (distance < 0) {
-                clearInterval(timerInterval);
-                document.getElementById("countdown").innerHTML = "LAUNCHED";
-            }
         }
 
         updateCountdown();
         const timerInterval = setInterval(updateCountdown, 1000);
 
+        // Slideshow
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
-        const totalSlides = slides.length;
 
         function showNextSlide() {
             slides[currentSlide].classList.remove('active');
-            currentSlide = (currentSlide + 1) % totalSlides;
+            currentSlide = (currentSlide + 1) % slides.length;
             slides[currentSlide].classList.add('active');
         }
 
