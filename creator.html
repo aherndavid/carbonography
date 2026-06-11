@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --black:       #000000;
+    --deep:        #080808;
+    --panel:       #0f0f0f;
+    --border:      #1c1c1c;
+    --border-lit:  #2e2e2e;
+    --white:       #f5f5f5;
+    --grey:        #888888;
+    --grey-dim:    #444444;
+    --accent:      #ffffff;
+    --accent-dim:  rgba(255,255,255,0.06);
+    --accent-mid:  rgba(255,255,255,0.12);
+    --img-accent:  #ffffff;
+    --vid-accent:  #aaaaaa;
+    --img-dim:     rgba(255,255,255,0.06);
+    --vid-dim:     rgba(170,170,170,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: var(--black); color: var(--white); padding: 28px 24px 48px; min-height: 100vh; }
+  .page-wrap { max-width: 1100px; margin: 0 auto; }
+
+  .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-lit); padding-bottom: 20px; margin-bottom: 28px; }
+  .logo-wrap { display: flex; align-items: center; gap: 14px; }
+  .logo-badge { width: 48px; height: 48px; border: 1px solid var(--border-lit); overflow: hidden; flex-shrink: 0; display:flex; align-items:center; justify-content:center; font-size:22px; }
+  .logo-badge img { width: 100%; height: 100%; object-fit: cover; }
+  .logo-main { font-family: 'Inter', system-ui, sans-serif; font-size: 26px; font-weight: 700; color: var(--white); letter-spacing: -0.03em; line-height: 1; }
+  .logo-sub { font-size: 11px; color: var(--grey); letter-spacing: 0.12em; margin-top: 5px; font-weight: 400; text-transform: uppercase; }
+  .header-badge { font-size: 10px; letter-spacing: 3px; color: var(--grey); border: 1px solid var(--border-lit); padding: 5px 12px; text-transform: uppercase; font-weight: 500; }
+
+  /* MODE TABS */
+  .mode-tabs { display: flex; gap: 0; margin-bottom: 24px; border: 1px solid var(--border); overflow: hidden; }
+  .mode-tab { flex: 1; padding: 14px 20px; text-align: center; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; cursor: pointer; transition: background 0.2s, color 0.2s; color: var(--grey); background: var(--deep); border: none; user-select: none; }
+  .mode-tab.active-image { background: var(--img-dim); color: var(--white); border-bottom: 1px solid var(--white); }
+  .mode-tab.active-video { background: var(--vid-dim); color: var(--vid-accent); border-bottom: 1px solid var(--vid-accent); }
+  .mode-tab:hover:not(.active-image):not(.active-video) { background: var(--panel); color: var(--white); }
+  .mode-indicator { font-size: 11px; letter-spacing: 1.5px; display: block; opacity: 0.5; margin-top: 3px; font-weight: 400; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin-bottom: 1px; }
+
+  .card { background: var(--panel); border: 1px solid var(--border); padding: 20px 22px; }
+  .card-title { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--grey); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+  .card-title::before { content: ''; display: inline-block; width: 2px; height: 12px; background: var(--white); opacity: 0.3; }
+  .card-title.video-title { color: var(--vid-accent); }
+  .card-title.video-title::before { background: var(--vid-accent); opacity: 1; }
+  .card.video-card { border-color: var(--border); }
+
+  label { display: block; font-size: 12px; letter-spacing: 2px; color: var(--grey); text-transform: uppercase; margin-bottom: 5px; margin-top: 14px; font-family: 'Inter', system-ui, sans-serif; font-weight: 500; }
+  label:first-child { margin-top: 0; }
+
+  input[type=text], select, textarea {
+    width: 100%; background: var(--deep); border: 1px solid var(--border);
+    color: var(--white); padding: 10px 12px; font-family: 'Inter', system-ui, sans-serif;
+    font-size: 15px; border-radius: 0; transition: border-color 0.15s; appearance: none;
+  }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23666666'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center; cursor: pointer;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--border-lit); outline: none; }
+  input::placeholder, textarea::placeholder { color: var(--grey-dim); }
+  textarea { resize: vertical; font-size: 15px; }
+
+  .toggle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 4px; }
+  .toggle-item { display: flex; align-items: center; justify-content: space-between; background: var(--deep); border: 1px solid var(--border); padding: 9px 12px; cursor: pointer; transition: border-color 0.15s, background 0.15s; user-select: none; }
+  .toggle-item.active { border-color: var(--border-lit); background: var(--accent-dim); }
+  .toggle-label { font-size: 12px; letter-spacing: 1.5px; color: var(--grey); font-family: 'Inter', system-ui, sans-serif; font-weight: 500; text-transform: uppercase; }
+  .toggle-item.active .toggle-label { color: var(--white); }
+  .toggle-pip { width: 6px; height: 6px; border-radius: 50%; background: var(--border-lit); transition: background 0.15s; }
+  .toggle-item.active .toggle-pip { background: var(--white); }
+
+  .swatch-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .swatch { width: 26px; height: 26px; border: 1px solid transparent; cursor: pointer; transition: border-color 0.12s, transform 0.12s; }
+  .swatch:hover { transform: scale(1.15); }
+  .swatch.selected { border-color: var(--white); }
+  .swatch-label { font-size: 12px; color: var(--grey); margin-top: 6px; letter-spacing: 1px; font-family: 'Inter', system-ui, sans-serif; }
+
+  /* ANGLE PICKER */
+  .angle-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 4px; }
+  .angle-btn { background: var(--deep); border: 1px solid var(--border); padding: 12px 8px 10px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: border-color 0.15s, background 0.15s; user-select: none; }
+  .angle-btn:hover { border-color: var(--border-lit); }
+  .angle-btn.active { border-color: var(--white); background: var(--accent-dim); }
+  .angle-diagram { width: 64px; height: 36px; display: block; }
+  .angle-img { width: 72px; height: 72px; object-fit: contain; display: block; }
+  .angle-name { font-size: 12px; letter-spacing: 0.3px; color: var(--grey); text-align: center; line-height: 1.3; font-family: 'Inter', system-ui, sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; }
+  .angle-sub { font-size: 11px; color: var(--grey-dim); text-align: center; line-height: 1.3; font-family: 'Inter', system-ui, sans-serif; font-weight: 400; letter-spacing: 0; }
+  .angle-btn.active .angle-name { color: var(--white); }
+  .angle-btn.active .angle-sub { color: var(--grey); }
+  .angle-desc-box { background: var(--deep); border: 1px solid var(--border); padding: 12px 16px; margin-top: 6px; font-size: 14px; color: var(--grey); line-height: 1.7; min-height: 40px; transition: border-color 0.15s; font-family: 'Inter', system-ui, sans-serif; }
+  .angle-desc-box.lit { border-color: var(--border-lit); color: #cccccc; }
+
+  /* VIDEO SHOT GRID */
+  .shot-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 4px; }
+  .shot-btn { background: var(--deep); border: 1px solid var(--border); padding: 12px 8px 10px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: border-color 0.15s, background 0.15s; user-select: none; }
+  .shot-btn:hover { border-color: var(--border-lit); }
+  .shot-btn.active { border-color: var(--vid-accent); background: var(--vid-dim); }
+  .shot-icon { font-size: 20px; line-height: 1; }
+  .shot-name { font-size: 12px; letter-spacing: 1px; color: var(--grey); text-transform: uppercase; text-align: center; line-height: 1.3; font-family: 'Inter', system-ui, sans-serif; font-weight: 600; }
+  .shot-btn.active .shot-name { color: var(--white); }
+  .shot-desc-box { background: var(--deep); border: 1px solid var(--border); padding: 12px 16px; margin-top: 6px; font-size: 14px; color: var(--grey); line-height: 1.7; min-height: 40px; transition: border-color 0.15s; font-family: 'Inter', system-ui, sans-serif; }
+  .shot-desc-box.lit { border-color: var(--border-lit); color: #cccccc; }
+
+  /* SEQUENCE BUILDER */
+  .sequence-list { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; min-height: 40px; }
+  .seq-item { display: flex; align-items: center; justify-content: space-between; background: var(--deep); border: 1px solid var(--border); padding: 8px 12px; font-size: 14px; color: var(--grey); gap: 10px; font-family: 'Inter', system-ui, sans-serif; }
+  .seq-item-text { flex: 1; line-height: 1.4; }
+  .seq-num { font-family: 'Inter', system-ui, sans-serif; font-size: 14px; font-weight: 700; color: var(--white); min-width: 22px; }
+  .seq-remove { background: none; border: none; color: var(--grey-dim); cursor: pointer; font-size: 14px; padding: 0 4px; transition: color 0.15s; }
+  .seq-remove:hover { color: var(--white); }
+  .seq-empty { font-size: 14px; color: var(--grey-dim); letter-spacing: 1px; padding: 8px 0; font-family: 'Inter', system-ui, sans-serif; }
+  .btn-add-shot { background: transparent; border: 1px solid var(--border); color: var(--grey); width: 100%; padding: 10px; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; margin-top: 6px; transition: border-color 0.15s, color 0.15s; }
+  .btn-add-shot:hover { border-color: var(--border-lit); color: var(--white); }
+
+  /* PLATE PREVIEW */
+  .plate-preview-wrap { margin-top: 10px; display: flex; align-items: center; gap: 12px; }
+  .plate-preview {
+    font-family: 'Charles Wright', 'DM Sans', sans-serif;
+    font-weight: 800; font-size: 18px; letter-spacing: 3px; padding: 6px 16px;
+    border-radius: 2px; border: 1px solid #333; min-width: 120px;
+    text-align: center; transition: all 0.2s; user-select: none;
+  }
+  .plate-preview.uk-front    { background: #f5f0c8; color: #111; border-color: #bbb; }
+  .plate-preview.uk-rear     { background: #f5e040; color: #111; border-color: #bbb; }
+  .plate-preview.eu-white    { background: #f5f5f5; color: #111; border-color: #bbb; }
+  .plate-preview.us-standard { background: #e8e8e8; color: #1a3a6e; border-color: #999; }
+  .plate-preview.blank       { background: var(--deep); color: var(--grey-dim); border-color: var(--border); letter-spacing: 2px; font-size: 11px; }
+  .plate-style-note { font-size: 13px; color: var(--grey); letter-spacing: 1px; font-family: 'Inter', system-ui, sans-serif; }
+
+  /* OUTPUT */
+  .output-card { background: var(--deep); border: 1px solid var(--border-lit); padding: 20px; margin-top: 20px; }
+  .output-label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--grey); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .output-label::before { content: ''; display: inline-block; width: 2px; height: 12px; background: var(--white); opacity: 0.3; }
+  #output-box { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 11.5px; color: #bbbbbb; line-height: 1.8; white-space: pre-wrap; word-break: break-word; min-height: 80px; max-height: 420px; overflow-y: auto; }
+  #output-box::-webkit-scrollbar { width: 3px; }
+  #output-box::-webkit-scrollbar-track { background: var(--deep); }
+  #output-box::-webkit-scrollbar-thumb { background: var(--border-lit); }
+
+  .btn-generate { border: none; width: 100%; padding: 16px; font-family: 'Inter', system-ui, sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; cursor: pointer; transition: background 0.15s, color 0.15s; margin-top: 20px; }
+  .btn-generate.image-gen { background: var(--white); color: var(--black); }
+  .btn-generate.image-gen:hover { background: #dddddd; }
+  .btn-generate.video-gen { background: var(--vid-accent); color: var(--black); }
+  .btn-generate.video-gen:hover { background: #cccccc; }
+
+  .btn-copy { background: transparent; border: 1px solid var(--border); color: var(--grey); width: 100%; padding: 10px; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; margin-top: 8px; transition: border-color 0.15s, color 0.15s; }
+  .btn-copy:hover { border-color: var(--border-lit); color: var(--white); }
+  .btn-copy.copied { border-color: #4caf50; color: #4caf50; }
+  .char-count { font-size: 12px; color: var(--grey-dim); text-align: right; margin-top: 3px; letter-spacing: 1px; font-family: 'Inter', system-ui, sans-serif; }
+
+  /* VIDEO ENV TOGGLES */
+  .env-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 4px; }
+  .env-btn { background: var(--deep); border: 1px solid var(--border); padding: 8px 6px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: border-color 0.15s, background 0.15s; user-select: none; }
+  .env-btn.active { border-color: var(--border-lit); background: var(--accent-dim); }
+  .env-icon { font-size: 18px; }
+  .env-name { font-size: 11px; letter-spacing: 1px; color: var(--grey); text-transform: uppercase; text-align: center; font-family: 'Inter', system-ui, sans-serif; font-weight: 600; }
+  .env-btn.active .env-name { color: var(--white); }
+
+  /* HIDDEN SECTIONS */
+  .image-only { display: block; }
+  .video-only { display: none; }
+  body.video-mode .image-only { display: none; }
+  body.video-mode .video-only { display: block; }
+  body.video-mode .output-card { border-color: var(--border-lit); }
+  body.video-mode .output-label::before { background: var(--vid-accent); opacity: 1; }
+  body.video-mode .output-label { color: var(--vid-accent); }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+<div class="header" style="justify-content:center; padding-bottom:20px; position:relative;">
+  <img src="assets/logo.png" alt="Carbonography" style="width:100%; height:auto; display:block;" onerror="this.style.opacity='0.3'">
+  <div style="position:absolute; bottom:0; right:0; font-family:'Inter',system-ui,sans-serif; font-size:10px; letter-spacing:3px; color:var(--grey); text-transform:uppercase; font-weight:500;">V3</div>
+</div>
+
+<!-- MODE TABS -->
+<div class="mode-tabs">
+  <div class="mode-tab active-image" id="tab-image" onclick="setMode('image')">
+    📷 IMAGE PROMPT
+    <span class="mode-indicator">Still / Photo Generator</span>
+  </div>
+  <div class="mode-tab" id="tab-video" onclick="setMode('video')">
+    🎬 VIDEO PROMPT
+    <span class="mode-indicator">Motion / Cinematic Sequence</span>
+  </div>
+</div>
+
+<!-- =================== SHARED: VEHICLE IDENTITY =================== -->
+<div class="two-col">
+  <div class="card">
+    <div class="card-title">Vehicle Identity</div>
+    <label>Make</label>
+    <select id="make">
+      <option value="">Select make…</option>
+      <optgroup label="— Hypercar —">
+        <option>Bugatti</option>
+        <option>Koenigsegg</option>
+        <option>Pagani</option>
+        <option>SSC North America</option>
+        <option>Rimac</option>
+        <option>Hennessey</option>
+      </optgroup>
+      <optgroup label="— Supercar / Exotic —">
+        <option>Ferrari</option>
+        <option>Lamborghini</option>
+        <option>McLaren</option>
+        <option>Aston Martin</option>
+        <option>Lotus</option>
+        <option>De Tomaso</option>
+        <option>Noble</option>
+        <option>Radical</option>
+      </optgroup>
+      <optgroup label="— German Prestige —">
+        <option>Porsche</option>
+        <option>Mercedes-AMG</option>
+        <option>Mercedes-Benz</option>
+        <option>BMW M</option>
+        <option>BMW</option>
+        <option>Audi</option>
+        <option>Audi RS</option>
+        <option>Brabus</option>
+        <option>Alpina</option>
+        <option>Mansory</option>
+      </optgroup>
+      <optgroup label="— British Luxury —">
+        <option>Bentley</option>
+        <option>Rolls-Royce</option>
+        <option>Jaguar</option>
+        <option>Land Rover</option>
+        <option>Range Rover</option>
+        <option>McLaren</option>
+        <option>BAC</option>
+        <option>TVR</option>
+        <option>Caterham</option>
+      </optgroup>
+      <optgroup label="— Italian Prestige —">
+        <option>Alfa Romeo</option>
+        <option>Maserati</option>
+        <option>Lancia</option>
+        <option>Pininfarina</option>
+        <option>Italdesign</option>
+      </optgroup>
+      <optgroup label="— American Muscle / Luxury —">
+        <option>Cadillac</option>
+        <option>Lincoln</option>
+        <option>Dodge</option>
+        <option>Chevrolet Corvette</option>
+        <option>Ford Mustang</option>
+        <option>Shelby</option>
+        <option>Saleen</option>
+        <option>Rezvani</option>
+      </optgroup>
+      <optgroup label="— Japanese Performance —">
+        <option>Nissan GT-R</option>
+        <option>Toyota Supra</option>
+        <option>Lexus</option>
+        <option>Honda NSX</option>
+        <option>Mazda</option>
+        <option>Subaru</option>
+        <option>Mitsubishi</option>
+      </optgroup>
+      <optgroup label="— Scandinavian / Other —">
+        <option>Volvo</option>
+        <option>Polestar</option>
+        <option>Czinger</option>
+        <option>Zenvo</option>
+        <option>Spyker</option>
+      </optgroup>
+      <optgroup label="— Other —">
+        <option value="__custom__">Other / Enter manually below</option>
+      </optgroup>
+    </select>
+    <input type="text" id="make-custom" placeholder="Enter make manually…" style="display:none; margin-top:6px;">
+    <label>Model</label>
+    <select id="model">
+      <option value="">— select make first —</option>
+    </select>
+    <input type="text" id="model-custom" placeholder="Enter model manually…" style="display:none; margin-top:6px;">
+    <label>Year</label>
+    <input type="text" id="year" placeholder="e.g. 2024">
+    <label>Vehicle Type</label>
+    <select id="vtype">
+      <option value="">Select type…</option>
+      <optgroup label="Cars">
+        <option>Sedan</option><option>Coupe</option><option>Hatchback</option>
+        <option>SUV</option><option>Crossover</option><option>Pickup Truck</option>
+        <option>Van / MPV</option><option>Estate / Wagon</option>
+        <option>Convertible / Roadster</option><option>Supercar</option><option>Hypercar</option>
+      </optgroup>
+      <optgroup label="Motorcycles">
+        <option>Superbike</option><option>Naked / Streetfighter</option>
+        <option>Cruiser</option><option>Adventure / Tourer</option>
+        <option>Cafe Racer</option><option>Dirt Bike</option><option>Scooter</option>
+      </optgroup>
+    </select>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Exterior Colour</div>
+    <label>Body Colour Name</label>
+    <input type="text" id="ext-colour-name" placeholder="e.g. Obsidian Black, Guards Red">
+    <label>Finish</label>
+    <select id="finish">
+      <option value="">Select finish…</option>
+      <option>Gloss</option><option>Satin / Semi-Gloss</option><option>Matte</option>
+      <option>Metallic Gloss</option><option>Metallic Matte</option>
+      <option>Pearlescent</option><option>Chrome</option><option>Carbon Fibre</option>
+      <option>Two-Tone</option>
+    </select>
+    <label>Quick Swatch</label>
+    <div class="swatch-row" id="ext-swatches"></div>
+    <div class="swatch-label" id="ext-swatch-label">None selected</div>
+  </div>
+</div>
+
+<!-- =================== IMAGE-ONLY SECTIONS =================== -->
+<div class="image-only">
+
+  <!-- Interior + Studio -->
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Interior</div>
+      <label>Interior Colour</label>
+      <input type="text" id="int-colour" placeholder="e.g. Cognac Leather, Black Alcantara">
+      <label>Interior Trim</label>
+      <select id="int-trim">
+        <option value="">Select trim…</option>
+        <option>Full Leather</option><option>Alcantara / Suede</option>
+        <option>Carbon Fibre Accents</option><option>Wood Trim</option>
+        <option>Piano Black</option><option>Brushed Aluminium</option><option>Fabric</option>
+      </select>
+      <label>Interior Ambient Lighting</label>
+      <div class="toggle-grid">
+        <div class="toggle-item" id="amb-off" onclick="togglePair('amb','off')"><span class="toggle-label">OFF</span><span class="toggle-pip"></span></div>
+        <div class="toggle-item active" id="amb-on" onclick="togglePair('amb','on')"><span class="toggle-label">AMBIENT ON</span><span class="toggle-pip"></span></div>
+      </div>
+      <label>Ambient Light Colour (if on)</label>
+      <input type="text" id="amb-colour" placeholder="e.g. Soft White, Red, Blue">
+    </div>
+
+    <div class="card">
+      <div class="card-title">Studio & Lighting</div>
+      <label>Background</label>
+      <select id="bg" onchange="updateBgHint()">
+        <optgroup label="— Light Studio —">
+          <option value="pure white seamless infinity cove background">Pure White Infinity Cove</option>
+          <option value="soft white studio floor with subtle gradient shadow beneath the vehicle">White Studio Floor + Gradient Shadow</option>
+          <option value="light grey seamless studio backdrop">Light Grey Studio</option>
+          <option value="white polished floor with mirror reflection beneath the vehicle">White Floor with Mirror Reflection</option>
+        </optgroup>
+        <optgroup label="— Dark / Web-Ready —">
+          <option value="pure black seamless infinity cove background — #000000 — no visible floor edge, no background detail, absolute black void surrounding the vehicle">Pure Black — #000000 (Web Composite)</option>
+          <option value="near-black seamless studio background — very dark charcoal #131413 — subtle warmth, no visible floor seam, deep dark void with a faint organic quality">Near-Black Charcoal — #131413 (Web Composite)</option>
+        </optgroup>
+      </select>
+      <div id="bg-hint" style="display:none; margin-top:8px; background:var(--deep); border:1px solid var(--border-lit); padding:9px 12px; font-size:13px; color:#aaaaaa; letter-spacing:0.5px; line-height:1.6; font-family:'Inter',system-ui,sans-serif;">
+        🌐 <strong>Web Composite mode</strong> — prompt instructs the AI to render the vehicle against a flat dark field, making it easy to drop onto your website. No background bokeh, no environment detail. Vehicle only.
+      </div>
+      <label>Studio Lights</label>
+      <div class="toggle-grid">
+        <div class="toggle-item active" id="stl-on" onclick="togglePair('stl','on')"><span class="toggle-label">STUDIO ON</span><span class="toggle-pip"></span></div>
+        <div class="toggle-item" id="stl-off" onclick="togglePair('stl','off')"><span class="toggle-label">STUDIO OFF</span><span class="toggle-pip"></span></div>
+      </div>
+      <label>Vehicle Headlights</label>
+      <div class="toggle-grid">
+        <div class="toggle-item" id="hdl-off" onclick="togglePair('hdl','off')"><span class="toggle-label">LIGHTS OFF</span><span class="toggle-pip"></span></div>
+        <div class="toggle-item active" id="hdl-on" onclick="togglePair('hdl','on')"><span class="toggle-label">LIGHTS ON</span><span class="toggle-pip"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Registration Plate -->
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-title">Registration Plate</div>
+    <div class="two-col" style="margin-bottom:0; gap:16px;">
+      <div>
+        <label>Plate Style</label>
+        <select id="plate-style" onchange="updatePlatePreview()">
+          <option value="none">No Plate / Clean (blank)</option>
+          <option value="uk-front">UK — White Front Plate</option>
+          <option value="uk-rear">UK — Yellow Rear Plate</option>
+          <option value="eu-white">EU — White Plate</option>
+          <option value="us-standard">US — State Plate (grey/blue)</option>
+          <option value="custom">Custom / Other</option>
+        </select>
+        <label>Plate Text</label>
+        <input type="text" id="plate-text" placeholder="e.g. AB24 XYZ" oninput="updatePlatePreview()" maxlength="10" style="text-transform:uppercase; font-size:15px; letter-spacing:3px; font-weight:700;">
+        <label>Custom Plate Description (optional)</label>
+        <input type="text" id="plate-custom" placeholder="e.g. Italian yellow plate, black digits" oninput="updatePlatePreview()">
+      </div>
+      <div style="display:flex; flex-direction:column; justify-content:center; align-items:flex-start; gap:8px; padding-top:22px;">
+        <div class="plate-preview blank" id="plate-preview">PREVIEW</div>
+        <div class="plate-style-note" id="plate-style-note">Select a style and enter your text</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Camera Angle Picker -->
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-title">Camera Angle</div>
+    <div class="angle-grid" id="angle-grid"></div>
+    <div class="angle-desc-box" id="angle-desc">Select an angle above to see details.</div>
+  </div>
+
+  <!-- Wheel + Notes -->
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Wheel & Brake Detail</div>
+      <label>Wheel Style</label>
+      <input type="text" id="wheels" placeholder="e.g. 21-inch forged 5-spoke gloss black">
+      <label>Brake Caliper Colour</label>
+      <input type="text" id="calipers" placeholder="e.g. Red Brembo, Yellow, Body-colour">
+      <label>Vehicle Condition</label>
+      <select id="condition" onchange="updateConditionHint()">
+        <option value="clean">Clean — Standard Studio Presentation</option>
+        <option value="washed">Just Washed — Water Beading Detail</option>
+        <option value="wet-dramatic">Soaking Wet — Heavy Water Sheet</option>
+        <option value="dusty">Dusty / Light Patina</option>
+      </select>
+      <div id="condition-hint" style="display:none; margin-top:8px; background:var(--deep); border:1px solid var(--border-lit); padding:9px 12px; font-size:13px; color:#aaaaaa; letter-spacing:0.5px; line-height:1.6; font-family:'Inter',system-ui,sans-serif;"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Special Notes</div>
+      <label>Extras / Options</label>
+      <input type="text" id="extras" placeholder="e.g. panoramic roof, rear spoiler, carbon mirrors">
+      <label>Additional Instructions</label>
+      <textarea id="notes" rows="3" placeholder="Any extra direction for the AI image generator…"></textarea>
+    </div>
+  </div>
+
+</div><!-- /image-only -->
+
+<!-- =================== VIDEO-ONLY SECTIONS =================== -->
+<div class="video-only">
+
+  <!-- Environment + Lighting -->
+  <div class="two-col">
+    <div class="card video-card">
+      <div class="card-title video-title">Location & Environment</div>
+      <label>Setting</label>
+      <select id="vid-setting">
+        <option value="empty underground car park with polished concrete floor and dramatic uplighting">Underground Car Park — Dramatic Uplighting</option>
+        <option value="wet urban street at night, city reflections on tarmac, sodium streetlights overhead">Wet Urban Street — Night City</option>
+        <option value="empty rooftop car park at golden hour, city skyline in background, warm side light">Rooftop Car Park — Golden Hour</option>
+        <option value="dark industrial warehouse with hard light shafts piercing through skylights">Industrial Warehouse — Hard Light Shafts</option>
+        <option value="open coastal road at dusk, ocean visible in background, golden rim lighting">Coastal Road — Dusk</option>
+        <option value="empty airfield or runway at night with subtle perimeter lighting">Airfield / Runway — Night</option>
+        <option value="mountain pass road with dramatic overcast sky, mist in the valley below">Mountain Pass — Overcast Drama</option>
+        <option value="white seamless studio floor, clean minimal environment, controlled studio lighting">Clean Studio — Minimal</option>
+        <option value="custom">Custom (describe below)</option>
+      </select>
+      <label>Custom Setting (if above is Custom)</label>
+      <input type="text" id="vid-setting-custom" placeholder="e.g. rain-soaked motorway service station">
+      <label>Time of Day</label>
+      <select id="vid-time">
+        <option value="golden hour warm side light casting long shadows">Golden Hour</option>
+        <option value="blue hour — twilight, sky deep blue, artificial lights beginning to glow">Blue Hour / Twilight</option>
+        <option value="full night, darkness, artificial lights only">Night</option>
+        <option value="overcast daylight — flat even light, no harsh shadows">Overcast Day</option>
+        <option value="bright midday sunlight — harsh overhead light">Bright Midday</option>
+        <option value="dawn, soft pink-orange light, low sun angle">Dawn</option>
+      </select>
+    </div>
+
+    <div class="card video-card">
+      <div class="card-title video-title">Motion Style & Camera Feel</div>
+      <label>Vehicle Motion</label>
+      <select id="vid-motion">
+        <option value="vehicle stationary, engine off, completely still">Stationary — Static Display</option>
+        <option value="vehicle slowly rolling into frame and gently decelerating to a stop">Rolling In — Slow Approach, Stopping</option>
+        <option value="vehicle slowly driving through frame, constant speed, passing camera">Slow Drive-Through — Passing Shot</option>
+        <option value="vehicle driving toward camera and stopping just before lens">Drive Toward Camera — Front Approach</option>
+        <option value="vehicle reversing slowly into position, stopping centred">Reverse Approach — Backing In</option>
+        <option value="vehicle doing a slow rolling launch, accelerating away from camera">Rolling Launch — Accelerating Away</option>
+        <option value="vehicle in motion at speed, apparent motion blur on wheels and background">High Speed — Dynamic Motion Blur</option>
+      </select>
+      <label>Camera Movement</label>
+      <select id="vid-camera">
+        <option value="camera locked off, completely static — tripod shot">Locked Off — Static Tripod</option>
+        <option value="slow subtle push in toward the vehicle on a slider, barely perceptible movement">Slow Slider Push In</option>
+        <option value="gentle 90-degree arc around the vehicle — slow orbital move">Slow Orbit / Arc Around</option>
+        <option value="low tracking shot following the vehicle at wheel height, slight panning">Low Tracking — Wheel Height Pan</option>
+        <option value="slow drone pull-back revealing vehicle from above">Drone Pull-Back — Aerial Reveal</option>
+        <option value="hand-held with very slight organic movement — intimate feel">Subtle Hand-Held Feel</option>
+      </select>
+      <label>Pace & Edit Feel</label>
+      <select id="vid-pace">
+        <option value="slow cinematic pace — long holds, deliberate cuts">Slow Cinematic</option>
+        <option value="medium pace — confident editorial rhythm">Medium Editorial</option>
+        <option value="dynamic — punchy cuts, high energy">Dynamic / Punchy</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Shot Type Sequence Builder — MAIN VIDEO FEATURE -->
+  <div class="card video-card" style="margin-bottom:16px;">
+    <div class="card-title video-title">Shot Type Selector — Build Your Sequence</div>
+    <div style="font-size:11px; color:var(--grey); margin-bottom:14px; letter-spacing:0.5px; line-height:1.6;">
+      Select a shot type below, then click ADD TO SEQUENCE to build your video shot list. Reorder by removing and re-adding. A complete sequence generates a full cinematic video prompt.
+    </div>
+    <div class="shot-grid" id="shot-grid"></div>
+    <div class="shot-desc-box" id="shot-desc">Select a shot type above to see details.</div>
+    <button class="btn-add-shot" onclick="addToSequence()">+ ADD TO SEQUENCE</button>
+
+    <label style="margin-top:18px;">Your Shot Sequence</label>
+    <div class="sequence-list" id="sequence-list">
+      <div class="seq-empty" id="seq-empty">No shots added yet — build your sequence above.</div>
+    </div>
+  </div>
+
+  <!-- Finishing Details -->
+  <div class="two-col">
+    <div class="card video-card">
+      <div class="card-title video-title">Colour Grade & Mood</div>
+      <label>Colour Grade</label>
+      <select id="vid-grade">
+        <option value="cinematic teal-and-orange grade, warm highlights, cool shadows">Teal & Orange — Cinematic Classic</option>
+        <option value="neutral commercial grade — accurate whites, no colour cast, clean shadows">Neutral Commercial — Clean</option>
+        <option value="high-contrast monochrome — stark blacks, crushed shadows, silver highlights">Monochrome — High Contrast</option>
+        <option value="warm golden grade — amber highlights, rich deep shadows">Warm Golden — Premium Feel</option>
+        <option value="cold steely blue grade — desaturated, clinical, precise">Cold Steel Blue — Technical</option>
+        <option value="moody dark lift — lifted blacks, underexposed, brooding atmosphere">Dark Moody — Underexposed Drama</option>
+      </select>
+      <label>Depth of Field</label>
+      <select id="vid-dof">
+        <option value="shallow depth of field — subject sharp, background beautifully blurred bokeh">Shallow — Cinematic Bokeh</option>
+        <option value="medium depth of field — vehicle sharp, background slightly soft">Medium — Clear Context</option>
+        <option value="deep depth of field — everything sharp from front to back">Deep — All in Focus</option>
+      </select>
+    </div>
+    <div class="card video-card">
+      <div class="card-title video-title">Wheels, Extras & Notes</div>
+      <label>Brake Caliper Colour</label>
+      <input type="text" id="vid-cali" placeholder="e.g. Yellow, Red Brembo, Body-colour">
+      <label>Notable Extras</label>
+      <input type="text" id="vid-extras" placeholder="e.g. carbon roof, rear diffuser, aftermarket exhaust">
+      <label>Additional Director Notes</label>
+      <textarea id="vid-notes" rows="3" placeholder="e.g. hero moment at 0:10 — headlights switch on dramatically…"></textarea>
+    </div>
+  </div>
+
+</div><!-- /video-only -->
+
+<!-- GENERATE BUTTON -->
+<button class="btn-generate image-gen" id="btn-generate" onclick="buildPrompt()">GENERATE IMAGE PROMPT</button>
+
+<!-- OUTPUT -->
+<div class="output-card" id="output-card">
+  <div class="output-label" id="output-label">Master Prompt Pipeline</div>
+  <div id="output-box">Configure your vehicle above, then hit GENERATE PROMPT…</div>
+  <div class="char-count" id="char-count"></div>
+  <button class="btn-copy" id="copy-btn" onclick="copyOut()">COPY TO CLIPBOARD</button>
+</div>
+
+<script>
+// =================== BG HINT ===================
+function updateBgHint() {
+  const bg = document.getElementById('bg').value;
+  const hint = document.getElementById('bg-hint');
+  hint.style.display = (bg.includes('#000000') || bg.includes('#131413')) ? 'block' : 'none';
+}
+
+// =================== CONDITION HINT ===================
+const conditionHints = {
+  'clean':        '',
+  'washed':       '💧 Just Washed — prompt instructs the AI to render fine water beading across all painted surfaces, damp wheel arches and tyre sidewalls, and a slight wet sheen on glass.',
+  'wet-dramatic': '🌊 Soaking Wet — heavy water sheeting down bodywork, standing water on the roof and bonnet, water streaming off the sills and diffuser.',
+  'dusty':        '🌫 Dusty / Patina — light road dust settled on horizontal surfaces, subtle brake dust on inner wheel faces, slightly dulled gloss.'
+};
+function updateConditionHint() {
+  const val  = document.getElementById('condition').value;
+  const hint = document.getElementById('condition-hint');
+  const msg  = conditionHints[val] || '';
+  hint.style.display = msg ? 'block' : 'none';
+  hint.textContent   = msg;
+}
+
+// =================== MODE SWITCHER ===================
+let currentMode = 'image';
+function setMode(mode) {
+  currentMode = mode;
+  document.body.classList.toggle('video-mode', mode === 'video');
+  document.getElementById('tab-image').className = 'mode-tab' + (mode === 'image' ? ' active-image' : '');
+  document.getElementById('tab-video').className = 'mode-tab' + (mode === 'video' ? ' active-video' : '');
+  const btn = document.getElementById('btn-generate');
+  btn.textContent = mode === 'image' ? 'GENERATE IMAGE PROMPT' : 'GENERATE VIDEO PROMPT';
+  btn.className = 'btn-generate ' + (mode === 'image' ? 'image-gen' : 'video-gen');
+  document.getElementById('output-box').textContent = 'Configure your vehicle above, then hit GENERATE PROMPT…';
+  document.getElementById('char-count').textContent = '';
+}
+
+// =================== SWATCHES ===================
+const extColors = [
+  { hex: '#ffffff', name: 'Polar White' },{ hex: '#e8e0d0', name: 'Cream / Ivory' },
+  { hex: '#d4a843', name: 'Sunburst Yellow' },{ hex: '#e85c1a', name: 'Guards Red / Orange' },
+  { hex: '#8b1a1a', name: 'Deep Burgundy' },{ hex: '#1a3a6e', name: 'Cobalt Blue' },
+  { hex: '#1a2e1a', name: 'British Racing Green' },{ hex: '#2a2a2a', name: 'Jet Black' },
+  { hex: '#6e6e6e', name: 'Nardo Grey' },{ hex: '#b8b8b8', name: 'Arctic Silver' },
+  { hex: '#7c4b8a', name: 'Viola Purple' },{ hex: '#3a7a5a', name: 'Sage Green' },
+];
+(function buildSwatches(){
+  const row = document.getElementById('ext-swatches');
+  extColors.forEach(c => {
+    const s = document.createElement('div');
+    s.className = 'swatch';
+    s.style.background = c.hex;
+    if (c.hex === '#ffffff') s.style.border = '2px solid #333';
+    s.title = c.name;
+    s.onclick = () => {
+      document.querySelectorAll('.swatch').forEach(x => x.classList.remove('selected'));
+      s.classList.add('selected');
+      document.getElementById('ext-colour-name').value = c.name;
+      document.getElementById('ext-swatch-label').textContent = c.name;
+    };
+    row.appendChild(s);
+  });
+})();
+
+// =================== PLATE PREVIEW ===================
+const plateStyles = {
+  'none':        { cls: 'blank',       note: 'No plate — clean bumper' },
+  'uk-front':    { cls: 'uk-front',    note: 'UK White Front — black digits' },
+  'uk-rear':     { cls: 'uk-rear',     note: 'UK Yellow Rear — black digits' },
+  'eu-white':    { cls: 'eu-white',    note: 'EU White — black digits, blue strip' },
+  'us-standard': { cls: 'us-standard', note: 'US State Plate — varies by state' },
+  'custom':      { cls: 'eu-white',    note: 'Custom / Other — describe below' },
+};
+function updatePlatePreview() {
+  const style = document.getElementById('plate-style').value;
+  const text  = document.getElementById('plate-text').value.toUpperCase() || 'PREVIEW';
+  const prev  = document.getElementById('plate-preview');
+  const note  = document.getElementById('plate-style-note');
+  const info  = plateStyles[style] || plateStyles['none'];
+  prev.className = 'plate-preview ' + info.cls;
+  prev.textContent = style === 'none' ? 'NO PLATE' : text;
+  note.textContent = info.note;
+}
+function buildPlatePrompt() {
+  const style  = document.getElementById('plate-style').value;
+  const text   = document.getElementById('plate-text').value.trim().toUpperCase();
+  const custom = document.getElementById('plate-custom').value.trim();
+  if (style === 'none') return 'No registration plate visible — bumper is clean.';
+  const styleDescriptions = {
+    'uk-front':    'UK-specification white front registration plate with black Charles Wright font digits',
+    'uk-rear':     'UK-specification yellow rear registration plate with black Charles Wright font digits',
+    'eu-white':    'European white registration plate with black digits and blue EU country identifier strip on the left',
+    'us-standard': 'US state-format registration plate with standard embossed digits',
+    'custom':      custom || 'custom registration plate',
+  };
+  let desc = styleDescriptions[style];
+  if (text) desc += `, reading "${text}"`;
+  if (custom && style !== 'custom') desc += `. Additional note: ${custom}`;
+  desc += '. The plate text must be rendered accurately and legibly — no AI-hallucinated characters.';
+  return desc;
+}
+
+// =================== TOGGLES ===================
+const toggleState = { amb: 'on', stl: 'on', hdl: 'on' };
+function togglePair(group, val) {
+  toggleState[group] = val;
+  ['on','off'].forEach(v => {
+    const el = document.getElementById(`${group}-${v}`);
+    if (el) el.classList.toggle('active', v === val);
+  });
+}
+
+// =================== FINISH SURFACE BEHAVIOUR ===================
+const finishBehaviour = {
+  'Gloss':              'high-gloss clearcoat with sharp mirror-like specular highlights, strong environment reflections, deep paint colour',
+  'Satin / Semi-Gloss': 'satin clearcoat with softened specular highlights, reduced mirror reflections, subtle sheen — not matte, not gloss',
+  'Matte':              'flat matte finish with zero specular highlights, no mirror reflections, uniform diffuse light absorption — studio lights must be kept subdued to avoid appearing glossy',
+  'Metallic Gloss':     'metallic gloss clearcoat with sparkling metal flake visible in direct light, shifting colour depth, strong specular highlights',
+  'Metallic Matte':     'metallic matte finish with visible metal flake but no specular gloss — diffuse light scatter across the flake particles',
+  'Pearlescent':        'pearlescent clearcoat with colour-shifting pearl lustre, iridescent depth that shifts hue between viewing angles',
+  'Chrome':             'full chrome mirror finish — complete environment reflection like a liquid mirror, maximum reflectivity, no paint colour underneath',
+  'Carbon Fibre':       'exposed carbon fibre weave — 2x2 twill pattern with gloss clear lacquer over the top, directional specular sheen shifts across the weave depending on light angle',
+  'Two-Tone':           'two-tone finish — upper and lower body panels in contrasting colours with a crisp, clean demarcation line between them',
+};
+
+// =================== IMAGE ANGLES ===================
+// diagram: inline SVG showing car (top-down silhouette) + camera dot + direction arrow
+// Car faces RIGHT by default (nose at right side of SVG)
+const CAR = `<g transform="translate(32,18)">
+  <!-- body -->
+  <rect x="-14" y="-6" width="28" height="12" rx="2" fill="white" opacity="0.9"/>
+  <!-- roof -->
+  <rect x="-7" y="-5" width="13" height="10" rx="2" fill="white" opacity="0.5"/>
+  <!-- nose -->
+  <polygon points="14,-4 18,0 14,4" fill="white" opacity="0.9"/>
+  <!-- wheels -->
+  <rect x="-12" y="-9" width="6" height="3" rx="1" fill="white" opacity="0.6"/>
+  <rect x="-12" y="6" width="6" height="3" rx="1" fill="white" opacity="0.6"/>
+  <rect x="5" y="-9" width="6" height="3" rx="1" fill="white" opacity="0.6"/>
+  <rect x="5" y="6" width="6" height="3" rx="1" fill="white" opacity="0.6"/>
+</g>`;
+
+function camDot(x,y) { return `<circle cx="${x}" cy="${y}" r="3" fill="white" opacity="0.9"/><circle cx="${x}" cy="${y}" r="5.5" fill="none" stroke="white" stroke-width="1" opacity="0.4"/>`; }
+function aimLine(x1,y1,x2,y2) { return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="white" stroke-width="0.8" stroke-dasharray="3,2" opacity="0.35"/>`; }
+
+function makeDiagram(camX, camY, extraSvg='', carRotate=0) {
+  return `<svg class="angle-diagram" viewBox="0 0 64 36" xmlns="http://www.w3.org/2000/svg">
+    ${aimLine(camX, camY, 32, 18)}
+    <g transform="rotate(${carRotate},32,18)">${CAR.replace(/<g transform="translate\(32,18\)">/,'<g>')}</g>
+    ${camDot(camX, camY)}
+    ${extraSvg}
+  </svg>`;
+}
+
+const angles = [
+  {
+    diagram: makeDiagram(2, 18),
+    name: 'Straight Front',
+    sub: 'Camera faces bumper dead-on',
+    focalLength: 85, aperture: 'f/8', camHeight: 'bonnet height (approx 70cm from ground)', camDist: '4m', yaw: '0°', pitch: '0°',
+    prompt: 'perfectly straight-on front elevation, vehicle centred, headlights and grille filling the frame symmetrically — camera sensor plane perfectly parallel to the grille, zero perspective distortion',
+    desc: '📷 Camera is directly in front of the car, perfectly centred. You see the grille, both headlights and front bumper symmetrically. Best for DRL light signatures and front fascia detail.'
+  },
+  {
+    diagram: makeDiagram(4, 4),
+    name: '¾ Front — Driver',
+    sub: 'Front + left flank visible',
+    focalLength: 50, aperture: 'f/5.6', camHeight: 'wheel-centre height (approx 35cm from ground)', camDist: '5m', yaw: '35° from front-left', pitch: '-3°',
+    prompt: 'classic three-quarter front left angle, camera offset 35° from the front-left, wheel-centre height, slight downward tilt, showing front fascia and driver-side left flank — left-to-right perspective, moderate depth of field, focus on front badge and leading edge of bonnet',
+    desc: '📷 Camera is positioned 45° to the front-left. You see the front of the car AND the driver\'s-side flank in one shot. The most common hero/press angle in automotive photography.'
+  },
+  {
+    diagram: makeDiagram(4, 32),
+    name: '¾ Front — Passenger',
+    sub: 'Front + right flank visible',
+    focalLength: 50, aperture: 'f/5.6', camHeight: 'wheel-centre height (approx 35cm from ground)', camDist: '5m', yaw: '35° from front-right', pitch: '-3°',
+    prompt: 'classic three-quarter front right angle, camera offset 35° from the front-right, wheel-centre height, slight downward tilt, showing front fascia and passenger-side right flank — right-to-left perspective, moderate depth of field, focus on front badge',
+    desc: '📷 Camera 45° to the front-right. Front of car plus the passenger-side flank visible. Mirror of the driver-side hero — often preferred for RHD market materials.'
+  },
+  {
+    diagram: makeDiagram(32, 2),
+    name: 'Pure Side — Driver',
+    sub: 'Camera 90° to left of car',
+    focalLength: 85, aperture: 'f/8', camHeight: 'wheel-centre height (approx 35cm from ground)', camDist: '6m', yaw: '90° to left', pitch: '0°',
+    prompt: 'pure left-side profile, camera 90° to the left side, sensor plane perfectly parallel to the door panels, wheel-centre height, full wheelbase visible from nose to tail — entire vehicle silhouette in frame with even depth of field front to rear',
+    desc: '📷 Camera is directly to the left of the car at wheel-centre height. Pure silhouette — roofline, stance, door panels and full proportions visible from bonnet to boot.'
+  },
+  {
+    diagram: makeDiagram(32, 34),
+    name: 'Pure Side — Passenger',
+    sub: 'Camera 90° to right of car',
+    focalLength: 85, aperture: 'f/8', camHeight: 'wheel-centre height (approx 35cm from ground)', camDist: '6m', yaw: '90° to right', pitch: '0°',
+    prompt: 'pure right-side profile, camera 90° to the right side, sensor plane perfectly parallel to the door panels, wheel-centre height, full wheelbase visible from nose to tail — entire vehicle silhouette in frame',
+    desc: '📷 Camera directly to the right of the car. Same full-silhouette profile as above — use when key design details (exhaust, vents, livery) are on the right side.'
+  },
+  {
+    diagram: makeDiagram(60, 4),
+    name: '¾ Rear — Driver',
+    sub: 'Rear + left flank visible',
+    focalLength: 50, aperture: 'f/5.6', camHeight: 'wheel-centre height (approx 35cm from ground)', camDist: '5m', yaw: '35° from rear-left', pitch: '-3°',
+    prompt: 'three-quarter rear left angle, camera offset 35° from the rear-left, wheel-centre height, showing rear fascia, both taillights and driver-side left rear flank — focus on taillights and rear badge, gentle background falloff',
+    desc: '📷 Camera 45° behind the car to the left. You see the rear bumper, both taillights, exhaust tips and the driver\'s-side rear quarter panel. Classic rear hero angle.'
+  },
+  {
+    diagram: makeDiagram(60, 32),
+    name: '¾ Rear — Passenger',
+    sub: 'Rear + right flank visible',
+    focalLength: 50, aperture: 'f/5.6', camHeight: 'wheel-centre height (approx 35cm from ground)', camDist: '5m', yaw: '35° from rear-right', pitch: '-3°',
+    prompt: 'three-quarter rear right angle, camera offset 35° from the rear-right, wheel-centre height, showing rear fascia, both taillights and passenger-side right rear flank — focus on taillights, exhaust tips and rear diffuser',
+    desc: '📷 Camera 45° behind the car to the right. Taillights, rear diffuser and right-side rear flank. Use when the key exhaust or design detail is on the passenger side.'
+  },
+  {
+    diagram: makeDiagram(62, 18),
+    name: 'Straight Rear',
+    sub: 'Camera faces boot dead-on',
+    focalLength: 85, aperture: 'f/8', camHeight: 'boot lid height (approx 80cm from ground)', camDist: '4m', yaw: '0° from rear', pitch: '0°',
+    prompt: 'perfectly straight-on rear elevation, camera sensor plane parallel to the rear bumper, boot lid height, vehicle perfectly centred — both taillights, rear badge and exhaust tips symmetrically framed, zero perspective distortion',
+    desc: '📷 Camera directly behind the car, perfectly centred. Both taillight clusters, badge, exhausts and rear bumper in full symmetry. Strong and graphic — particularly good for quad exhausts.'
+  },
+  {
+    // overhead: camera above, shown as concentric rings above car
+    diagram: `<svg class="angle-diagram" viewBox="0 0 64 36" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(0,32,18)">${CAR.replace(/<g transform="translate\(32,18\)">/,'<g transform="translate(32,18)">')}</g>
+      <circle cx="32" cy="18" r="8" fill="none" stroke="white" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.3"/>
+      <circle cx="32" cy="18" r="3" fill="white" opacity="0.7"/>
+      <text x="32" y="9" text-anchor="middle" font-size="5" fill="white" opacity="0.4" font-family="Inter,system-ui,sans-serif">↓</text>
+    </svg>`,
+    name: 'Overhead — Down',
+    sub: "Bird's eye, 90° above",
+    focalLength: 35, aperture: 'f/8', camHeight: 'directly above vehicle (~5m)', camDist: '5m', yaw: '0°', pitch: '-90°',
+    prompt: "directly overhead flat top-down bird's-eye view, camera pointing straight down at 90° to the ground, vehicle perfectly centred, full roof and footprint visible — wide angle to capture full vehicle width, even lighting top-down",
+    desc: '📷 Camera is directly above the car pointing straight down. You see the full roof, sunroof, bonnet scoop and overall footprint. Bold, graphic and unusual — works well with contrasting floor colour.'
+  },
+  {
+    diagram: makeDiagram(4, 4, `<text x="6" y="11" font-size="5" fill="white" opacity="0.5" font-family="Inter,system-ui,sans-serif">↑</text>`),
+    name: 'High Angle — Front',
+    sub: 'Elevated, looking down at front',
+    focalLength: 35, aperture: 'f/5.6', camHeight: 'elevated (~2m above vehicle roof)', camDist: '5m', yaw: '35° from front-left', pitch: '-35°',
+    prompt: 'aerial three-quarter front left angle, camera elevated approximately 2m above roof height, looking down at 35° pitch — roof, bonnet and driver-side flank all simultaneously visible, slight wide-angle compression',
+    desc: '📷 Camera is raised high (like a drone or ladder) and looks down at the front-left corner. You see roof, bonnet and driver-side flank simultaneously. Contemporary and cinematic.'
+  },
+  {
+    diagram: makeDiagram(60, 4, `<text x="54" y="11" font-size="5" fill="white" opacity="0.5" font-family="Inter,system-ui,sans-serif">↑</text>`),
+    name: 'High Angle — Rear',
+    sub: 'Elevated, looking down at rear',
+    focalLength: 35, aperture: 'f/5.6', camHeight: 'elevated (~2m above vehicle roof)', camDist: '5m', yaw: '35° from rear-right', pitch: '-35°',
+    prompt: 'aerial three-quarter rear right angle, camera elevated approximately 2m above roof height, looking down at 35° pitch — roof, boot lid and passenger-side rear quarter all simultaneously visible',
+    desc: '📷 Camera raised high, looking down at the rear-right corner. Roof, boot lid and passenger-side rear quarter all visible. Excellent for SUVs, estate cars and vehicles with strong rooflines.'
+  },
+  {
+    // ground level: camera very low at front, arrow pointing up
+    diagram: `<svg class="angle-diagram" viewBox="0 0 64 36" xmlns="http://www.w3.org/2000/svg">
+      ${aimLine(2,34,32,18)}
+      <g transform="rotate(0,32,18)">${CAR.replace(/<g transform="translate\(32,18\)">/,'<g transform="translate(32,18)">')}</g>
+      ${camDot(2,34)}
+      <text x="5" y="31" font-size="5" fill="white" opacity="0.4" font-family="Inter,system-ui,sans-serif">↗</text>
+    </svg>`,
+    name: 'Ground Level — Front',
+    sub: "Camera below bumper, tilted up",
+    focalLength: 28, aperture: 'f/5.6', camHeight: 'ground level (approx 5cm from floor)', camDist: '2m', yaw: '10° from front-left', pitch: '+40° upward',
+    prompt: "extreme low worm's-eye angle, camera at ground level approximately 5cm from the floor tilted upward at 40°, showing underside of front bumper, front splitter edge, wheel arch lips and bonnet from below — wide angle, dramatic perspective distortion",
+    desc: '📷 Camera is at ground level, below the front bumper, tilting upward. You see the underside of the front splitter, wheel arch lips and bonnet from below. Aggressive and dramatic — emphasises front aero.'
+  },
+  {
+    // panning side shot — car has motion lines
+    diagram: `<svg class="angle-diagram" viewBox="0 0 64 36" xmlns="http://www.w3.org/2000/svg">
+      <line x1="4" y1="18" x2="10" y2="18" stroke="white" stroke-width="0.7" opacity="0.2"/>
+      <line x1="4" y1="21" x2="8" y2="21" stroke="white" stroke-width="0.7" opacity="0.15"/>
+      <line x1="4" y1="15" x2="8" y2="15" stroke="white" stroke-width="0.7" opacity="0.15"/>
+      ${aimLine(32,34,32,20)}
+      <g transform="rotate(0,32,18)">${CAR.replace(/<g transform="translate\(32,18\)">/,'<g transform="translate(32,18)">')}</g>
+      ${camDot(32,34)}
+    </svg>`,
+    name: 'Low Side — Motion',
+    sub: 'Knee height, panning as car moves',
+    focalLength: 50, aperture: 'f/5.6', camHeight: 'knee height (approx 50cm from ground)', camDist: '4m', yaw: '100° from front', pitch: '0°',
+    prompt: 'dynamic low-angle panning tracking shot from the side slightly behind, camera at knee height at 50cm from ground — vehicle moving left to right, 1/60s panning blur on background and wheel spokes, car body sharp, road texture streaks, camera panning to track the moving vehicle',
+    desc: '📷 Camera at knee height to the side of the car while it moves. Panning creates motion blur on wheels and background while the body stays sharp. Conveys speed without high speed — cinematic standard.'
+  },
+  {
+    // wheel close-up: camera close to front-left wheel
+    diagram: `<svg class="angle-diagram" viewBox="0 0 64 36" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(0,32,18)">${CAR.replace(/<g transform="translate\(32,18\)">/,'<g transform="translate(32,18)">')}</g>
+      ${camDot(12,2)}
+      ${aimLine(12,2,20,9)}
+      <circle cx="20" cy="9" r="5" fill="none" stroke="white" stroke-width="0.8" opacity="0.5"/>
+    </svg>`,
+    name: 'Wheel Detail',
+    sub: 'Macro close-up on front wheel',
+    focalLength: 100, aperture: 'f/2.8', camHeight: 'wheel-centre height (approx 35cm from ground)', camDist: '0.8m', yaw: '45° from front-left', pitch: '0°',
+    prompt: 'extreme macro close-up focused on the front wheel — tyre sidewall lettering, brake caliper, spoke design and rotor detail. 100mm macro focal length at f/2.8, razor-sharp focus on caliper and nearest spoke, background falling into smooth bokeh. Tyre sidewall text legible.',
+    desc: '📷 Camera close to the front wheel, focused on the rim, caliper and tyre sidewall. Very shallow depth of field — background blurs away. Best for showcasing aftermarket wheels or coloured calipers.'
+  },
+  {
+    // interior — camera inside cabin
+    diagram: `<svg class="angle-diagram" viewBox="0 0 64 36" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(0,32,18)">${CAR.replace(/<g transform="translate\(32,18\)">/,'<g transform="translate(32,18)">')}</g>
+      ${camDot(28,18)}
+      <line x1="28" y1="18" x2="40" y2="18" stroke="white" stroke-width="0.8" stroke-dasharray="2,1" opacity="0.4"/>
+    </svg>`,
+    name: 'Interior — Driver',
+    sub: 'Sitting in the seat, looking forward',
+    focalLength: 35, aperture: 'f/2.8', camHeight: "driver's eye height (approx 110cm from ground)", camDist: '0.5m behind wheel', yaw: '0°', pitch: '-5°',
+    prompt: "interior driver's-eye perspective, 35mm lens, looking forward over the steering wheel toward the dashboard and windscreen — instrument cluster, centre console, gear selector and infotainment screen all in frame. Natural vignette from door pillars. Dashboard materials and screen bloom minimal. Accurate interior lighting.",
+    desc: '📷 Camera sits where the driver\'s head would be, looking over the steering wheel toward the dashboard and screen. Steering wheel, instrument cluster, centre console and windscreen all in frame.'
+  },
+  {
+    diagram: makeDiagram(4, 4, `<line x1="12" y1="12" x2="20" y2="16" stroke="white" stroke-width="0.7" opacity="0.3"/>`),
+    name: 'Door Open Reveal',
+    sub: 'Door ajar, interior + exterior',
+    focalLength: 50, aperture: 'f/5.6', camHeight: 'wheel-centre height (approx 35cm from ground)', camDist: '4m', yaw: '35° from front-left', pitch: '-3°',
+    prompt: "three-quarter front left angle with the driver's door fully open at 90 degrees — exterior bodywork, door card, seat bolsters, sill plate and interior trim all simultaneously visible. Focus on door card and seat. Interior ambient light glowing within. Exterior paint sharp.",
+    desc: '📷 Camera at 45° front-left while the driver\'s door stands open. Both exterior bodywork and interior are simultaneously visible — seat bolsters, door card, sill plate. Great for showcasing a contrasting cabin colour.'
+  },
+];
+let selectedAngle = null;
+(function buildAngleGrid(){
+  const grid = document.getElementById('angle-grid');
+  const DEFAULT_ANGLE = 3; // Pure Side — Driver
+  angles.forEach((a, i) => {
+    const btn = document.createElement('div');
+    btn.className = 'angle-btn';
+    const imgIndex = i + 1; // 1-based
+    const visual = imgIndex <= 16
+      ? `<img src="assets/${imgIndex}.png" class="angle-img" alt="${a.name}">`
+      : a.diagram;
+    btn.innerHTML = `${visual}<div class="angle-name">${a.name}</div><div class="angle-sub">${a.sub}</div>`;
+    btn.onclick = () => {
+      document.querySelectorAll('.angle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedAngle = a;
+      const desc = document.getElementById('angle-desc');
+      desc.textContent = a.desc;
+      desc.classList.add('lit');
+    };
+    grid.appendChild(btn);
+    if (i === DEFAULT_ANGLE) {
+      btn.classList.add('active');
+      selectedAngle = a;
+      document.getElementById('angle-desc').textContent = a.desc;
+      document.getElementById('angle-desc').classList.add('lit');
+    }
+  });
+})();
+
+// =================== VIDEO SHOT TYPES ===================
+const videoShots = [
+  {
+    icon: '🎬',
+    name: 'Hero\nRoll-In',
+    shortName: 'Hero Roll-In from Right',
+    prompt: 'The vehicle enters frame slowly from the right side facing left, gliding smoothly toward the centre of the frame and gently decelerating to a stop. Camera locked off at a low side-on angle. Wheels rolling, slight tyre flex visible.',
+    desc: 'The signature Autofacts opener — car enters from right, stops centre frame. Classic cinematic reveal. Perfect first shot.'
+  },
+  {
+    icon: '🔲',
+    name: 'Front\nApproach',
+    shortName: 'Front-On Slow Approach',
+    prompt: 'Vehicle drives slowly and directly toward the locked-off camera from distance, growing from small to large in frame, stopping just before the lens fills with the grille. Headlights on. Low camera angle at bumper height.',
+    desc: 'Powerful front-on approach — intimidating and dramatic. Works great as a second shot after the roll-in.'
+  },
+  {
+    icon: '🔄',
+    name: 'Slow\nOrbit',
+    shortName: '360° Slow Orbit',
+    prompt: 'Camera performs a smooth slow 360-degree arc around the stationary vehicle, maintaining consistent distance and height at bonnet level. Full orbit revealing all angles of the exterior in one continuous motion.',
+    desc: 'The full reveal — camera arcs around a stationary car. Great for showing all sides of the vehicle in one shot.'
+  },
+  {
+    icon: '↙️',
+    name: '3/4 Rear\nReveal',
+    shortName: '3/4 Rear Static Reveal',
+    prompt: 'Camera locked off in three-quarter rear left position. Vehicle is stationary. Shot holds on the rear fascia, taillights glowing, exhaust tips visible. Slow subtle push in on slider over 5 seconds.',
+    desc: 'Taillights and rear diffuser as the hero. Strong closing shot — shows the back of the car with authority.'
+  },
+  {
+    icon: '⬇️',
+    name: 'Drone\nOverhead',
+    shortName: 'Drone Top-Down Pull Back',
+    prompt: 'Drone starts directly above the vehicle looking straight down, then slowly pulls backward and upward revealing the car within its surroundings. Vehicle remains centred throughout the move.',
+    desc: 'Drone pull-back from overhead — dramatic context reveal. Shows the car in its environment from above.'
+  },
+  {
+    icon: '🚗',
+    name: 'Low Side\nTracking',
+    shortName: 'Low Side Tracking Shot',
+    prompt: 'Camera tracks alongside the moving vehicle at wheel height, approximately 2 metres from the side. Vehicle moves at low speed, wheels spinning slowly, tyre sidewalls sharp. Background slightly blurred from lateral motion.',
+    desc: 'Side tracking at wheel height — dynamic and cinematic. Emphasises stance, wheels and motion.'
+  },
+  {
+    icon: '🔍',
+    name: 'Detail\nMontage',
+    shortName: 'Close-Up Detail Shots',
+    prompt: 'Sequence of tight detail close-ups: brake caliper through wheel spokes, badge on bonnet, door handle, exhaust tip, side vent or intake. Each held for 2–3 seconds. Macro depth of field — sharp subject, blurred surroundings.',
+    desc: 'Detail montage — badges, calipers, vents, exhausts. High-end editorial feel, works anywhere in the sequence.'
+  },
+  {
+    icon: '💡',
+    name: 'Lights\nReveal',
+    shortName: 'Headlight Switch-On Reveal',
+    prompt: 'Camera locked off front three-quarter angle. Vehicle lights are OFF. After 2 seconds, headlights and DRLs switch on dramatically, illuminating the front fascia with a burst of light. Hold on the lit vehicle for 4 seconds.',
+    desc: 'The headlight switch-on moment — huge impact. DRLs ignite and flood the front. Use as a dramatic mid-sequence beat.'
+  },
+  {
+    icon: '🚪',
+    name: 'Door\nOpen',
+    shortName: 'Door Open Reveal',
+    prompt: 'Camera positioned at three-quarter front angle. The driver\'s door swings open smoothly and deliberately, revealing the interior — seat bolsters, door card, ambient lighting glowing within. Door holds open. Interior and exterior visible simultaneously.',
+    desc: 'Door open reveal — interior meets exterior. Premium feel, great for showcasing interior spec or ambient lighting.'
+  },
+  {
+    icon: '🏎️',
+    name: 'Drive\nAway',
+    shortName: 'Drive-Away Departure',
+    prompt: 'Vehicle accelerates away from the stationary camera down a straight road or through the environment, shrinking into the distance. Exhaust note implied by motion. Camera locked off low and wide. Vehicle disappears into the background.',
+    desc: 'The departure shot — car drives away and vanishes. Strong final shot, creates a sense of farewell and power.'
+  },
+  {
+    icon: '🌅',
+    name: 'Environment\nEstablish',
+    shortName: 'Wide Environment Establishing',
+    prompt: 'Wide establishing shot with the vehicle small within a dramatic environment — cityscape, mountain road, coastal setting or industrial location. Camera locked off. The environment is the hero; the vehicle is placed purposefully within it.',
+    desc: 'Context-setting wide shot — puts the car in the world. Great opener before cutting to closer shots.'
+  },
+  {
+    icon: '🪞',
+    name: 'Reflection\nShot',
+    shortName: 'Ground Reflection / Puddle',
+    prompt: 'Camera low and near to the ground capturing the vehicle\'s reflection in wet tarmac, a polished floor or a puddle. Vehicle stationary and perfectly reflected below. Moody, editorial composition.',
+    desc: 'Reflection on wet ground — instantly cinematic. Works beautifully in car parks, wet streets or studio floor.'
+  },
+];
+
+let selectedShot = null;
+let shotSequence = [];
+
+(function buildShotGrid(){
+  const grid = document.getElementById('shot-grid');
+  videoShots.forEach((s) => {
+    const btn = document.createElement('div');
+    btn.className = 'shot-btn';
+    btn.innerHTML = `<div class="shot-icon">${s.icon}</div><div class="shot-name">${s.name}</div>`;
+    btn.onclick = () => {
+      document.querySelectorAll('.shot-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedShot = s;
+      const desc = document.getElementById('shot-desc');
+      desc.textContent = s.desc;
+      desc.classList.add('lit');
+    };
+    grid.appendChild(btn);
+  });
+})();
+
+function addToSequence() {
+  if (!selectedShot) {
+    alert('Select a shot type first.');
+    return;
+  }
+  shotSequence.push({ ...selectedShot });
+  renderSequence();
+}
+
+function removeFromSequence(idx) {
+  shotSequence.splice(idx, 1);
+  renderSequence();
+}
+
+function renderSequence() {
+  const list = document.getElementById('sequence-list');
+  const empty = document.getElementById('seq-empty');
+  list.innerHTML = '';
+  if (shotSequence.length === 0) {
+    list.innerHTML = '<div class="seq-empty" id="seq-empty">No shots added yet — build your sequence above.</div>';
+    return;
+  }
+  shotSequence.forEach((s, i) => {
+    const item = document.createElement('div');
+    item.className = 'seq-item';
+    item.innerHTML = `
+      <span class="seq-num">${i + 1}</span>
+      <span class="seq-item-text">${s.icon} ${s.shortName}</span>
+      <button class="seq-remove" onclick="removeFromSequence(${i})" title="Remove">✕</button>
+    `;
+    list.appendChild(item);
+  });
+}
+
+// =================== PROMPT BUILDER ===================
+// =================== MAKE DROPDOWN ===================
+document.getElementById('make').addEventListener('change', function() {
+  const custom = document.getElementById('make-custom');
+  custom.style.display = this.value === '__custom__' ? 'block' : 'none';
+});
+function getMake() {
+  const sel = document.getElementById('make').value;
+  if (sel === '__custom__') return document.getElementById('make-custom').value.trim();
+  return sel;
+}
+
+function getModel() {
+  const sel = document.getElementById('model').value;
+  if (sel === '__custom__') return document.getElementById('model-custom').value.trim();
+  return sel;
+}
+
+// =================== MODEL DATABASE ===================
+const modelDB = {
+  'Bugatti': ['Veyron 16.4','Veyron Super Sport','Chiron','Chiron Super Sport 300+','Chiron Pur Sport','Chiron Sport','Divo','Bolide','Mistral Roadster','EB110','EB110 GT','EB110 Super Sport','Atlantic (concept)','La Voiture Noire'],
+  'Koenigsegg': ['CC8S','CCR','CCX','CCXR','CCXR Trevita','Agera','Agera R','Agera RS','Agera Final','One:1','Regera','Jesko','Jesko Absolut','Gemera','CC850','Ottimo'],
+  'Pagani': ['Zonda C12','Zonda F','Zonda F Roadster','Zonda R','Zonda Cinque','Zonda Tricolore','Zonda Revolucion','Huayra','Huayra BC','Huayra Roadster','Huayra Roadster BC','Imola','Utopia'],
+  'SSC North America': ['Ultimate Aero','Ultimate Aero TT','Tuatara'],
+  'Rimac': ['Concept One','C_Two','Nevera','Nevera R'],
+  'Hennessey': ['Venom GT','Venom F5','Venom F5 Roadster'],
+  'Ferrari': [
+    '250 GTO','250 GT Berlinetta Lusso','275 GTB','275 GTB/4','Dino 246 GT','Dino 246 GTS',
+    '308 GTB','308 GTS','308 GTBi','328 GTB','328 GTS',
+    '348 tb','348 ts','348 Spider',
+    '355 Berlinetta','355 Spider','355 F1 Spider',
+    '360 Modena','360 Spider','360 Challenge Stradale',
+    '430 Scuderia','F430','F430 Spider',
+    '458 Italia','458 Spider','458 Speciale','458 Speciale A',
+    '488 GTB','488 Spider','488 Pista','488 Pista Spider',
+    '296 GTB','296 GTS',
+    'F8 Tributo','F8 Spider',
+    'SF90 Stradale','SF90 Spider','SF90 XX Stradale','SF90 XX Spider',
+    '812 Superfast','812 GTS','812 Competizione','812 Competizione A',
+    'Roma','Roma Spider',
+    'Portofino','Portofino M',
+    'GTC4Lusso','GTC4Lusso T',
+    'Purosangue',
+    'LaFerrari','LaFerrari Aperta',
+    'Enzo Ferrari',
+    'F40','F50',
+    'Testarossa','512 TR','F512 M',
+    '599 GTB Fiorano','599 GTO',
+    '612 Scaglietti',
+    'California','California T',
+    'FF',
+    'Monza SP1','Monza SP2',
+    'Daytona SP3','Icona Monza',
+  ],
+  'Lamborghini': [
+    'Miura','Miura S','Miura SV',
+    'Countach LP400','Countach LP500S','Countach 25th Anniversary','Countach LPI 800-4',
+    'Diablo','Diablo VT','Diablo SV','Diablo GT','Diablo SE30',
+    'Murciélago','Murciélago Roadster','Murciélago LP640','Murciélago LP670-4 SuperVeloce','Murciélago LP650-4 Roadster',
+    'Gallardo','Gallardo Spider','Gallardo LP560-4','Gallardo LP570-4 Superleggera','Gallardo LP570-4 Spyder Performante',
+    'Aventador LP700-4','Aventador LP700-4 Roadster','Aventador LP750-4 SuperVeloce','Aventador LP750-4 SV Roadster','Aventador S','Aventador S Roadster','Aventador SVJ','Aventador SVJ Roadster','Aventador Ultimae','Aventador Ultimae Roadster',
+    'Huracán LP610-4','Huracán LP610-4 Spyder','Huracán LP580-2','Huracán Performante','Huracán Spyder','Huracán Evo','Huracán Evo Spyder','Huracán Evo RWD','Huracán STO','Huracán Tecnica','Huracán Sterrato',
+    'Urus','Urus S','Urus Performante',
+    'Revuelto','Revuelto Opera Unica',
+    'Sián FKP 37','Sián Roadster',
+    'Essenza SCV12',
+    'LM002',
+  ],
+  'McLaren': [
+    'F1','F1 GTR',
+    'MP4-12C','MP4-12C Spider',
+    '650S Coupe','650S Spider',
+    '675LT Coupe','675LT Spider',
+    '720S Coupe','720S Spider',
+    '750S Coupe','750S Spider',
+    '765LT Coupe','765LT Spider',
+    'Artura','Artura Spider',
+    'P1','P1 GTR',
+    'Senna','Senna GTR',
+    'Speedtail',
+    'Elva',
+    'GT',
+    '570S Coupe','570S Spider','570GT',
+    '540C',
+    '600LT Coupe','600LT Spider',
+    'W1',
+  ],
+  'Aston Martin': [
+    'DB2','DB4','DB4 GT','DB5','DB6','DB7','DB9','DB9 Volante',
+    'DB11 V8','DB11 V12','DB11 Volante',
+    'DB12','DB12 Volante',
+    'DBS','DBS Superleggera','DBS Superleggera Volante','DBS 770 Ultimate',
+    'Vantage V8','Vantage V12','Vantage AMR','Vantage F1 Edition','Vantage (2024)',
+    'Vanquish','Vanquish S','Vanquish Zagato','Vanquish (2024)',
+    'Rapide','Rapide S','Rapide AMR',
+    'DBX','DBX707',
+    'Valkyrie','Valkyrie AMR Pro','Valkyrie Spider',
+    'Valhalla',
+    'Victor',
+    'One-77',
+    'Vulcan',
+  ],
+  'Lotus': ['Elan','Europa','Esprit','Esprit S1','Esprit Turbo','Esprit V8','Elise','Exige','Exige S','Evora','Evora GT','Emira','Eletre','Emeya','3-Eleven'],
+  'De Tomaso': ['Pantera','Pantera GTS','Pantera GT5-S','Mangusta','Vallelunga','P72'],
+  'Noble': ['M12 GTO','M400','M600','M500'],
+  'Radical': ['SR3','SR8','SR10','RXC Turbo','RXC Turbo R'],
+  'Porsche': [
+    '356 A','356 B','356 C',
+    '911 Carrera','911 Carrera S','911 Carrera 4','911 Carrera 4S',
+    '911 Turbo','911 Turbo S',
+    '911 GT3','911 GT3 RS','911 GT3 Touring',
+    '911 GT2 RS',
+    '911 Targa 4','911 Targa 4S',
+    '911 Carrera T','911 Carrera GTS','911 Carrera 4 GTS',
+    '911 Dakar',
+    '911 Sport Classic',
+    '911 R',
+    '911 SC','911 Carrera 3.2','964 Carrera RS','993 Carrera RS','993 GT2','996 GT3','997 GT3','991 GT3','992 GT3',
+    '914','914-6',
+    '918 Spyder',
+    '924','924 Turbo','928','928 S4','944','944 Turbo','944 S2','968',
+    'Boxster','Boxster S','Boxster Spyder','Boxster GTS',
+    'Cayman','Cayman S','Cayman GT4','Cayman GT4 RS','Cayman GTS',
+    'Cayenne','Cayenne S','Cayenne GTS','Cayenne Turbo','Cayenne Turbo S E-Hybrid',
+    'Macan','Macan S','Macan GTS','Macan Turbo','Macan Electric',
+    'Panamera','Panamera 4S','Panamera GTS','Panamera Turbo','Panamera Turbo S',
+    'Taycan','Taycan Turbo','Taycan Turbo S','Taycan Cross Turismo','Taycan GTS',
+    'Mission X (concept)',
+  ],
+  'Mercedes-AMG': [
+    'GT Coupe','GT S Coupe','GT R','GT R Pro','GT Black Series',
+    'GT Roadster','GT C Roadster',
+    'GT 4-Door 63 S','GT 4-Door 63 S E Performance',
+    'GT 63 S (2024)','GT 65',
+    'C 63 AMG','C 63 S AMG','C 63 S E Performance',
+    'E 63 AMG','E 63 S AMG',
+    'S 63 AMG','S 65 AMG',
+    'CLS 63 AMG','CLS 53 AMG',
+    'SL 55 AMG','SL 63 AMG','SL 65 AMG',
+    'SLS AMG','SLS AMG Black Series','SLS AMG Roadster',
+    'GLE 63 AMG','GLE 63 S AMG',
+    'GLC 63 AMG','GLC 63 S AMG',
+    'G 63 AMG','G 65 AMG',
+    'A 45 AMG','A 45 S AMG',
+    'CLA 45 AMG','CLA 45 S AMG',
+    'ONE',
+  ],
+  'Mercedes-Benz': [
+    '300 SL Gullwing','300 SL Roadster',
+    '280 SL Pagoda',
+    '450 SLC','500 SLC',
+    'SL 500','SL 600','SL 55 AMG (R230)','SL 65 AMG (R230)',
+    'SLC 300','SLC 43',
+    'S-Class S500','S-Class S600','S-Class S680 Maybach',
+    'E-Class Coupe','E-Class Cabriolet',
+    'C-Class Coupe','C-Class Cabriolet',
+    'CLA','CLS',
+    'GTS','G-Class G500','G-Class G550','G-Class G63',
+    'Maybach S500','Maybach S600','Maybach S650','Maybach GLS 600',
+    'EQS','EQE','EQS SUV',
+    'Vision EQXX (concept)',
+  ],
+  'BMW M': [
+    'M1',
+    'M3 (E30)','M3 (E36)','M3 (E46)','M3 (E90)','M3 (F80)','M3 (G80)','M3 CS (G80)',
+    'M4 Coupe (F82)','M4 Coupe (G82)','M4 Competition','M4 CSL','M4 CS',
+    'M5 (E28)','M5 (E34)','M5 (E39)','M5 (E60)','M5 (F10)','M5 (F90)','M5 CS',
+    'M6 Coupe','M6 Gran Coupe',
+    'M8 Coupe','M8 Gran Coupe','M8 Competition',
+    'M2 (F87)','M2 (G87)','M2 CS',
+    'M240i',
+    'X5 M','X5 M Competition','X6 M','X6 M Competition',
+    'Z4 M Roadster','Z4 M Coupe',
+    'i4 M50','iX M60',
+    'XM','XM Label Red',
+    'M Hybrid V8 (Le Mans)',
+  ],
+  'BMW': [
+    '2002 Turbo','3.0 CSL',
+    '6 Series (E24)','6 Series (E63)','6 Series Gran Coupe',
+    '8 Series (E31)','8 Series Coupe (G15)','8 Series Gran Coupe','8 Series Convertible',
+    'Z1','Z3','Z3 M Roadster','Z4 (E85)','Z4 (G29)','Z8',
+    '507',
+    '1 Series M Coupe',
+    '7 Series','7 Series M760i','Alpina B7',
+    'i8','i8 Roadster',
+    'iX','i7',
+  ],
+  'Audi': [
+    'Quattro (Ur-Quattro)','Sport Quattro',
+    '80 Quattro','90 Quattro',
+    'S2 Coupe',
+    'TT Coupe','TT Roadster','TT RS Coupe','TT RS Roadster',
+    'TTS Coupe','TTS Roadster',
+    'R8 V8','R8 V10','R8 V10 Plus','R8 V10 Performance','R8 GT','R8 Spyder V10',
+    'A5 Coupe','A5 Cabriolet',
+    'A7','A8',
+    'e-tron GT','RS e-tron GT',
+    'Q8','Q8 e-tron',
+  ],
+  'Audi RS': [
+    'RS2 Avant',
+    'RS4 Avant (B5)','RS4 Avant (B7)','RS4 Avant (B8)','RS4 Avant (B9)',
+    'RS5 Coupe','RS5 Sportback',
+    'RS6 Avant (C5)','RS6 Avant (C6)','RS6 Avant (C7)','RS6 Avant (C8)',
+    'RS7 Sportback',
+    'RS3 Saloon','RS3 Sportback',
+    'RS Q3','RS Q3 Sportback',
+    'RS Q8',
+    'TTRS',
+    'R8 V10 Performance (RS Badge)',
+  ],
+  'Brabus': ['800 (S-Class base)','900 (G-Class base)','1000 (G-Class base)','Rocket 900 (E63 base)','Crawler','Shadow 900 (SL base)','G V12 900'],
+  'Alpina': ['B3','B4','B5','B7','B8 Gran Coupe','XD3','XD4','XB7','D3 S','Roadster V8'],
+  'Mansory': ['Carbonado (Aventador)','Cyrus (DB9)','Stallion (F12)','Vivere (Bugatti Veyron)'],
+  'Bentley': [
+    'Continental GT W12','Continental GT V8','Continental GT Speed','Continental GT Mulliner','Continental GT3-R','Continental GTC',
+    'Continental GT (2003)','Continental GT Speed (2007)',
+    'Mulsanne','Mulsanne Speed','Mulsanne W.O. Edition',
+    'Flying Spur','Flying Spur V8','Flying Spur Speed','Flying Spur Mulliner',
+    'Bentayga','Bentayga V8','Bentayga Speed','Bentayga EWB','Bentayga Azure',
+    'Bacalar',
+    'Batur',
+    'Blower (4.5 Litre)','Speed Six','8 Litre','R-Type Continental',
+  ],
+  'Rolls-Royce': [
+    'Silver Shadow','Silver Shadow II',
+    'Silver Seraph',
+    'Corniche','Corniche Convertible',
+    'Camargue',
+    'Silver Spirit','Silver Spur',
+    'Park Ward',
+    'Ghost','Ghost Series II','Ghost Extended','Ghost Black Badge',
+    'Wraith','Wraith Black Badge',
+    'Dawn','Dawn Black Badge',
+    'Phantom','Phantom Extended','Phantom VIII','Phantom Drophead Coupe',
+    'Cullinan','Cullinan Black Badge',
+    'Spectre',
+    'Silver Ghost (1907)',
+    'Boat Tail',
+    'La Rose Noire Droptail',
+  ],
+  'Jaguar': [
+    'E-Type Series 1','E-Type Series 2','E-Type Series 3','E-Type V12',
+    'XK120','XK140','XK150',
+    'XKE','XKSS',
+    'XJS','XJS V12',
+    'XK8','XKR','XKR-S','XK (X150)',
+    'XJ (Series 1)','XJ6','XJ12','XJ (X350)','XJ (X351)','XJR575',
+    'S-Type R',
+    'XF','XFR','XFR-S',
+    'XE','XER 300 Sport',
+    'F-Type V6','F-Type S','F-Type V8 S','F-Type R','F-Type SVR',
+    'F-Pace','F-Pace SVR',
+    'I-Pace',
+    'C-X75 (concept)',
+    'XJ13',
+    'D-Type','C-Type',
+  ],
+  'Land Rover': ['Defender 90','Defender 110','Defender V8','Discovery','Discovery Sport','Freelander','Series I','Series II','Series III'],
+  'Range Rover': ['Range Rover Classic','Range Rover P38','Range Rover (L322)','Range Rover (L405)','Range Rover (L460)','Range Rover Sport','Range Rover Sport SVR','Range Rover Sport SV','Range Rover Evoque','Range Rover Velar','Range Rover SV Autobiography','SV Bespoke'],
+  'BAC': ['Mono','Mono R'],
+  'TVR': ['Griffith (1992)','Cerbera','Tuscan','Sagaris','T350','Tamora','Griffith (2017)'],
+  'Caterham': ['Seven 160','Seven 270','Seven 310','Seven 360','Seven 420','Seven 485','Seven 620R','Seven SuperSprint','CSR 260'],
+  'Alfa Romeo': [
+    '8C Competizione','8C Spider',
+    'Spider (Duetto)','Spider S3','Spider S4',
+    'GTV 916','GTV 6','GTV V6 Turbo',
+    '156 GTA','147 GTA',
+    'Brera','Brera S',
+    'Giulia Quadrifoglio','Giulia Sprint',
+    'Stelvio Quadrifoglio',
+    '33 Stradale (2023)',
+    '4C','4C Spider',
+    'Giulia GTA','Giulia GTAm',
+    'Montreal',
+    '1750 GTV',
+    'Giulietta Sprint','Giulietta Sprint Speciale',
+  ],
+  'Maserati': [
+    'Ghibli (1967)','Ghibli SS',
+    'Bora','Merak','Khamsin',
+    'Quattroporte (1963)','Quattroporte III','Quattroporte IV','Quattroporte V','Quattroporte VI',
+    '3200 GT',
+    'Coupe Cambiocorsa','Spyder Cambiocorsa',
+    'GranTurismo','GranTurismo S','GranTurismo MC Stradale','GranTurismo Folgore',
+    'GranCabrio','GranCabrio Sport','GranCabrio Folgore',
+    'MC12',
+    'Ghibli (2013)','Ghibli Trofeo',
+    'Levante','Levante Trofeo',
+    'Grecale','Grecale Trofeo','Grecale Folgore',
+    'MC20','MC20 Cielo',
+  ],
+  'Lancia': ['Stratos','037 Rally','Delta Integrale','Delta HF Turbo','Aurelia B24 Spider','Fulvia Coupe','Flaminia GT','Montecarlo','Thema 8.32'],
+  'Pininfarina': ['Battista','Battista Anniversario'],
+  'Italdesign': ['Zerouno','Zerouno Duerta'],
+  'Cadillac': ['Eldorado','DeVille','Fleetwood','Seville','XLR','CTS-V','CT5-V Blackwing','CT4-V Blackwing','Celestiq','Lyriq','Escalade','Escalade-V'],
+  'Lincoln': ['Continental','Town Car','Mark VIII','Navigator','Aviator','Corsair'],
+  'Dodge': ['Viper RT/10','Viper GTS','Viper SRT-10','Viper ACR','Viper TA','Challenger SRT Hellcat','Challenger SRT Demon','Challenger SRT Demon 170','Charger SRT Hellcat','Charger SRT Hellcat Redeye','Durango SRT Hellcat','Charger Daytona EV'],
+  'Chevrolet Corvette': ['C1 (1953)','C2 Sting Ray','C3','C4','C4 ZR-1','C5','C5 Z06','C6','C6 Z06','C6 ZR1','C7 Stingray','C7 Z06','C7 Grand Sport','C7 ZR1','C8 Stingray','C8 Z06','C8 E-Ray','C8 ZR1','C8 Zora (E-Ray ZR1)'],
+  'Ford Mustang': ['Mustang 289 Fastback','Mustang 350 GT','Mustang Boss 302','Mustang Boss 429','Mustang Mach 1','Mustang Cobra Jet','Mustang GT','Mustang GT350','Mustang GT350R','Mustang GT500','Mustang Dark Horse','Mustang Mach-E GT'],
+  'Shelby': ['Cobra 427','Cobra Daytona Coupe','GT350','GT500 (1967)','GT350R','GT500 (2013)','GT500 (2020)','Series 1','SuperSnake','Terlingua'],
+  'Saleen': ['S7','S7 Twin Turbo','S302 Mustang','S1'],
+  'Rezvani': ['Beast','Beast X','Tank','Vengeance'],
+  'Nissan GT-R': ['GT-R R32','GT-R R33','GT-R R34','GT-R R35','GT-R Nismo','GT-R Track Edition','GT-R50 by Italdesign'],
+  'Toyota Supra': ['2000GT','Supra (A60)','Supra (A70)','Supra (A80) 2JZ','GR Supra 3.0','GR Supra A91 Edition','GR Supra 45th Anniversary'],
+  'Lexus': ['LFA','LFA Nürburgring Edition','LC 500','LC 500h','LC 500 Convertible','RC F','RC F Track Edition','IS F','GS F','LS 500','LX 600'],
+  'Honda NSX': ['NSX (NA1)','NSX-R (NA1)','NSX (NA2)','NSX Type S','NSX Type R (2022)','NSX-R GT'],
+  'Mazda': ['RX-7 FC','RX-7 FD','RX-7 Spirit R','RX-8','MX-5 NA','MX-5 NB','MX-5 NC','MX-5 ND','MX-5 RF','Furai (concept)','Cosmo Sport','RX-Vision (concept)'],
+  'Subaru': ['Impreza WRX STI (GC8)','Impreza WRX STI (GDB)','Impreza WRX STI Spec C','WRX STI S207','WRX STI S209','WRX STI Type RA-R','BRZ','BRZ tS','BRZ STI Sport'],
+  'Mitsubishi': ['Lancer Evolution I','Lancer Evolution IV','Lancer Evolution VI Tommi Makinen','Lancer Evolution VII','Lancer Evolution VIII MR','Lancer Evolution IX MR','Lancer Evolution X','3000GT VR-4','GTO Twin Turbo','Eclipse GSX'],
+  'Volvo': ['P1800','Amazon','1800ES','C70','S60 R','S60 Polestar','V60 Polestar','XC90 T8','S90 T8'],
+  'Polestar': ['Polestar 1','Polestar 2','Polestar 3','Polestar 4','Polestar 5','Polestar 6 (concept)'],
+  'Czinger': ['21C','21C V Max'],
+  'Zenvo': ['ST1','TS1 GT','TSR-S','Aurora Tur','Aurora Agil'],
+  'Spyker': ['C8 Laviolette','C8 Spyder','C8 Aileron','C12 Zagato'],
+};
+
+(function buildModelDropdown() {
+  const makeSelect  = document.getElementById('make');
+  const modelSelect = document.getElementById('model');
+  const modelCustom = document.getElementById('model-custom');
+
+  function populate(make) {
+    modelSelect.innerHTML = '';
+    const models = modelDB[make];
+    if (!models) {
+      modelSelect.innerHTML = '<option value="">Enter manually below</option>';
+      modelCustom.style.display = 'block';
+      modelCustom.placeholder = 'Enter model…';
+      return;
+    }
+    const placeholder = document.createElement('option');
+    placeholder.value = ''; placeholder.textContent = '— select model —';
+    modelSelect.appendChild(placeholder);
+    models.forEach(m => {
+      const o = document.createElement('option');
+      o.value = m; o.textContent = m;
+      modelSelect.appendChild(o);
+    });
+    const other = document.createElement('option');
+    other.value = '__custom__'; other.textContent = 'Other / Enter manually';
+    modelSelect.appendChild(other);
+    modelCustom.style.display = 'none';
+  }
+
+  makeSelect.addEventListener('change', function() {
+    const make = this.value === '__custom__'
+      ? document.getElementById('make-custom').value.trim()
+      : this.value;
+    populate(make);
+  });
+
+  modelSelect.addEventListener('change', function() {
+    modelCustom.style.display = this.value === '__custom__' ? 'block' : 'none';
+  });
+})();
+
+function buildPrompt() {
+  if (currentMode === 'image') buildImagePrompt();
+  else buildVideoPrompt();
+}
+
+function buildImagePrompt() {
+  const make    = getMake();
+  const model   = getModel();
+  const year    = document.getElementById('year').value.trim();
+  const vtype   = document.getElementById('vtype').value;
+  const extCol  = document.getElementById('ext-colour-name').value.trim();
+  const finish  = document.getElementById('finish').value;
+  const intCol  = document.getElementById('int-colour').value.trim();
+  const intTrim = document.getElementById('int-trim').value;
+  const ambOn   = toggleState.amb === 'on';
+  const ambCol  = document.getElementById('amb-colour').value.trim();
+  const bg      = document.getElementById('bg').value;
+  const stlOn   = toggleState.stl === 'on';
+  const hdlOn   = toggleState.hdl === 'on';
+  const wheels     = document.getElementById('wheels').value.trim();
+  const cali       = document.getElementById('calipers').value.trim();
+  const condition  = document.getElementById('condition').value;
+  const extras     = document.getElementById('extras').value.trim();
+  const notes   = document.getElementById('notes').value.trim();
+
+  if (!make && !model) { document.getElementById('output-box').textContent = '⚠  Please enter at least a Make and Model.'; return; }
+  if (!selectedAngle)  { document.getElementById('output-box').textContent = '⚠  Please select a camera angle.'; return; }
+
+  const vehicleName = [year, make, model, vtype].filter(Boolean).join(' ');
+
+  // ── Finish surface behaviour ──────────────────────────────────────────
+  const finishDesc = finish ? (finishBehaviour[finish] || finish) : 'high-gloss clearcoat with accurate specular highlights';
+  const colourDesc = extCol ? `${extCol} — ${finishDesc}` : `manufacturer standard colour — ${finishDesc}`;
+
+  // ── Matte conflict: studio lights cause matte to appear glossy ────────
+  const isMatte = finish && (finish.toLowerCase().includes('matte') || finish.toLowerCase().includes('satin'));
+  const matteWarning = isMatte && stlOn
+    ? ' MATTE FINISH NOTE: Studio key light intensity must be kept low and diffused — avoid any specular highlights on the bodywork. Matte paint must read as truly flat with zero gloss.'
+    : '';
+
+  // ── Camera parameters from selected angle ────────────────────────────
+  const focalLength = selectedAngle.focalLength || 50;
+  const aperture    = selectedAngle.aperture    || 'f/5.6';
+  const camHeight   = selectedAngle.camHeight   || 'wheel-centre height';
+  const camDist     = selectedAngle.camDist     || '5m';
+
+  // ── Studio lighting description ───────────────────────────────────────
+  let lightingDesc = '';
+  if (stlOn && hdlOn)   lightingDesc = `Large overhead softbox key light, soft fill from opposite side, subtle rim light on roofline — clean controlled studio illumination. No studio equipment, softboxes, light panels, ceiling rigs, octaboxes or light sources visible anywhere in frame — lighting effect only, all sources outside frame. Vehicle headlights and DRLs switched ON, casting crisp forward light beams onto the floor.${matteWarning}`;
+  else if (stlOn)       lightingDesc = `Large overhead softbox key light, soft fill from opposite side — clean studio illumination. No studio equipment, softboxes, light panels, ceiling rigs or light sources visible anywhere in frame — lighting effect only, all sources outside frame. Vehicle headlights OFF.${matteWarning}`;
+  else if (hdlOn)       lightingDesc = `Studio ambient lights dimmed. No studio equipment or light sources visible in frame. Vehicle headlights and DRLs fully ON as primary light source — dramatic forward light spill onto the floor, minimal lens flare.`;
+  else                  lightingDesc = `Studio lights OFF and vehicle headlights OFF — near-dark, residual ambient spill only. No visible studio equipment or light sources in frame.`;
+
+  let p = `A photorealistic studio photograph of a ${vehicleName}.`;
+
+  // ── Exterior ─────────────────────────────────────────────────────────
+  p += `\n\nEXTERIOR: Body colour ${colourDesc}. Realistic clearcoat reflections, crisp panel gaps, correct panel curvature. Paint depth, specular highlights and shadow gradients physically accurate and faithful to the real-world formula. Body panels, shutlines, badges and proportions must exactly match the real production ${vehicleName}. No AI hallucinations. No fictional design details.`;
+
+  // ── Registration plate ────────────────────────────────────────────────
+  p += `\n\nREGISTRATION PLATE: ${buildPlatePrompt()}`;
+
+  // ── Wheels & brakes ───────────────────────────────────────────────────
+  if (wheels || cali) {
+    p += `\n\nWHEELS & BRAKES:`;
+    if (wheels) p += ` ${wheels} — accurate spoke geometry, realistic tyre rubber with legible sidewall text, correct tyre profile.`;
+    if (cali)   p += ` Brake calipers in ${cali} — correct caliper shape for this vehicle, detailed rotor cross-drilling or venting accurate.`;
+  }
+
+  // ── Extras ────────────────────────────────────────────────────────────
+  if (extras) p += `\n\nOPTIONS / EXTRAS: ${extras}.`;
+
+  // ── Interior ──────────────────────────────────────────────────────────
+  if (intCol || intTrim) {
+    p += `\n\nINTERIOR: Where visible — ${[intCol, intTrim].filter(Boolean).join(', ')} — stitch definition visible, accurate material texture and sheen.`;
+    if (ambOn) p += ` Ambient interior lighting ACTIVE${ambCol ? ` in ${ambCol}` : ''}, glowing softly through glass and footwells.`;
+    else p += ` Interior ambient lighting OFF.`;
+  }
+
+  // ── Vehicle condition ─────────────────────────────────────────────────
+  const conditionPrompts = {
+    'clean':        null,
+    'washed':       `VEHICLE CONDITION — JUST WASHED: Freshly hand-washed and damp. Visible water beading in tight spherical droplets across all painted surfaces. Tyre sidewalls damp and darkened. Wheel arches show fine water spray residue. Glass clean with faint wash-cloth streak lines. Faint damp patch on floor directly beneath. No mud, no road grime — showroom hand-wash finish. Each micro-droplet individually sharp and physically accurate.`,
+    'wet-dramatic': `VEHICLE CONDITION — SOAKING WET: Heavily saturated. Water sheeting down bodywork following panel contours. Standing water pooling on roof and boot lid. Water streaming off sills, splitter and diffuser. Paint appears 20–30% richer and more saturated than dry. Glass completely water-covered. Tyres and wheel arches heavily darkened. Wide wet halo on floor. Physically accurate fluid dynamics — water follows real gravity and panel geometry.`,
+    'dusty':        `VEHICLE CONDITION — LIGHT DUST & PATINA: Fine pale grey-brown dust layer on all upward-facing horizontal surfaces. Dust thicker in panel recesses and shuts. Faint brake dust residue on inner wheel faces. Paint gloss slightly dulled — colour still readable but lacking showroom depth. Glass has a very light haze. Lower sills carry faint road-spray marks. Individual dust particulate texture visible at 1:1.`
+  };
+  const conditionText = conditionPrompts[condition];
+  if (conditionText) p += `\n\n${conditionText}`;
+
+  // ── Background ────────────────────────────────────────────────────────
+  const isDarkBg = bg.includes('#000000') || bg.includes('#131413');
+  if (isDarkBg) {
+    p += `\n\nBACKGROUND: ${bg}. WEB COMPOSITE MANDATE: Perfectly flat uniform dark field — no bokeh, no environment detail, no visible studio equipment, no gradient vignette, no light spill on backdrop. Vehicle sits cleanly for digital compositing without masking. Soft barely-perceptible ground shadow directly beneath vehicle only.`;
+  } else {
+    p += `\n\nBACKGROUND: ${bg}. Clean natural ground shadow beneath the vehicle — no harsh drop shadows, no distracting elements. No reflections of studio equipment, softboxes, ceiling rigs, light panels or octaboxes visible in any surface. Background completely clean of studio hardware.`;
+  }
+
+  // ── Lighting ──────────────────────────────────────────────────────────
+  p += `\n\nLIGHTING: ${lightingDesc}`;
+
+  // ── Camera & composition ──────────────────────────────────────────────
+  p += `\n\nCAMERA & COMPOSITION: ${selectedAngle.prompt}. Full-frame sensor, ${focalLength}mm lens, ${aperture}, ISO 100, 1/125s. Camera height: ${camHeight}, distance: ${camDist}. Studio-grade colour grading — neutral white balance, correct white point, no colour casts, no chromatic aberration.`;
+
+  // ── Quality mandate ───────────────────────────────────────────────────
+  p += `\n\nQUALITY MANDATE: Commercial automotive press-standard photograph — indistinguishable from a real ${make} ${model} manufacturer image shot on a Phase One medium-format camera. 8K output (7680×4320px minimum). Microscopic surface texture on paintwork, fine panel gap tolerances, crisp tyre sidewall lettering, razor-sharp badge edges, accurate glass refractive index. Every element holds at 1:1 pixel zoom. Anti-aliasing on all curved edges. Factory-clean presentation — no dust, no fingerprints, no water spots unless condition selected.`;
+
+  // ── Negative prompt ───────────────────────────────────────────────────
+  p += `\n\nNEGATIVE PROMPT (do not render any of the following): no CGI look, no cartoon or illustration style, no warped body panels, no melted or incorrect tyre geometry, no extra doors or wheels, no double logos or duplicate badges, no incorrect or hallucinated badging, no text mangling on plates or sidewalls, no background seams or visible studio hardware, no square or rectangular light reflections in floor or bodywork, no chromatic aberration, no excessive bloom or lens flare unless motion angle, no motion blur unless motion angle selected, no inconsistent reflections, no misaligned wheels.`;
+
+  if (notes) p += `\n\nADDITIONAL DIRECTION: ${notes}`;
+
+  outputResult(p);
+}
+
+function buildVideoPrompt() {
+  const make    = getMake();
+  const model   = getModel();
+  const year    = document.getElementById('year').value.trim();
+  const vtype   = document.getElementById('vtype').value;
+  const extCol  = document.getElementById('ext-colour-name').value.trim();
+  const finish  = document.getElementById('finish').value;
+
+  const settingEl   = document.getElementById('vid-setting');
+  const settingVal  = settingEl.value;
+  let setting       = settingVal === 'custom'
+                        ? (document.getElementById('vid-setting-custom').value.trim() || 'custom location')
+                        : settingVal;
+  const timeOfDay   = document.getElementById('vid-time').value;
+  const motion      = document.getElementById('vid-motion').value;
+  const camera      = document.getElementById('vid-camera').value;
+  const pace        = document.getElementById('vid-pace').value;
+  const grade       = document.getElementById('vid-grade').value;
+  const dof         = document.getElementById('vid-dof').value;
+  const cali        = document.getElementById('vid-cali').value.trim();
+  const extras      = document.getElementById('vid-extras').value.trim();
+  const notes       = document.getElementById('vid-notes').value.trim();
+
+  if (!make && !model) { document.getElementById('output-box').textContent = '⚠  Please enter at least a Make and Model.'; return; }
+  if (shotSequence.length === 0) { document.getElementById('output-box').textContent = '⚠  Please add at least one shot to your sequence.'; return; }
+
+  const vehicleName = [year, make, model, vtype].filter(Boolean).join(' ');
+  const colourDesc  = [extCol, finish].filter(Boolean).join(', ');
+
+  // ── FIX 1: Studio vs outdoor time-of-day conflict ──────────────────────
+  // When a studio setting is selected, time-of-day descriptions referencing
+  // outdoor sky, twilight or city lights confuse the model into adding
+  // background bokeh lights and outdoor environments. Replace with a neutral
+  // studio-lighting descriptor instead.
+  const isStudio = settingVal.includes('studio') || settingVal.includes('seamless') || settingVal.includes('Studio');
+  let atmosphereDesc;
+  if (isStudio) {
+    // Strip any outdoor/sky language; describe only the controlled studio light
+    if (timeOfDay.includes('golden hour') || timeOfDay.includes('Golden')) {
+      atmosphereDesc = 'Studio lighting: warm soft-box key light from camera-left, subtle fill from right. No outdoor elements. No background bokeh or practicals. Seamless white floor and backdrop only.';
+    } else if (timeOfDay.includes('blue hour') || timeOfDay.includes('twilight') || timeOfDay.includes('Twilight')) {
+      atmosphereDesc = 'Studio lighting: cool-toned professional soft-box illumination — blue-white key light, slightly dimmed fill. No sky, no outdoor lights, no background bokeh. Seamless studio backdrop only. Do NOT add window light, city lights or atmospheric haze.';
+    } else if (timeOfDay.includes('night') || timeOfDay.includes('Night')) {
+      atmosphereDesc = 'Studio lighting: dramatically dimmed studio environment — single hard key light creating strong shadows. No outdoor elements, no background lighting effects. Pure studio space.';
+    } else {
+      atmosphereDesc = `Studio lighting: ${timeOfDay}. Controlled studio environment — seamless floor and backdrop. No outdoor elements, no background bokeh, no practicals outside the studio rig.`;
+    }
+  } else {
+    atmosphereDesc = `${setting}. Time of day: ${timeOfDay}. The environment should feel cinematic and intentional — not generic. Every surface, reflection and light source should support the mood.`;
+  }
+
+  // ── FIX 2: Monochrome + coloured caliper conflict ──────────────────────
+  // Asking for monochrome grade AND a specific caliper colour forces the
+  // model to render both simultaneously, causing colour hallucination on
+  // the brake components. Suppress caliper colour in monochrome output.
+  const isMonochrome = grade.includes('monochrome') || grade.includes('Monochrome');
+  const effectiveCali = (isMonochrome && cali) ? null : cali;
+  const monochromeWarning = (isMonochrome && cali)
+    ? `\n⚠ CONFLICT SUPPRESSED: Brake caliper colour (${cali}) has been removed — it conflicts with the monochrome grade. Render all components in greyscale only.`
+    : '';
+
+  // ── FIX 3: Shot direction reinforcement ────────────────────────────────
+  // Spatial direction (left/right entry) is one of the most common failure
+  // points. Put the primary motion instruction at the very top of the prompt
+  // before any other detail, and repeat it explicitly in the shot description.
+  const primaryShot = shotSequence[0];
+  const hasDirectionalRoll = primaryShot && primaryShot.shortName.toLowerCase().includes('right');
+  const directionPreamble = hasDirectionalRoll
+    ? `CRITICAL FRAMING DIRECTION: The vehicle enters from the RIGHT side of the frame and moves toward the LEFT. RIGHT to LEFT. Do not reverse this direction.\n\n`
+    : '';
+
+  // ── BUILD PROMPT (motion-first ordering for FIX 4) ─────────────────────
+  // Semantic overload fix: lead with the most spatially/temporally specific
+  // instruction (the shot action), then environment, then vehicle detail last.
+  // This keeps the model's attention on direction and motion, not just keywords.
+
+  let p = directionPreamble;
+  p += `CINEMATIC AUTOMOTIVE VIDEO PROMPT — ${vehicleName.toUpperCase()}\n`;
+  p += `${'─'.repeat(60)}\n`;
+
+  // Shot sequence FIRST — spatial/motion instructions before vehicle detail
+  p += `\nSHOT SEQUENCE (${shotSequence.length} shot${shotSequence.length > 1 ? 's' : ''}):\n`;
+  shotSequence.forEach((s, i) => {
+    p += `\nSHOT ${i + 1} — ${s.shortName.toUpperCase()}\n`;
+    // For roll-in shots: reinforce direction inline
+    let shotPrompt = s.prompt;
+    if (s.shortName.toLowerCase().includes('right')) {
+      shotPrompt = shotPrompt.replace(
+        /enters frame slowly from the right/gi,
+        'enters frame from the RIGHT side of frame (screen-right) and moves toward the LEFT'
+      );
+      shotPrompt += ' DIRECTION EMPHASIS: entry is from screen-right, motion is right-to-left. Do not mirror this.';
+    }
+    p += `${shotPrompt}\n`;
+  });
+
+  p += `\nVEHICLE MOTION: ${motion}.`;
+  p += `\nCAMERA MOVEMENT: ${camera}.`;
+  p += `\nEDIT PACE: ${pace}.`;
+
+  // Environment second
+  p += `\n\nLOCATION & ATMOSPHERE: ${atmosphereDesc}`;
+
+  // Vehicle identity last (still important but less likely to be lost)
+  p += `\n\nSUBJECT VEHICLE: ${vehicleName}. Bodywork in ${colourDesc || 'manufacturer standard colour'}.`;
+  if (effectiveCali) p += ` Brake calipers: ${effectiveCali}.`;
+  if (extras) p += ` Notable extras: ${extras}.`;
+  p += ` Photorealistic — faithful to the real production ${make} ${model}. Accurate proportions, correct badges, authentic panel lines, no hallucinated design details.`;
+
+  p += `\n\nCOLOUR GRADE: ${grade}.`;
+  if (isMonochrome) p += ` All elements rendered in greyscale — no colour present anywhere in the frame.`;
+  p += `\nDEPTH OF FIELD: ${dof}.`;
+
+  p += `\n\nCINEMATIC QUALITY MANDATE: Commercial automotive advertising standard. Smooth motion, no jitter. Realistic tyre deformation and wheel rotation. Accurate light interaction with bodywork — reflections, specular highlights and shadow gradients faithful to real-world physics. No AI motion artifacts.`;
+
+  if (monochromeWarning) p += monochromeWarning;
+  if (notes) p += `\n\nDIRECTOR NOTES: ${notes}`;
+
+  outputResult(p);
+}
+
+function outputResult(p) {
+  document.getElementById('output-box').textContent = p;
+  document.getElementById('char-count').textContent = `${p.length.toLocaleString()} characters`;
+  document.getElementById('copy-btn').classList.remove('copied');
+  document.getElementById('copy-btn').textContent = 'COPY TO CLIPBOARD';
+}
+
+function copyOut() {
+  const text = document.getElementById('output-box').textContent;
+  if (!text || text.includes('Configure')) return;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ COPIED';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'COPY TO CLIPBOARD'; btn.classList.remove('copied'); }, 2500);
+  });
+}
+</script>
+</div><!-- /page-wrap -->
+</body>
+</html>
