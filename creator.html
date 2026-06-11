@@ -806,72 +806,7 @@ const angles = [
     focalLength: 35, aperture: 'f/5.6', camHeight: 'elevated (~2m above vehicle roof)', camDist: '5m', yaw: '35° from rear-right', pitch: '-35°',
     prompt: 'aerial three-quarter rear right angle, camera elevated approximately 2m above roof height, looking down at 35° pitch — roof, boot lid and passenger-side rear quarter all simultaneously visible',
     desc: '📷 Camera raised high, looking down at the rear-right corner. Roof, boot lid and passenger-side rear quarter all visible. Excellent for SUVs, estate cars and vehicles with strong rooflines.'
-  },
-  {
-    // ground level: camera very low at front, arrow pointing up
-    diagram: `<svg class="angle-diagram" viewBox="0 0 64 36" xmlns="http://www.w3.org/2000/svg">
-      ${aimLine(2,34,32,18)}
-      <g transform="rotate(0,32,18)">${CAR.replace(/<g transform="translate\(32,18\)">/,'<g transform="translate(32,18)">')}</g>
-      ${camDot(2,34)}
-      <text x="5" y="31" font-size="5" fill="white" opacity="0.4" font-family="Inter,system-ui,sans-serif">↗</text>
-    </svg>`,
-    name: 'Ground Level — Front',
-    sub: "Camera below bumper, tilted up",
-    focalLength: 28, aperture: 'f/5.6', camHeight: 'ground level (approx 5cm from floor)', camDist: '2m', yaw: '10° from front-left', pitch: '+40° upward',
-    prompt: "extreme low worm's-eye angle, camera at ground level approximately 5cm from the floor tilted upward at 40°, showing underside of front bumper, front splitter edge, wheel arch lips and bonnet from below — wide angle, dramatic perspective distortion",
-    desc: '📷 Camera is at ground level, below the front bumper, tilting upward. You see the underside of the front splitter, wheel arch lips and bonnet from below. Aggressive and dramatic — emphasises front aero.'
-  },
-  {
-    // panning side shot — car has motion lines
-    diagram: `<svg class="angle-diagram" viewBox="0 0 64 36" xmlns="http://www.w3.org/2000/svg">
-      <line x1="4" y1="18" x2="10" y2="18" stroke="white" stroke-width="0.7" opacity="0.2"/>
-      <line x1="4" y1="21" x2="8" y2="21" stroke="white" stroke-width="0.7" opacity="0.15"/>
-      <line x1="4" y1="15" x2="8" y2="15" stroke="white" stroke-width="0.7" opacity="0.15"/>
-      ${aimLine(32,34,32,20)}
-      <g transform="rotate(0,32,18)">${CAR.replace(/<g transform="translate\(32,18\)">/,'<g transform="translate(32,18)">')}</g>
-      ${camDot(32,34)}
-    </svg>`,
-    name: 'Low Side — Motion',
-    sub: 'Knee height, panning as car moves',
-    focalLength: 50, aperture: 'f/5.6', camHeight: 'knee height (approx 50cm from ground)', camDist: '4m', yaw: '100° from front', pitch: '0°',
-    prompt: 'dynamic low-angle panning tracking shot from the side slightly behind, camera at knee height at 50cm from ground — vehicle moving left to right, 1/60s panning blur on background and wheel spokes, car body sharp, road texture streaks, camera panning to track the moving vehicle',
-    desc: '📷 Camera at knee height to the side of the car while it moves. Panning creates motion blur on wheels and background while the body stays sharp. Conveys speed without high speed — cinematic standard.'
-  },
-  {
-    // wheel close-up: camera close to front-left wheel
-    diagram: `<svg class="angle-diagram" viewBox="0 0 64 36" xmlns="http://www.w3.org/2000/svg">
-      <g transform="rotate(0,32,18)">${CAR.replace(/<g transform="translate\(32,18\)">/,'<g transform="translate(32,18)">')}</g>
-      ${camDot(12,2)}
-      ${aimLine(12,2,20,9)}
-      <circle cx="20" cy="9" r="5" fill="none" stroke="white" stroke-width="0.8" opacity="0.5"/>
-    </svg>`,
-    name: 'Wheel Detail',
-    sub: 'Macro close-up on front wheel',
-    focalLength: 100, aperture: 'f/2.8', camHeight: 'wheel-centre height (approx 35cm from ground)', camDist: '0.8m', yaw: '45° from front-left', pitch: '0°',
-    prompt: 'extreme macro close-up focused on the front wheel — tyre sidewall lettering, brake caliper, spoke design and rotor detail. 100mm macro focal length at f/2.8, razor-sharp focus on caliper and nearest spoke, background falling into smooth bokeh. Tyre sidewall text legible.',
-    desc: '📷 Camera close to the front wheel, focused on the rim, caliper and tyre sidewall. Very shallow depth of field — background blurs away. Best for showcasing aftermarket wheels or coloured calipers.'
-  },
-  {
-    // interior — camera inside cabin
-    diagram: `<svg class="angle-diagram" viewBox="0 0 64 36" xmlns="http://www.w3.org/2000/svg">
-      <g transform="rotate(0,32,18)">${CAR.replace(/<g transform="translate\(32,18\)">/,'<g transform="translate(32,18)">')}</g>
-      ${camDot(28,18)}
-      <line x1="28" y1="18" x2="40" y2="18" stroke="white" stroke-width="0.8" stroke-dasharray="2,1" opacity="0.4"/>
-    </svg>`,
-    name: 'Interior — Driver',
-    sub: 'Sitting in the seat, looking forward',
-    focalLength: 35, aperture: 'f/2.8', camHeight: "driver's eye height (approx 110cm from ground)", camDist: '0.5m behind wheel', yaw: '0°', pitch: '-5°',
-    prompt: "interior driver's-eye perspective, 35mm lens, looking forward over the steering wheel toward the dashboard and windscreen — instrument cluster, centre console, gear selector and infotainment screen all in frame. Natural vignette from door pillars. Dashboard materials and screen bloom minimal. Accurate interior lighting.",
-    desc: '📷 Camera sits where the driver\'s head would be, looking over the steering wheel toward the dashboard and screen. Steering wheel, instrument cluster, centre console and windscreen all in frame.'
-  },
-  {
-    diagram: makeDiagram(4, 4, `<line x1="12" y1="12" x2="20" y2="16" stroke="white" stroke-width="0.7" opacity="0.3"/>`),
-    name: 'Door Open Reveal',
-    sub: 'Door ajar, interior + exterior',
-    focalLength: 50, aperture: 'f/5.6', camHeight: 'wheel-centre height (approx 35cm from ground)', camDist: '4m', yaw: '35° from front-left', pitch: '-3°',
-    prompt: "three-quarter front left angle with the driver's door fully open at 90 degrees — exterior bodywork, door card, seat bolsters, sill plate and interior trim all simultaneously visible. Focus on door card and seat. Interior ambient light glowing within. Exterior paint sharp.",
-    desc: '📷 Camera at 45° front-left while the driver\'s door stands open. Both exterior bodywork and interior are simultaneously visible — seat bolsters, door card, sill plate. Great for showcasing a contrasting cabin colour.'
-  },
+  }
 ];
 let selectedAngle = null;
 (function buildAngleGrid(){
