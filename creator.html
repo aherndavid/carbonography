@@ -75,6 +75,8 @@
   .toggle-item.active .toggle-label { color: var(--white); }
   .toggle-pip { width: 6px; height: 6px; border-radius: 50%; background: var(--border-lit); transition: background 0.15s; }
   .toggle-item.active .toggle-pip { background: var(--white); }
+  .toggle-grid.disabled-grid { opacity: 0.35; pointer-events: none; filter: grayscale(1); }
+  .toggle-grid.disabled-grid .toggle-item { cursor: default; }
 
   .swatch-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
   .swatch { width: 26px; height: 26px; border: 1px solid transparent; cursor: pointer; transition: border-color 0.12s, transform 0.12s; }
@@ -170,16 +172,16 @@
 
   /* GEMINI LOADING OVERLAY */
   .gemini-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 1000;
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     opacity: 0; pointer-events: none; transition: opacity 0.3s;
   }
   .gemini-overlay.active { opacity: 1; pointer-events: all; }
-  .gemini-overlay-logo { width: 220px; max-width: 60vw; height: auto; margin-bottom: 32px; animation: gemini-pulse 1.8s ease-in-out infinite; }
+  .gemini-overlay-logo { width: 380px; max-width: 80vw; height: auto; margin-bottom: 40px; animation: gemini-pulse 1.8s ease-in-out infinite; }
   @keyframes gemini-pulse { 0%, 100% { opacity: 0.5; transform: scale(0.98); } 50% { opacity: 1; transform: scale(1.02); } }
-  .gemini-overlay-text { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; letter-spacing: 4px; text-transform: uppercase; color: var(--grey); margin-bottom: 14px; }
-  .gemini-overlay-count { font-family: 'JetBrains Mono', monospace; font-size: 48px; font-weight: 700; color: var(--white); letter-spacing: 2px; }
-  .gemini-overlay-bar { width: 240px; height: 2px; background: var(--border-lit); margin-top: 24px; overflow: hidden; }
+  .gemini-overlay-text { font-family: 'Inter', system-ui, sans-serif; font-size: 15px; letter-spacing: 5px; text-transform: uppercase; color: var(--grey); margin-bottom: 16px; }
+  .gemini-overlay-count { font-family: 'JetBrains Mono', monospace; font-size: 64px; font-weight: 700; color: var(--white); letter-spacing: 2px; }
+  .gemini-overlay-bar { width: 320px; height: 2px; background: var(--border-lit); margin-top: 28px; overflow: hidden; }
   .gemini-overlay-bar-fill { height: 100%; background: var(--white); width: 0%; transition: width 1s linear; }
   body.video-mode .output-label::before { background: var(--vid-accent); opacity: 1; }
   body.video-mode .output-label { color: var(--vid-accent); }
@@ -372,17 +374,23 @@
           <option value="pure black seamless infinity cove background — #000000 — no visible floor edge, no background detail, absolute black void surrounding the vehicle">Pure Black — #000000 (Web Composite)</option>
           <option value="near-black seamless studio background — very dark charcoal #131413 — subtle warmth, no visible floor seam, deep dark void with a faint organic quality">Near-Black Charcoal — #131413 (Web Composite)</option>
         </optgroup>
+        <optgroup label="— Night Mode —">
+          <option value="__night_mode__">🌙 Night Mode — Headlight Beams on Dark Ground</option>
+        </optgroup>
       </select>
       <div id="bg-hint" style="display:none; margin-top:8px; background:var(--deep); border:1px solid var(--border-lit); padding:9px 12px; font-size:13px; color:#aaaaaa; letter-spacing:0.5px; line-height:1.6; font-family:'Inter',system-ui,sans-serif;">
         🌐 <strong>Web Composite mode</strong> — prompt instructs the AI to render the vehicle against a flat dark field, making it easy to drop onto your website. No background bokeh, no environment detail. Vehicle only.
       </div>
-      <label>Studio Lights</label>
-      <div class="toggle-grid">
+      <div id="night-hint" style="display:none; margin-top:8px; background:var(--deep); border:1px solid var(--border-lit); padding:9px 12px; font-size:13px; color:#aaaaaa; letter-spacing:0.5px; line-height:1.6; font-family:'Inter',system-ui,sans-serif;">
+        🌙 <strong>Night Mode</strong> — vehicle rendered on a dark studio floor at night, headlights and DRLs forced ON, casting bright directional beams across the ground in front of the car with a soft glow halo. Studio lighting is disabled in this mode.
+      </div>
+      <label id="studio-lights-label">Studio Lights</label>
+      <div class="toggle-grid" id="studio-lights-grid">
         <div class="toggle-item active" id="stl-on" onclick="togglePair('stl','on')"><span class="toggle-label">STUDIO ON</span><span class="toggle-pip"></span></div>
         <div class="toggle-item" id="stl-off" onclick="togglePair('stl','off')"><span class="toggle-label">STUDIO OFF</span><span class="toggle-pip"></span></div>
       </div>
-      <label>Vehicle Headlights</label>
-      <div class="toggle-grid">
+      <label id="headlights-label">Vehicle Headlights</label>
+      <div class="toggle-grid" id="headlights-grid">
         <div class="toggle-item" id="hdl-off" onclick="togglePair('hdl','off')"><span class="toggle-label">LIGHTS OFF</span><span class="toggle-pip"></span></div>
         <div class="toggle-item active" id="hdl-on" onclick="togglePair('hdl','on')"><span class="toggle-label">LIGHTS ON</span><span class="toggle-pip"></span></div>
       </div>
@@ -600,7 +608,25 @@
 function updateBgHint() {
   const bg = document.getElementById('bg').value;
   const hint = document.getElementById('bg-hint');
-  hint.style.display = (bg.includes('#000000') || bg.includes('#131413')) ? 'block' : 'none';
+  const nightHint = document.getElementById('night-hint');
+  const isNight = bg === '__night_mode__';
+
+  hint.style.display = (!isNight && (bg.includes('#000000') || bg.includes('#131413'))) ? 'block' : 'none';
+  nightHint.style.display = isNight ? 'block' : 'none';
+
+  const studioGrid = document.getElementById('studio-lights-grid');
+  const headlightsGrid = document.getElementById('headlights-grid');
+
+  if (isNight) {
+    // Night Mode forces headlights ON and disables studio lights
+    studioGrid.classList.add('disabled-grid');
+    headlightsGrid.classList.add('disabled-grid');
+    togglePair('stl', 'off');
+    togglePair('hdl', 'on');
+  } else {
+    studioGrid.classList.remove('disabled-grid');
+    headlightsGrid.classList.remove('disabled-grid');
+  }
 }
 
 // =================== CONDITION HINT ===================
@@ -843,6 +869,14 @@ const angles = [
     focalLength: 35, aperture: 'f/5.6', camHeight: 'elevated (~2m above vehicle roof)', camDist: '5m', yaw: '35° from rear-right', pitch: '-35°',
     prompt: 'aerial three-quarter rear right angle, camera elevated approximately 2m above roof height, looking down at 35° pitch — roof, boot lid and passenger-side rear quarter all simultaneously visible',
     desc: '📷 Camera raised high, looking down at the rear-right corner. Roof, boot lid and passenger-side rear quarter all visible. Excellent for SUVs, estate cars and vehicles with strong rooflines.'
+  },
+  {
+    diagram: makeDiagram(4, 4, `<circle cx="44" cy="14" r="5" fill="none" stroke="white" stroke-width="0.8" opacity="0.5"/>`),
+    name: 'Headlight Close-Up',
+    sub: 'Macro detail on headlight unit',
+    focalLength: 100, aperture: 'f/2.8', camHeight: 'headlight height (approx 75cm from ground)', camDist: '1m', yaw: '30° from front-left', pitch: '0°',
+    prompt: 'extreme macro close-up focused on the front headlight unit and DRL signature — camera 30° from the front-left at headlight height, 1m distance. 100mm macro focal length at f/2.8, razor-sharp focus on the lens, internal reflectors and LED elements, background falling into smooth bokeh. Accurate lens housing shape, badge and trim details for this exact vehicle.',
+    desc: '📷 Macro close-up on the headlight unit and DRL signature, 30° from the front-left. Very shallow depth of field — internal lens detail and LED elements sharp, surroundings blur away. Best for showcasing distinctive light signatures.'
   }
 ];
 let selectedAngle = null;
@@ -1465,15 +1499,26 @@ function buildImagePrompt() {
   if (conditionText) p += `\n\n${conditionText}`;
 
   // ── Background ────────────────────────────────────────────────────────
+  const isNightMode = bg === '__night_mode__';
   const isDarkBg = bg.includes('#000000') || bg.includes('#131413');
-  if (isDarkBg) {
+
+  // ── Aspect ratio: Night Mode benefits from a wide frame so the beams fit ──
+  window.__carbAspectRatio = isNightMode ? '16:9' : null;
+
+  if (isNightMode) {
+    p += `\n\nASPECT RATIO: 16:9 widescreen format. Compose the shot wide — leave generous open floor space in front of the vehicle for the headlight beams to fully extend and illuminate within frame.`;
+    p += `\n\nBACKGROUND: Night-time setting — pure dark studio floor and backdrop, near-black (#0a0a0a), no environment detail, no visible horizon, no background objects. The only illumination in the scene comes from the vehicle's own headlights and DRLs.`;
+    p += `\n\nHEADLIGHT BEAM EFFECT: The vehicle's headlights and DRLs are switched ON and are the dominant light source in the frame. Render two distinct, bright, slightly diverging beams of light projecting forward from the headlights onto the dark ground, illuminating the floor directly ahead of the vehicle with a realistic cone-shaped spread and soft-edged falloff. Where the beams strike the floor, render a bright illuminated patch with a subtle warm-white glow and gentle light scatter/haze in the air directly in front of the lenses. The beams must originate precisely from the headlight units and follow correct automotive headlight geometry — low and slightly downward-angled, never crossing or symmetric like spotlights. Areas of the floor outside the beam cones remain in deep shadow. The vehicle's own bodywork is lit primarily by the glow and bounce light from its own beams, with subtle rim lighting on the front fascia and bonnet from the DRLs. Background remains otherwise completely dark — no other light sources, no bokeh, no ambient fill.`;
+  } else if (isDarkBg) {
     p += `\n\nBACKGROUND: ${bg}. WEB COMPOSITE MANDATE: Perfectly flat uniform dark field — no bokeh, no environment detail, no visible studio equipment, no gradient vignette, no light spill on backdrop. Vehicle sits cleanly for digital compositing without masking. Soft barely-perceptible ground shadow directly beneath vehicle only.`;
   } else {
     p += `\n\nBACKGROUND: ${bg}. Clean natural ground shadow beneath the vehicle — no harsh drop shadows, no distracting elements. No reflections of studio equipment, softboxes, ceiling rigs, light panels or octaboxes visible in any surface. Background completely clean of studio hardware.`;
   }
 
   // ── Lighting ──────────────────────────────────────────────────────────
-  p += `\n\nLIGHTING: ${lightingDesc}`;
+  if (!isNightMode) {
+    p += `\n\nLIGHTING: ${lightingDesc}`;
+  }
 
   // ── Camera & composition ──────────────────────────────────────────────
   p += `\n\nCAMERA & COMPOSITION: ${selectedAngle.prompt}. Full-frame sensor, ${focalLength}mm lens, ${aperture}, ISO 100, 1/125s. Camera height: ${camHeight}, distance: ${camDist}. Studio-grade colour grading — neutral white balance, correct white point, no colour casts, no chromatic aberration.`;
@@ -1682,14 +1727,21 @@ async function generateWithGemini() {
   showGeminiOverlay();
 
   try {
+    const requestBody = {
+      contents: [{ parts: [{ text: prompt }] }]
+    };
+    if (window.__carbAspectRatio) {
+      requestBody.generationConfig = {
+        imageConfig: { aspectRatio: window.__carbAspectRatio }
+      };
+    }
+
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }]
-        })
+        body: JSON.stringify(requestBody)
       }
     );
 
